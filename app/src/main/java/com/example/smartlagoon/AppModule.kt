@@ -3,7 +3,7 @@ package com.example.smartlagoon
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
-import com.example.outdoorromagna.data.database.SmartlagoonDatabase
+import com.example.smartlagoon.data.database.SmartlagoonDatabase
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json

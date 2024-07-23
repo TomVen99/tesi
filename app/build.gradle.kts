@@ -63,6 +63,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     //Da qui partono i miei import
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")

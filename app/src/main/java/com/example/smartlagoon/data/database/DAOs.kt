@@ -4,6 +4,9 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
+import com.example.smartlagoon.data.database.Favourite
+import com.example.smartlagoon.data.database.Track
+import com.example.smartlagoon.data.database.User
 import kotlinx.coroutines.flow.Flow
 
 @Dao

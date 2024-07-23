@@ -38,7 +38,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.outdoorromagna.data.database.User
+import com.example.smartlagoon.data.database.User
 import com.example.outdoorromagna.ui.OutdoorRomagnaRoute
 import com.example.outdoorromagna.ui.screens.home.HomeScreenActions
 import com.example.outdoorromagna.ui.screens.tracks.TracksActions
