@@ -49,9 +49,19 @@ sealed class SmartlagoonRoute(
     var currentRoute: String,
     val arguments: List<NamedNavArgument> = emptyList()
 ) {
-    data object Login : SmartlagoonRoute("login", "Smartlagoon - Login", "")
+    data object Login : SmartlagoonRoute("login", "Smartlagoon - Login", "login")
 
     data object Signin : SmartlagoonRoute("signin", "Smartlagoon - Signin", "")
+
+    data object Challenge : SmartlagoonRoute("challange", "Channalnge", "")
+
+    data object Ranking : SmartlagoonRoute("ranking", "Ranking", "")
+
+    data object Badge : SmartlagoonRoute("badge", "Badge", "")
+
+    data object Recycle : SmartlagoonRoute("recycle", "Recycle", "")
+
+    data object Info : SmartlagoonRoute("info", "Info", "")
 
     data object Home : SmartlagoonRoute(
         "home/{userUsername}",//{latitude}/{longitude}",
@@ -209,7 +219,7 @@ sealed class SmartlagoonRoute(
     }
 
     companion object {
-        val routes = setOf(Login, Signin, Home, Settings, Profile, AddTrack, Tracking, AddTrackDetails)
+        val routes = setOf(Login, Signin, Home, Ranking, Badge, Info, Recycle, Profile, Settings, AddTrack, Tracking, AddTrackDetails)
     }
 }
 
@@ -281,7 +291,7 @@ fun SmartlagoonNavGraph(
         }
         with(SmartlagoonRoute.Home) {
             composable(route, arguments) {backStackEntry ->
-                //usersVm.resetValues()
+                Log.d("LOG", "sono qui")
                 val homeScreenVm = koinViewModel<HomeScreenViewModel>()
                 val state by homeScreenVm.state.collectAsStateWithLifecycle()
                 var userName =  backStackEntry.arguments?.getString("userUsername") ?: userDefault
@@ -312,7 +322,8 @@ fun SmartlagoonNavGraph(
                         user,
                         tracksDbVm,
                         tracksDbState,
-                        groupedTracksState
+                        groupedTracksState,
+                        sharedPreferences
                     )
                 }
             }

@@ -2,6 +2,7 @@ package com.example.smartlagoon.ui.screens.login
 
 import android.content.SharedPreferences
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -66,6 +67,7 @@ fun Login(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .padding(10.dp)
+                .background(MaterialTheme.colorScheme.background)
                 .border(1.dp, MaterialTheme.colorScheme.onBackground, RectangleShape)
         ) {
             val focusManager = LocalFocusManager.current
