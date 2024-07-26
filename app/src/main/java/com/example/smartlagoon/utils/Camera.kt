@@ -1,4 +1,4 @@
-package com.example.outdoorromagna.utils
+package com.example.smartlagoon.utils
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult

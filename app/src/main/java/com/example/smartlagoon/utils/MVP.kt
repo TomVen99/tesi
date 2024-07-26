@@ -1,4 +1,4 @@
-package com.example.outdoorromagna.utils
+package com.example.smartlagoon.utils
 
 import android.Manifest
 import android.content.Context
@@ -13,10 +13,9 @@ import androidx.activity.result.ActivityResultRegistry
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import com.example.outdoorromagna.R
-import com.example.outdoorromagna.ui.TracksDbViewModel
-import com.example.outdoorromagna.ui.screens.addtrack.AddTrackActions
-import com.example.outdoorromagna.ui.screens.tracking.Ui
+import com.example.smartlagoon.R
+import com.example.smartlagoon.ui.viewmodel.TracksDbViewModel
+import com.example.smartlagoon.ui.screens.addtrack.AddTrackActions
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
@@ -28,9 +27,10 @@ import java.util.Locale
 class MapPresenter(private val context: Context,
                    private val registry: ActivityResultRegistry,
                    private val isStarted: MutableLiveData<Boolean>,
-                   private val tracksDbVm: TracksDbViewModel) {
+                   private val tracksDbVm: TracksDbViewModel
+) {
 
-    lateinit var ui: MutableLiveData<Ui>
+    /*lateinit var ui: MutableLiveData<Ui>
     private lateinit var googleMap: GoogleMap
     private lateinit var locationProvider: LocationProvider
     private lateinit var stepCounter: StepCounter
@@ -186,7 +186,7 @@ class MapPresenter(private val context: Context,
         }
 
         return city
-    }
+    }*/
 }
 
 

@@ -1,4 +1,4 @@
-package com.example.outdoorromagna.utils
+package com.example.smartlagoon.utils
 
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -12,10 +12,10 @@ import androidx.lifecycle.MutableLiveData
 
 class PermissionsManager(
     registry: ActivityResultRegistry,
-    private val locationProvider: LocationProvider,
+    //private val locationProvider: LocationProvider,
     private val stepCounter: StepCounter
 ) {
-
+/*
     val locationPermissionDenied = MutableLiveData<Boolean>()
     val activityRecognitionPermissionDenied = MutableLiveData<Boolean>()
 
@@ -49,5 +49,5 @@ class PermissionsManager(
             Log.d("TAG", "Log: setupStepCounter")
             stepCounter.setupStepCounter()
         }
-    }
+    }*/
 }

@@ -1,4 +1,4 @@
-package com.example.outdoorromagna.ui.composables
+package com.example.smartlagoon.ui.composables
 
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import com.example.outdoorromagna.ui.screens.login.LoginActions
-import com.example.outdoorromagna.ui.screens.signin.SigninActions
+import com.example.smartlagoon.ui.screens.login.LoginActions
+import com.example.smartlagoon.ui.screens.signin.SigninActions
 
 @Composable
 fun PasswordTextField(

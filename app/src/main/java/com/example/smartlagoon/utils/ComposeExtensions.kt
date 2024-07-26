@@ -1,4 +1,4 @@
-package com.example.outdoorromagna.utils
+package com.example.smartlagoon.utils
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.MutableLiveData

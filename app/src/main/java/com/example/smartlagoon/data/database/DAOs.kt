@@ -1,4 +1,4 @@
-package com.example.outdoorromagna.data.database
+package com.example.smartlagoon.data.database
 
 import androidx.room.Dao
 import androidx.room.Delete

@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.AddCircle
+import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Person
@@ -39,6 +39,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.smartlagoon.data.database.User
+import com.example.smartlagoon.ui.SmartlagoonRoute
+import com.example.smartlagoon.ui.screens.home.HomeScreenActions
+import com.example.smartlagoon.ui.screens.tracks.TracksActions
+import com.example.smartlagoon.ui.screens.tracks.TracksState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -88,11 +92,11 @@ fun TopAppBar(
                             edit.putString("username", "")
                             edit.apply()
                         }
-                        navController.navigate(OutdoorRomagnaRoute.Login.route)
+                        navController.navigate(SmartlagoonRoute.Login.route)
                         }
                 ){
                     Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ExitToApp,
+                        imageVector = Icons.Outlined.ExitToApp,
                         contentDescription = "Logout",
                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -154,7 +158,7 @@ fun BottomAppBar(
                     modifier = Modifier.padding(0.dp),
                     onClick = {
                         navController.navigate(
-                            OutdoorRomagnaRoute.Home.buildWithoutPosition(
+                            SmartlagoonRoute.Home.buildWithoutPosition(
                                 user.username
                             )
                         )
@@ -174,13 +178,13 @@ fun BottomAppBar(
                         Text("Mappa")
                     }
                 }
-                OutdoorRomagnaRoute.AddTrack.buildRoute(user.username)
+                SmartlagoonRoute.AddTrack.buildRoute(user.username)
                 Button(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     ),
                     onClick = {
-                        navController.navigate(OutdoorRomagnaRoute.AddTrack.currentRoute)
+                        navController.navigate(SmartlagoonRoute.AddTrack.currentRoute)
                     },
                     contentPadding = PaddingValues(horizontal = 15.dp, vertical = 10.dp),
                     shape = RectangleShape
@@ -197,17 +201,17 @@ fun BottomAppBar(
                         Text("Registra")
                     }
                 }
-                OutdoorRomagnaRoute.Tracks.buildRoute(user.username, false)
-                OutdoorRomagnaRoute.Settings.buildRoute(user.username)
-                OutdoorRomagnaRoute.AddTrackDetails.buildRoute(user.username)
-                OutdoorRomagnaRoute.AddTrack.buildRoute(user.username)
+                SmartlagoonRoute.Tracks.buildRoute(user.username, false)
+                SmartlagoonRoute.Settings.buildRoute(user.username)
+                SmartlagoonRoute.AddTrackDetails.buildRoute(user.username)
+                SmartlagoonRoute.AddTrack.buildRoute(user.username)
                 Button(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     ),
                     modifier = Modifier.padding(0.dp),
                     onClick = {
-                        navController.navigate(OutdoorRomagnaRoute.Tracks.currentRoute)
+                        navController.navigate(SmartlagoonRoute.Tracks.currentRoute)
                     },
                     contentPadding = PaddingValues(horizontal = 15.dp, vertical = 10.dp),
                     shape = RectangleShape
@@ -225,14 +229,14 @@ fun BottomAppBar(
                     }
                 }
 
-                OutdoorRomagnaRoute.Profile.buildRoute(user.username)
+                SmartlagoonRoute.Profile.buildRoute(user.username)
                 Button(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
                     ),
                     modifier = Modifier.padding(0.dp),
                     onClick = {
-                        navController.navigate(OutdoorRomagnaRoute.Profile.currentRoute)
+                        navController.navigate(SmartlagoonRoute.Profile.currentRoute)
                     },
                     contentPadding = PaddingValues(horizontal = 15.dp, vertical = 10.dp),
                     shape = RectangleShape

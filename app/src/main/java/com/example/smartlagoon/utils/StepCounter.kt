@@ -1,4 +1,4 @@
-package com.example.outdoorromagna.utils
+package com.example.smartlagoon.utils
 
 import android.content.Context
 import android.content.Context.SENSOR_SERVICE

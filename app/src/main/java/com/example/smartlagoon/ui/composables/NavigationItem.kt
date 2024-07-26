@@ -1,6 +1,5 @@
-package com.example.outdoorromagna.ui.composables
+package com.example.smartlagoon.ui.composables
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Spacer
@@ -36,15 +35,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -52,11 +47,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.outdoorromagna.R
-import com.example.outdoorromagna.ui.OutdoorRomagnaRoute
-import com.example.outdoorromagna.ui.TracksDbState
-import com.example.outdoorromagna.ui.TracksDbViewModel
+import com.example.smartlagoon.R
+import com.example.smartlagoon.ui.SmartlagoonRoute
+import com.example.smartlagoon.ui.viewmodel.TracksDbState
 import kotlinx.coroutines.launch
 
 data class NavigationItem(
@@ -64,7 +57,7 @@ data class NavigationItem(
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
     val badgeCount: Int? = null,
-    val route: OutdoorRomagnaRoute
+    val route: SmartlagoonRoute
 )
 
 var drawerState: DrawerState = DrawerState(DrawerValue.Closed)
@@ -78,32 +71,32 @@ val items = listOf(
         title = "Mappa",
         selectedIcon = Icons.Filled.Map,
         unselectedIcon = Icons.Outlined.Map,
-        route = OutdoorRomagnaRoute.Home
+        route = SmartlagoonRoute.Home
     ),
     NavigationItem(
         title = "Registra",
         selectedIcon = Icons.Filled.AddCircle,
         unselectedIcon = Icons.Outlined.AddCircle,
-        route = OutdoorRomagnaRoute.AddTrack
+        route = SmartlagoonRoute.AddTrack
     ),
     NavigationItem(
         title = "Percorsi",
         selectedIcon = Icons.Filled.Directions,
         unselectedIcon = Icons.Outlined.Directions,
         badgeCount = 0,
-        route = OutdoorRomagnaRoute.Tracks
+        route = SmartlagoonRoute.Tracks
     ),
     NavigationItem(
         title = "Profilo",
         selectedIcon = Icons.Filled.Person,
         unselectedIcon = Icons.Outlined.Person,
-        route = OutdoorRomagnaRoute.Profile
+        route = SmartlagoonRoute.Profile
     ),
     NavigationItem(
         title = "Impostazioni",
         selectedIcon = Icons.Filled.Settings,
         unselectedIcon = Icons.Outlined.Settings,
-        route = OutdoorRomagnaRoute.Settings
+        route = SmartlagoonRoute.Settings
     ),
 )
 var currentRoute by mutableStateOf("")
@@ -149,7 +142,7 @@ fun SideBarMenu (
                     }
 
                     Image(
-                        painter = painterResource(id = R.drawable.logooudoorromagnarectangle),
+                        painter = painterResource(id = R.drawable.smartlagoon_logo),
                         contentDescription = "logo",
                         modifier = Modifier
                             .fillMaxWidth()
