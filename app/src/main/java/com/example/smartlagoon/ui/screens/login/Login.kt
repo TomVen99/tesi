@@ -112,7 +112,7 @@ fun Login(
                 if (signinResult == false) {
                     Text(signinLog.toString(), color = Color.Red)
                 } else if (signinResult == true) {
-                    navController.navigate(SmartlagoonRoute.Home.buildWithoutPosition(state.username))
+                    navController.navigate(SmartlagoonRoute.Home.buildRoute(state.username))
                 } else if (signinResult == null) {
                     Spacer(Modifier.size(15.dp))
                 }

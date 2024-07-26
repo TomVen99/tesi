@@ -76,11 +76,11 @@ fun TracksScreen(
                 TopAppBar(
                     navController = navController,
                     currentRoute = "Percorsi",
-                    showSearch = false,
-                    drawerState = getMyDrawerState(),
+                    /*showSearch = false,
+                    drawerState = getMyDrawerState(),*/
                     trackActions = actions,
                     scope = scope,
-                    showFilter = showFilter,
+                    //showFilter = showFilter,
                     filterState = state
                 )
             },

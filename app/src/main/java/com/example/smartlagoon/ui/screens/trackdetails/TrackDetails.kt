@@ -87,10 +87,10 @@ fun TrackDetails(
                 TopAppBar(
                     navController = navController,
                     currentRoute = "Dettagli Percorso",
-                    showSearch = false,
-                    drawerState = getMyDrawerState(),
+                    /*showSearch = false,
+                    drawerState = getMyDrawerState(),*/
                     scope = scope,
-                    showFilter = false
+                    //showFilter = false
                 )
             },
             bottomBar = { BottomAppBar(navController, user) },

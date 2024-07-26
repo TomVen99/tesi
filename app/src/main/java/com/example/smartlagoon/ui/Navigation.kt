@@ -54,17 +54,17 @@ sealed class SmartlagoonRoute(
     data object Signin : SmartlagoonRoute("signin", "Smartlagoon - Signin", "")
 
     data object Home : SmartlagoonRoute(
-        "home/{userUsername}/{latitude}/{longitude}",
+        "home/{userUsername}",//{latitude}/{longitude}",
         "homePage",
         "",
         listOf(
             navArgument("userUsername") { type = NavType.StringType },
-            navArgument("latitude") { type = NavType.FloatType },
-            navArgument("longitude") { type = NavType.FloatType }
+            /*navArgument("latitude") { type = NavType.FloatType },
+            navArgument("longitude") { type = NavType.FloatType }*/
         )
     ) {
-        fun buildRoute(userUsername: String, latitude: Float?, longitude: Float?): String{
-            setMyCurrentRoute("home/$userUsername/$latitude/$longitude")
+        fun buildRoute(userUsername: String): String{
+            setMyCurrentRoute("home/$userUsername")
             return currentRoute
         }
 
@@ -238,7 +238,7 @@ fun SmartlagoonNavGraph(
     startDestination = if (sharedPreferences.getBoolean("isUserLogged", false)) {
         val username = sharedPreferences.getString("username", "")
         if(username != null && username != "") {
-            SmartlagoonRoute.Home.buildWithoutPosition(username)
+            SmartlagoonRoute.Home.buildRoute(username)
         } else {
             SmartlagoonRoute.Login.route
         }

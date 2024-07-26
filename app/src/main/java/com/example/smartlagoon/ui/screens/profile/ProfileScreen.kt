@@ -175,9 +175,9 @@ fun ProfileScreen(
                 TopAppBar(
                     navController = navController,
                     currentRoute = "Profilo",
-                    drawerState = getMyDrawerState(),
+                    //drawerState = getMyDrawerState(),
                     scope = scope,
-                    showLogout = true,
+                    //showLogout = true,
                     sharedPreferences = sharedPreferences
                 )
             },

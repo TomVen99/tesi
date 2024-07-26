@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.ExitToApp
@@ -51,39 +53,44 @@ import kotlinx.coroutines.launch
 fun TopAppBar(
     navController: NavHostController,
     currentRoute: String,
-    showSearch: Boolean = false,
+    //showSearch: Boolean = false,
     actions: HomeScreenActions? = null,
     trackActions: TracksActions? = null,
     filterState: TracksState? = null,
-    drawerState: DrawerState,
+    //drawerState: DrawerState,
     scope: CoroutineScope,
-    showFilter: Boolean = false,
-    showLogout: Boolean = false,
+    //showFilter: Boolean = false,
+    //showLogout: Boolean = false,
     sharedPreferences: SharedPreferences? = null
 ) {
     Log.d("TAG", drawerState.toString())
     TopAppBar(
         title = {
-            Text(
-                currentRoute,
-                fontWeight = FontWeight.Medium,
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = {
-                Log.d("TAG", "cliccato menu")
-                scope.launch {
-                    drawerState.open()
-                }
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = "Menu",
+            Column (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Text(
+                    currentRoute,
+                    fontWeight = FontWeight.Medium,
                 )
             }
         },
+
+        navigationIcon = {
+                IconButton(onClick = {
+                    Log.d("TAG", "cliccato indietro")
+                    navController.navigateUp()
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                    )
+                }
+
+        },
         actions = {
-            if (showLogout) {
+            /*if (showLogout) {
                 IconButton(
                     onClick = {
                         if(sharedPreferences != null) {
@@ -129,7 +136,7 @@ fun TopAppBar(
                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
-            }
+            }*/
         },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -158,9 +165,7 @@ fun BottomAppBar(
                     modifier = Modifier.padding(0.dp),
                     onClick = {
                         navController.navigate(
-                            SmartlagoonRoute.Home.buildWithoutPosition(
-                                user.username
-                            )
+                            SmartlagoonRoute.Home.currentRoute
                         )
                     },
                     contentPadding = PaddingValues(horizontal = 15.dp, vertical = 10.dp),

@@ -50,7 +50,7 @@ fun SettingsScreen(
                     TopAppBar(
                         navController = navController,
                         currentRoute = "Impostazioni",
-                        drawerState = getMyDrawerState(),
+                        //drawerState = getMyDrawerState(),
                         scope = scope
                     )
                 },
