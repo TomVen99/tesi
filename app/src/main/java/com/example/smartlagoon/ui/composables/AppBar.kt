@@ -1,4 +1,4 @@
-package com.example.outdoorromagna.ui.composables
+package com.example.smartlagoon.ui.composables
 
 import android.content.SharedPreferences
 import android.util.Log
@@ -39,10 +39,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.smartlagoon.data.database.User
-import com.example.outdoorromagna.ui.OutdoorRomagnaRoute
-import com.example.outdoorromagna.ui.screens.home.HomeScreenActions
-import com.example.outdoorromagna.ui.screens.tracks.TracksActions
-import com.example.outdoorromagna.ui.screens.tracks.TracksState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
