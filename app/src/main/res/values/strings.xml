@@ -5,6 +5,9 @@
 
     <string name="username_shared_pref">usernameLogged</string>
 
+    <string name="channel_name">notifiche</string>
+    <string name="channel_description">descrizione</string>
+
     <string name="title_activity_maps">Map</string>
     <string name="steps">Passi</string>
     <string name="elapsed_time_label">Tempo trascorso</string>

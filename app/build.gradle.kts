@@ -68,6 +68,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.7")
+    //notifiche
+    //implementation("androidx.core:core-ktx:2.2.0")
+    //fine notifiche
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     //
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
