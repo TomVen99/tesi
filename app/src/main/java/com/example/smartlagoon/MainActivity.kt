@@ -20,16 +20,21 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.smartlagoon.ui.SmartlagoonNavGraph
 import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
+import com.example.smartlagoon.utils.NotificationWorker
+import com.example.smartlagoon.utils.PermissionsManager
 import com.example.smartlagoon.utils.sendNotifications
+import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
 
     //private lateinit var locationService: LocationService
     //private val settingsViewModel: SettingsViewModel by viewModel()
-    private val requestPermissionLauncher =
+    /*private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 // L'autorizzazione è stata concessa, puoi inviare notifiche
@@ -37,58 +42,38 @@ class MainActivity : ComponentActivity() {
             } else {
                 // L'autorizzazione è stata negata, gestisci di conseguenza
             }
+        }*/
+    private lateinit var permissionHelper: PermissionsManager
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                // L'autorizzazione è stata concessa, puoi schedulare le notifiche
+                scheduleNotifications()
+            } else {
+                // L'autorizzazione è stata negata, gestisci di conseguenza
+            }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        permissionHelper = PermissionsManager(this, requestPermissionLauncher)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            when {
-                ContextCompat.checkSelfPermission(
-                    this,
-                    "android.permission.POST_NOTIFICATIONS"
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                    // L'autorizzazione è già stata concessa
-                    sendNotification(this)
+            permissionHelper.checkAndRequestPermissionNotification(
+                onPermissionGranted = {
+                    scheduleNotifications()
+                                      },
+                onPermissionDenied = {
+                /* Gestisci l'evento di negazione dell'autorizzazione */
                 }
-                ActivityCompat.shouldShowRequestPermissionRationale(this, "android.permission.POST_NOTIFICATIONS") -> {
-                    // Mostra una spiegazione all'utente, poi richiedi l'autorizzazione
-                    requestPermissionLauncher.launch("android.permission.POST_NOTIFICATIONS")
-                }
-                else -> {
-                    // Richiedi direttamente l'autorizzazione
-                    requestPermissionLauncher.launch("android.permission.POST_NOTIFICATIONS")
-                }
-            }
+            )
         } else {
             // Per le versioni di Android precedenti, non è necessaria alcuna autorizzazione aggiuntiva
-            sendNotification(this)
+            scheduleNotifications()
         }
-    }
 
-    private fun sendNotification(context: Context) {
-        createNotificationChannel()
-        // Codice per inviare la notifica (vedi sotto)
-        sendNotifications(context)
-    }
-
-
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Channel Name"
-            val descriptionText = "Channel Description"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel("channel_id", name, importance).apply {
-                description = descriptionText
-            }
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
-        //settingsViewModel.resetTheme()
-        //locationService = get<LocationService>()
-
-        /*createNotificationChannel(this)
-        scheduleAlarm(this)*/
         setContent {
             //val theme by settingsViewModel.theme.collectAsState(initial = "")
             SmartlagoonTheme(/*darkTheme = theme == "Dark"*/) {
@@ -110,6 +95,36 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun sendNotification(context: Context) {
+        createNotificationChannel()
+        // Codice per inviare la notifica (vedi sotto)
+        sendNotifications(context)
+    }
+
+
+    private fun createNotificationChannel() {
+        val name = "Channel Name"
+        val descriptionText = "Channel Description"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel("channel_id", name, importance).apply {
+            description = descriptionText
+        }
+        val notificationManager: NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+    }
+        //settingsViewModel.resetTheme()
+        //locationService = get<LocationService>()
+
+        /*createNotificationChannel(this)
+        scheduleAlarm(this)*/
+
+    private fun scheduleNotifications() {
+        val workRequest = PeriodicWorkRequestBuilder<NotificationWorker>(15, TimeUnit.SECONDS)
+            .build()
+        WorkManager.getInstance(this).enqueue(workRequest)
     }
 
     override fun onPause() {

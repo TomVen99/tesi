@@ -69,7 +69,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.7")
     //notifiche
-    //implementation("androidx.core:core-ktx:2.2.0")
+    implementation ("androidx.work:work-runtime:2.8.1")
     //fine notifiche
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     //

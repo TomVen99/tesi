@@ -1,5 +1,6 @@
 package com.example.smartlagoon.ui.screens.home
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -52,9 +53,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.example.smartlagoon.MainActivity
 import com.example.smartlagoon.R
+import com.example.smartlagoon.TakePhotoActivity
 import com.example.smartlagoon.ui.composables.getMyDrawerState
 import com.example.smartlagoon.data.database.User
 import com.example.smartlagoon.ui.SmartlagoonRoute
@@ -152,6 +156,7 @@ fun MenuGrid(navController: NavController) {
 
 @Composable
 fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: NavController) {
+    val context = LocalContext.current
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
@@ -159,7 +164,13 @@ fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: 
             .size(170.dp)
             .clip(RoundedCornerShape(8.dp))
             .clickable {
-                navController.navigate(route.route)
+                if(route.route == "recycle")
+                {
+                    val intent = Intent(context, TakePhotoActivity::class.java)
+                    context.startActivity(intent)
+                }else {
+                    navController.navigate(route.route)
+                }
             }
     ) {
         Column(

@@ -1,21 +1,75 @@
 package com.example.smartlagoon.utils
 
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
+import android.app.Activity
 import android.content.Context
-import android.os.Build
-import android.util.Log
-import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
-import androidx.lifecycle.MutableLiveData
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class PermissionsManager(
-    registry: ActivityResultRegistry,
+    //registry: ActivityResultRegistry,
     //private val locationProvider: LocationProvider,
-    private val stepCounter: StepCounter
+    private val context: Context,
+    private val requestPermissionLauncher: ActivityResultLauncher<String>
 ) {
-/*
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    fun checkAndRequestPermissionNotification(onPermissionGranted: () -> Unit, onPermissionDenied: () -> Unit) {
+        when {
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // L'autorizzazione è già stata concessa
+                onPermissionGranted()
+            }
+            ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, Manifest.permission.POST_NOTIFICATIONS) -> {
+                // Mostra una spiegazione all'utente, poi richiedi l'autorizzazione
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+            else -> {
+                // Richiedi direttamente l'autorizzazione
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    fun checkAndRequestPermissionPhoto(onPermissionGranted: () -> Unit, onPermissionDenied: () -> Unit) {
+        when {
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                // L'autorizzazione è già stata concessa
+                onPermissionGranted()
+            }
+
+            /*ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_DENIED -> {
+                // L'autorizzazione è già stata concessa
+                onPermissionDenied()
+            }*/
+
+            ActivityCompat.shouldShowRequestPermissionRationale(context as Activity, Manifest.permission.POST_NOTIFICATIONS) -> {
+                // Mostra una spiegazione all'utente, poi richiedi l'autorizzazione
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+            else -> {
+                // Richiedi direttamente l'autorizzazione
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            }
+        }
+    }
+
+
+    /*
     val locationPermissionDenied = MutableLiveData<Boolean>()
     val activityRecognitionPermissionDenied = MutableLiveData<Boolean>()
 
@@ -50,4 +104,5 @@ class PermissionsManager(
             stepCounter.setupStepCounter()
         }
     }*/
+
 }

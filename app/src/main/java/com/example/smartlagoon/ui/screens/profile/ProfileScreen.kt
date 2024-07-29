@@ -174,18 +174,10 @@ fun ProfileScreen(
                 TopAppBar(
                     navController = navController,
                     currentRoute = "Profilo",
-                    //drawerState = getMyDrawerState(),
                     scope = scope,
-                    //showLogout = true,
                     sharedPreferences = sharedPreferences
                 )
             },
-            bottomBar = {
-                BottomAppBar(
-                    navController = navController,
-                    user = user
-                )
-            }
         ) { contentPadding ->
             Column(
                 modifier = Modifier
