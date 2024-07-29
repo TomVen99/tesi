@@ -159,7 +159,7 @@ fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: 
             .size(170.dp)
             .clip(RoundedCornerShape(8.dp))
             .clickable {
-                navController.navigate()
+                navController.navigate(route.route)
             }
     ) {
         Column(

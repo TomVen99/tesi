@@ -56,11 +56,10 @@ import coil.request.ImageRequest
 import com.example.smartlagoon.R
 import com.example.smartlagoon.data.database.User
 import com.example.smartlagoon.ui.viewmodel.TracksDbState
-import com.example.smartlagoon.ui.UsersViewModel
+import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 import com.example.smartlagoon.ui.composables.BottomAppBar
 import com.example.smartlagoon.ui.composables.SideBarMenu
 import com.example.smartlagoon.ui.composables.TopAppBar
-import com.example.smartlagoon.ui.composables.getMyDrawerState
 
 @Composable
 fun ProfileScreen(
@@ -69,7 +68,7 @@ fun ProfileScreen(
     usersViewModel : UsersViewModel,
     sharedPreferences: SharedPreferences,
     tracksDbState: TracksDbState,
-    userTracksNumber: Int,
+    userPoints: Int,
 ) {
     val scope = rememberCoroutineScope()
     val ctx = LocalContext.current
@@ -279,11 +278,11 @@ fun ProfileScreen(
                 ) {
                     /*Icon(
                         Icons.Filled.Numbers,
-                        contentDescription = "n percorsi"
+                        contentDescription = "Punti"
                     )
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))*/
                     Text(
-                        text = "Numero percorsi: $userTracksNumber",
+                        text = "Punti: $userPoints",
                         fontSize = 20.sp,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         textAlign = TextAlign.Center,

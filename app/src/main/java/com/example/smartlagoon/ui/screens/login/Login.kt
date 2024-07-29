@@ -42,7 +42,7 @@ import androidx.navigation.NavHostController
 import com.example.smartlagoon.ui.composables.PasswordTextField
 import com.example.smartlagoon.R
 import com.example.smartlagoon.ui.SmartlagoonRoute
-import com.example.smartlagoon.ui.UsersViewModel
+import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 
 
 

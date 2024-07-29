@@ -10,7 +10,7 @@ import com.example.smartlagoon.data.repositories.SettingsRepository
 import com.example.smartlagoon.data.repositories.ThemeRepository
 import com.example.smartlagoon.data.repositories.TracksRepository
 import com.example.smartlagoon.data.repositories.UsersRepository
-import com.example.smartlagoon.ui.UsersViewModel
+import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 import com.example.smartlagoon.ui.screens.addtrack.AddTrackViewModel
 import com.example.smartlagoon.ui.screens.addtrackdetails.AddTrackDetailsViewModel
 import com.example.smartlagoon.ui.screens.home.HomeScreenViewModel

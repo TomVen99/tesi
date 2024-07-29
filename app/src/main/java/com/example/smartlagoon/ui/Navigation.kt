@@ -40,6 +40,7 @@ import com.example.smartlagoon.ui.screens.tracks.TracksScreen
 import com.example.smartlagoon.ui.screens.tracks.TracksViewModel
 import com.example.smartlagoon.ui.viewmodel.FavouritesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.TracksDbViewModel
+import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import org.koin.androidx.compose.koinViewModel
 
@@ -329,11 +330,16 @@ fun SmartlagoonNavGraph(
             }
         }
         with(SmartlagoonRoute.Profile) {
-            composable(route, arguments) {backStackEntry ->
+            composable(route, arguments) {
                 if(usersState.users.isNotEmpty()) {
                     val userTrackNumber by tracksDbVm.userTracksNumber.observeAsState(0)
-                    val user = requireNotNull(usersState.users.find {
+                    Log.d("TAGGG", usersState.users.toString())
+                    sharedPreferences.getString("username", null)?.let { Log.d("TAGGG", it) }
+                    /*val user = requireNotNull(usersState.users.find {
                         it.username == backStackEntry.arguments?.getString("userUsername")
+                    })*/
+                    val user = requireNotNull(usersState.users.find {
+                        it.username == sharedPreferences.getString("username", null)
                     })
                     tracksDbVm.getUserTracksNumber(user.id)
                     ProfileScreen(
@@ -342,7 +348,7 @@ fun SmartlagoonNavGraph(
                         usersViewModel = usersVm,
                         sharedPreferences = sharedPreferences,
                         tracksDbState = tracksDbState,
-                        userTracksNumber = userTrackNumber
+                        userPoints = userTrackNumber
                     )
                 }
             }
