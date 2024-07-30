@@ -45,6 +45,7 @@ import com.example.smartlagoon.ui.screens.tracks.TracksState
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
 import com.example.smartlagoon.ui.viewmodel.PhotosDbState
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
+import java.util.Date
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -131,7 +132,7 @@ fun PhotoItem(photo: Photo, user: User) {
                     contentScale = ContentScale.Crop
                 )
                 Text(
-                    text = photo.username,
+                    text = photo.username + " " + Date(photo.timestamp),
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     color = Color.Black,
@@ -143,57 +144,6 @@ fun PhotoItem(photo: Photo, user: User) {
         }
     }
 }
-
-/*@Composable
-fun PrintPhotos(photos: List<Photo> ) {
-    Log.d("photo", "son qui")
-    /*ListItem(
-        headlineContent = { Text(text = "pippo") },
-        supportingContent = {
-            Text(text = "pippo")
-        },
-    )
-    ListItem(
-        headlineContent = { Text(text = "pippo") },
-        supportingContent = {
-            Text(text = "pippo")
-        },
-    )
-    ListItem(
-        headlineContent = { Text(text = "pippo") },
-        supportingContent = {
-            Text(text = "pippo")
-        },
-    )
-    ListItem(
-        headlineContent = { Text(text = "pippo") },
-        supportingContent = {
-            Text(text = "pippo")
-        },
-    )
-    ListItem(
-        headlineContent = { Text(text = "pippo") },
-        supportingContent = {
-            Text(text = "pippo")
-        },
-    )*/
-    for(photo in photos) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.tertiaryContainer
-            )
-        ) {
-            ListItem(
-                headlineContent = { Text(text = user.username) },
-                supportingContent = {
-                    Text(text = user.name)
-                },
-            )
-        }
-    }
-}*/
 
 
 

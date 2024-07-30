@@ -148,7 +148,7 @@ fun MenuGrid(navController: NavController, user: User) {
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
-            MenuItem("Ricicla", R.drawable.ic_ricicla, SmartlagoonRoute.Recycle, navController, user)
+            MenuItem("Scatta", R.drawable.ic_ricicla, SmartlagoonRoute.Recycle, navController, user)
             MenuItem("Info", R.drawable.ic_info, SmartlagoonRoute.Info, navController)
         }
     }

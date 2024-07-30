@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,6 +16,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -24,6 +28,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.smartlagoon.ui.SmartlagoonNavGraph
 import com.example.smartlagoon.ui.SmartlagoonRoute
+import com.example.smartlagoon.ui.screens.addtrack.ShowDialog
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
 import com.example.smartlagoon.utils.NotificationWorker
 import com.example.smartlagoon.utils.PermissionsManager
@@ -52,15 +57,17 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissionHelper.checkAndRequestPermissionNotification(
                 onPermissionGranted = {
-                    scheduleNotifications()
+                    //scheduleNotifications()
+                    //sendNotification(this)
                                       },
                 onPermissionDenied = {
-                /* Gestisci l'evento di negazione dell'autorizzazione */
+
                 }
             )
         } else {
             // Per le versioni di Android precedenti, non è necessaria alcuna autorizzazione aggiuntiva
-            scheduleNotifications()
+            //scheduleNotifications()
+            //sendNotification(this)
         }
 
         setContent {
@@ -90,6 +97,7 @@ class MainActivity : ComponentActivity() {
         createNotificationChannel()
         // Codice per inviare la notifica (vedi sotto)
         sendNotifications(context)
+        Log.d("notifiche", "notifica inviata")
     }
 
 

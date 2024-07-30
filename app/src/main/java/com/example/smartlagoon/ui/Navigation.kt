@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -364,8 +365,6 @@ fun SmartlagoonNavGraph(
                 val tracksVm = koinViewModel<TracksViewModel>()
                 val state by tracksVm.state.collectAsStateWithLifecycle()
                 if(usersState.users.isNotEmpty()) {
-                    /*val user = requireNotNull(usersState.users.find {
-                        it.username == backStackEntry.arguments?.getString("userUsername")*/
                     val user = requireNotNull(usersState.users.find {
                         it.username == sharedPreferences.getString("username", null)
                     })
@@ -384,14 +383,16 @@ fun SmartlagoonNavGraph(
             }
         }
         with(SmartlagoonRoute.Photo) {
-            composable(route, arguments) { backStackEntry ->
-                val photosVm = koinViewModel<PhotoViewModel>()
+            composable(route, arguments) {
+                LaunchedEffect(Unit) {
+                    val currentTime = System.currentTimeMillis()
+                    val cutoff = currentTime - 24 * 60 * 60 * 1000 // 24 ore in millisecondi
+                    photosDbVm.deleteOldPhoto(cutoff)
+                }
                 if(usersState.users.isNotEmpty()) {
                     val user = requireNotNull(usersState.users.find {
                         it.username == sharedPreferences.getString("username", null)
                     })
-                    val isSpecificTrack = backStackEntry.arguments?.getBoolean("specificTrack") ?: false
-                    Log.d("non devo passa", isSpecificTrack.toString())
                     PhotoScreen(
                         user = user,
                         photosDbVm = photosDbVm,

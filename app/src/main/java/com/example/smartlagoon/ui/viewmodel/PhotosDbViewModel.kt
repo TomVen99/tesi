@@ -4,15 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.smartlagoon.data.database.GroupedTrack
 import com.example.smartlagoon.data.database.Photo
 import com.example.smartlagoon.data.database.Track
 import com.example.smartlagoon.data.repositories.PhotosRepository
 import com.example.smartlagoon.data.repositories.TracksRepository
+import com.example.smartlagoon.utils.NotificationWorker
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 data class PhotosDbState(val photos: List<Photo>)
 
@@ -32,7 +37,7 @@ class PhotosDbViewModel(
         repository.upsertPhoto(photo)
     }
 
-    fun deleteOldPhoto(cutoff: Long) = viewModelScope.launch {
+    fun deleteOldPhoto(cutoff: Long) = viewModelScope.launch(Dispatchers.IO) {
         repository.deleteOldPhoto(cutoff)
     }
 

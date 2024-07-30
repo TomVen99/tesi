@@ -8,8 +8,13 @@ import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.smartlagoon.MainActivity
 import com.example.smartlagoon.R
+import com.example.smartlagoon.data.database.Photo
+import java.util.concurrent.TimeUnit
+
 
 fun sendNotifications(context: Context) {
     val intent = Intent(context, MainActivity::class.java).apply {

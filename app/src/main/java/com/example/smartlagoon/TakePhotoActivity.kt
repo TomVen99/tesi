@@ -19,12 +19,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.smartlagoon.data.database.Photo
 import com.example.smartlagoon.ui.screens.photo.PhotoScreen
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 import com.example.smartlagoon.ui.viewmodel.UsersViewModel
+import com.example.smartlagoon.utils.NotificationWorker
 import com.example.smartlagoon.utils.PermissionsManager
 import org.koin.androidx.compose.koinViewModel
+import java.util.concurrent.TimeUnit
 
 class TakePhotoActivity : ComponentActivity() {
 
@@ -89,7 +93,7 @@ class TakePhotoActivity : ComponentActivity() {
                                     photosDbVm.addPhoto(
                                         Photo(
                                             imageUri = imageUri.toString(),
-                                            username = user.username,//sharedPreferences.getInt("userId", 0),
+                                            username = user.username,
                                             timestamp = System.currentTimeMillis()
                                         )
                                     )
@@ -104,23 +108,22 @@ class TakePhotoActivity : ComponentActivity() {
                                         )
                                     }
                                 }
+                                scheduleNotification()
                             }
                         }
                     LaunchedEffect(Unit) {
                         imagePickerLauncher.launch(cameraIntent)
                     }
-                    /*if (usersState.users.isNotEmpty()) {
-                        sharedPreferences.getString("username", null)
-                            ?.let { Log.d("TakePhotoActivity", it) }
-                        val user = requireNotNull(usersState.users.find {
-                            it.username == sharedPreferences.getString("username", null)
-                        })*/
-                        PhotoScreen(
-                            user = user,
-                            photosDbVm = photosDbVm,
-                            photosDbState = photosDbState
-                        )
-                    //}
+                    LaunchedEffect(Unit) {
+                        val currentTime = System.currentTimeMillis()
+                        val cutoff = currentTime - 24 * 60 * 60 * 1000 // 24 ore in millisecondi
+                        photosDbVm.deleteOldPhoto(cutoff)
+                    }
+                    PhotoScreen(
+                        user = user,
+                        photosDbVm = photosDbVm,
+                        photosDbState = photosDbState
+                    )
                 } else {
                     Log.d("if", "son qui")
                 }
@@ -133,9 +136,17 @@ class TakePhotoActivity : ComponentActivity() {
     private fun createImageUri(): Uri? {
         val resolver = contentResolver
         val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, "profile_picture.jpg")
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            /*put(MediaStore.MediaColumns.DISPLAY_NAME, "profile_picture.jpg")
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")*/
         }
         return resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+    }
+    private fun scheduleNotification() {
+        val notificationWorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>()
+            .setInitialDelay(5, TimeUnit.MINUTES) // Ritardo di 24 ore
+            .build()
+
+        //Log.d("worker", "notifica impostata")
+        WorkManager.getInstance(applicationContext).enqueue(notificationWorkRequest)
     }
 }
