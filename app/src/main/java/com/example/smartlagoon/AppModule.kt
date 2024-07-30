@@ -6,6 +6,7 @@ import androidx.room.Room
 import com.example.smartlagoon.data.database.SmartlagoonDatabase
 import com.example.smartlagoon.data.remote.OSMDataSource
 import com.example.smartlagoon.data.repositories.FavoritesRepository
+import com.example.smartlagoon.data.repositories.PhotosRepository
 import com.example.smartlagoon.data.repositories.SettingsRepository
 import com.example.smartlagoon.data.repositories.ThemeRepository
 import com.example.smartlagoon.data.repositories.TracksRepository
@@ -15,6 +16,7 @@ import com.example.smartlagoon.ui.screens.addtrack.AddTrackViewModel
 import com.example.smartlagoon.ui.screens.addtrackdetails.AddTrackDetailsViewModel
 import com.example.smartlagoon.ui.screens.home.HomeScreenViewModel
 import com.example.smartlagoon.ui.screens.login.LoginViewModel
+import com.example.smartlagoon.ui.screens.photo.PhotoViewModel
 import com.example.smartlagoon.ui.screens.profile.ProfileViewModel
 import com.example.smartlagoon.ui.screens.settings.SettingsViewModel
 import com.example.smartlagoon.ui.screens.signin.SigninViewModel
@@ -22,6 +24,7 @@ import com.example.smartlagoon.ui.screens.tracking.TrackingViewModel
 import com.example.smartlagoon.ui.screens.tracks.TracksViewModel
 import com.example.smartlagoon.ui.theme.ThemeViewModel
 import com.example.smartlagoon.ui.viewmodel.FavouritesDbViewModel
+import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 import com.example.smartlagoon.ui.viewmodel.TracksDbViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -68,6 +71,13 @@ val appModule = module {
     single { UsersRepository(get<SmartlagoonDatabase>().usersDAO()) }
 
     single {
+        PhotosRepository(
+            get<SmartlagoonDatabase>().photosDAO(),
+            get<Context>().applicationContext.contentResolver
+        )
+    }
+
+    single {
         TracksRepository(
             get<SmartlagoonDatabase>().tracksDAO(),
             get<Context>().applicationContext.contentResolver
@@ -86,9 +96,13 @@ val appModule = module {
 
     viewModel { TracksDbViewModel(get()) }
 
+    viewModel { PhotosDbViewModel(get()) }
+
     viewModel { FavouritesDbViewModel(get()) }
 
     viewModel { LoginViewModel() }
+
+    viewModel { PhotoViewModel() }
 
     viewModel { SigninViewModel() }
 

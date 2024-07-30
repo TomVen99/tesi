@@ -51,7 +51,7 @@ fun SettingsScreen(
                         navController = navController,
                         currentRoute = "Impostazioni",
                         //drawerState = getMyDrawerState(),
-                        scope = scope
+                        //scope = scope
                     )
                 },
                 bottomBar = {

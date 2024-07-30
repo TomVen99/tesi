@@ -1,0 +1,199 @@
+package com.example.smartlagoon.ui.screens.photo
+
+import android.annotation.SuppressLint
+import android.net.Uri
+import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import com.example.smartlagoon.data.database.Photo
+import com.example.smartlagoon.data.database.User
+import com.example.smartlagoon.ui.viewmodel.TracksDbState
+import com.example.smartlagoon.ui.viewmodel.TracksDbViewModel
+import com.example.smartlagoon.ui.composables.TopAppBar
+import com.example.smartlagoon.ui.screens.tracks.TracksActions
+import com.example.smartlagoon.ui.screens.tracks.TracksState
+import com.example.smartlagoon.ui.theme.SmartlagoonTheme
+import com.example.smartlagoon.ui.viewmodel.PhotosDbState
+import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
+
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun PhotoScreen(
+    //navController: NavHostController,
+    user: User,
+    photosDbVm: PhotosDbViewModel,
+    photosDbState: PhotosDbState,
+) {
+    SmartlagoonTheme {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    navController = null,
+                    currentRoute = "Photo",
+                )
+            },
+        ) { contentPadding ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding),
+                contentPadding = PaddingValues(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                /*stickyHeader {
+                    Box(
+                        modifier = Modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(top = 5.dp)
+                                .border(1.dp, MaterialTheme.colorScheme.primaryContainer),
+                            verticalArrangement = Arrangement.Top
+                        ) {
+                            Text("Header Content") // Inserisci il contenuto dell'intestazione qui
+                        }
+                    }
+                }*/
+                items(photosDbState.photos) { photo ->
+                    PhotoItem(photo = photo, user = user)
+                }
+            }
+        }
+    }
+}
+
+/*@Composable
+fun PhotoList(photos: List<Photo>){
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(photos) { photo ->
+            PhotoItem(photo = photo)
+        }
+    }
+}*/
+
+@Composable
+fun PhotoItem(photo: Photo, user: User) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+        )
+    ) {
+        Box(
+
+        ) {
+            photo.imageUri?.let { uriString ->
+                val painter = rememberAsyncImagePainter(Uri.parse(uriString))
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f), // Puoi modificare l'aspetto secondo le tue necessità
+                    contentScale = ContentScale.Crop
+                )
+                Text(
+                    text = photo.username,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = Color.Black,
+                    modifier = Modifier.align(Alignment.TopStart)
+                        .background(Color.White)
+                        .fillMaxWidth()
+                )
+            }
+        }
+    }
+}
+
+/*@Composable
+fun PrintPhotos(photos: List<Photo> ) {
+    Log.d("photo", "son qui")
+    /*ListItem(
+        headlineContent = { Text(text = "pippo") },
+        supportingContent = {
+            Text(text = "pippo")
+        },
+    )
+    ListItem(
+        headlineContent = { Text(text = "pippo") },
+        supportingContent = {
+            Text(text = "pippo")
+        },
+    )
+    ListItem(
+        headlineContent = { Text(text = "pippo") },
+        supportingContent = {
+            Text(text = "pippo")
+        },
+    )
+    ListItem(
+        headlineContent = { Text(text = "pippo") },
+        supportingContent = {
+            Text(text = "pippo")
+        },
+    )
+    ListItem(
+        headlineContent = { Text(text = "pippo") },
+        supportingContent = {
+            Text(text = "pippo")
+        },
+    )*/
+    for(photo in photos) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer
+            )
+        ) {
+            ListItem(
+                headlineContent = { Text(text = user.username) },
+                supportingContent = {
+                    Text(text = user.name)
+                },
+            )
+        }
+    }
+}*/
+
+
+

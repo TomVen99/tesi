@@ -57,6 +57,21 @@ data class User (
 }
 
 @Entity
+data class Photo(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+
+    @ColumnInfo
+    val imageUri: String?,
+
+    @ColumnInfo
+    val username: String,
+
+    @ColumnInfo
+    val timestamp: Long,
+)
+
+@Entity
 data class Track (
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

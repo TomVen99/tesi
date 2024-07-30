@@ -89,7 +89,7 @@ fun TrackDetails(
                     currentRoute = "Dettagli Percorso",
                     /*showSearch = false,
                     drawerState = getMyDrawerState(),*/
-                    scope = scope,
+                    //scope = scope,
                     //showFilter = false
                 )
             },

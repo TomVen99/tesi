@@ -4,9 +4,6 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.example.smartlagoon.data.database.Favourite
-import com.example.smartlagoon.data.database.Track
-import com.example.smartlagoon.data.database.User
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -17,17 +14,9 @@ interface UsersDAO {
     @Query("SELECT * FROM user WHERE username = :user")
     fun getUser(user: String): Flow<User?>
 
-    /*@Query("SELECT * FROM Track WHERE start = :latitude AND longitude = :longitude")
-    fun getTrackByLatLng(latitude: Float, longitude: Float): Flow<Track?>*/
-
-    /*@Query("SELECT * FROM favorite WHERE userId = :userID AND markerId = :markerId")
-    fun getFavorite(userID : Int, markerId : Int) : Flow<Favorite?>*/
-
     @Query("UPDATE user SET urlProfilePicture = :profileImg WHERE username = :username")
     suspend fun updateProfileImg(username: String, profileImg: String)
 
-    /*@Query("SELECT * FROM place ORDER BY name ASC")
-    fun getAllPlaces(): Flow<List<Place>>*/
     @Upsert
     suspend fun upsertUser(user: User)
 
@@ -93,37 +82,22 @@ interface TracksDAO {
 }
 
 @Dao
-/*interface ActivityDAO {
-    @Query("SELECT * FROM activity")
-    fun getActivities(): Flow<List<Activity>>
+interface PhotoDAO {
+    @Upsert
+    suspend fun upsertPhoto(photo: Photo)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(activity: Activity)
+    @Query("SELECT * FROM Photo order by timestamp desc")
+    fun getAllPhotos(): Flow<List<Photo>>
 
-    @Update
-    fun updateActivity(activity: Activity)
+    @Query("SELECT * FROM Photo WHERE username = :user ")
+    suspend fun getUserPhotos(user: String): List<Photo>
 
-    @Delete
-    suspend fun delete(activity: Activity)
+    @Query("DELETE FROM Photo WHERE timestamp < :cutoff")
+    fun deleteOldPhotos(cutoff: Long)
 
-    @Query("DELETE FROM activity")
-    suspend fun deleteAll()
-
-    @Query("UPDATE activity SET name = :name WHERE activityId = :activityId")
-    suspend fun updateActivityName(activityId: String, name: String)
-
-    @Query("UPDATE activity SET favourite = :favourite WHERE activityId = :activityId")
-    suspend fun updateActivityFavourite(activityId: String, favourite: Boolean)
-
-    @Transaction
-    @Query("SELECT * FROM activity WHERE userCreatorUsername = :usernameSelected")
-    fun getActivitiesFromUser(usernameSelected: String): Flow<List<Activity>>
-
-    @Transaction
-    @Query("SELECT * FROM activity WHERE userCreatorUsername = :usernameSelected and favourite = true")
-    fun getFavouriteActivitiesFromUser(usernameSelected: String): Flow<List<Activity>>
-
-}*/
+    @Query("SELECT count(*) AS numeroFoto FROM Photo p WHERE p.username =:username ")
+    suspend fun getUserPhotoNumber(username: String): Int
+}
 
 data class GroupedTrack(
     val groupedLat: Double,

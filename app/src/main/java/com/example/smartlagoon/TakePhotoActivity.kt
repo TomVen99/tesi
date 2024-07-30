@@ -1,6 +1,7 @@
 package com.example.smartlagoon
 
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -9,138 +10,132 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.FileProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.smartlagoon.data.database.Photo
+import com.example.smartlagoon.ui.screens.photo.PhotoScreen
+import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
+import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 import com.example.smartlagoon.utils.PermissionsManager
-import java.io.File
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Date
-
-/*class TakePhotoActivity : ComponentActivity() {
-
-    private lateinit var permissionHelper: PermissionsManager
-    private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
-    private lateinit var takePictureLauncher: ActivityResultLauncher<Uri>
-    private var photoUri: Uri? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                // L'autorizzazione è stata concessa, puoi aprire la fotocamera
-                Log.d("PhotoPermissionTag", "Autorizzazione concessa")
-                openCamera()
-            } else {
-                // L'autorizzazione è stata negata, gestisci di conseguenza
-                Log.d("PhotoPermissionTag", "Autorizzazione NON concessa")
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
-
-        takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
-            if (success) {
-                // La foto è stata catturata correttamente, gestisci la foto qui
-                Log.d("PhotoPermissionTag", "Foto catturata con successo: $photoUri")
-            } else {
-                // La foto non è stata catturata, gestisci di conseguenza
-                Log.d("PhotoPermissionTag", "Foto NON catturata")
-            }
-        }
-
-        permissionHelper = PermissionsManager(this, requestPermissionLauncher)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Log.d("PhotoPermissionTag", "son qua")
-            permissionHelper.checkAndRequestPermissionPhoto(
-                onPermissionGranted = {
-                    Log.d("PhotoPermissionTag", "Autorizzazione concessa2")
-                    openCamera()
-                },
-                onPermissionDenied = {
-                    Log.d("PhotoPermissionTag", "Autorizzazione NON concessa2")
-                }
-            )
-        } else {
-            // Per le versioni di Android precedenti, non è necessaria alcuna autorizzazione aggiuntiva
-        }
-    }
-
-    private fun openCamera() {
-        try {
-            val photoFile = createImageFile()
-            photoUri = FileProvider.getUriForFile(this, "${applicationContext.packageName}.provider", photoFile)
-            takePictureLauncher.launch(photoUri!!)
-        } catch (ex: IOException) {
-            Log.e("PhotoPermissionTag", "Errore durante la creazione del file immagine", ex)
-        }
-    }
-
-    @Throws(IOException::class)
-    private fun createImageFile(): File {
-        // Crea un file immagine con un nome univoco
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val storageDir: File? = getExternalFilesDir(null)
-        return File.createTempFile(
-            "JPEG_${timeStamp}_", /* prefix */
-            ".jpg", /* suffix */
-            storageDir /* directory */
-        ).apply {
-            // Salva un percorso per essere usato con l'intent ACTION_VIEW
-            photoUri = Uri.fromFile(this)
-        }
-    }
-}*/
+import org.koin.androidx.compose.koinViewModel
 
 class TakePhotoActivity : ComponentActivity() {
 
     private lateinit var permissionHelper: PermissionsManager
+    private var imageUri: Uri? = null
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                // L'autorizzazione è stata concessa, puoi schedulare le notifiche
                 Log.d("PhotoPermissionTag", "Autorizzazione concessa")
-
+                handlePhotoCapture()
             } else {
-                // L'autorizzazione è stata negata, gestisci di conseguenza
                 Log.d("PhotoPermissionTag", "Autorizzazione NON concessa")
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
         }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         permissionHelper = PermissionsManager(this, requestPermissionLauncher)
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Log.d("PhotoPermissionTag", "son qua")
             permissionHelper.checkAndRequestPermissionPhoto(
-                onPermissionGranted = {
-                    val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                    startActivity(cameraIntent)
-                    finish()
-
-                },
+                onPermissionGranted = { handlePhotoCapture() },
                 onPermissionDenied = {
                     Log.d("PhotoPermissionTag", "Autorizzazione NON concessa2")
                 }
             )
         } else {
-            // Per le versioni di Android precedenti, non è necessaria alcuna autorizzazione aggiuntiva
+            // Nessuna autorizzazione aggiuntiva necessaria
         }
+    }
+
+    private fun handlePhotoCapture() {
+        val uri = createImageUri()
+        if (uri != null) {
+            imageUri = uri
+            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+                putExtra(MediaStore.EXTRA_OUTPUT, uri)
+            }
+            setContent {
+                val usersVm = koinViewModel<UsersViewModel>()
+                val usersState by usersVm.state.collectAsStateWithLifecycle()
+                val photosDbVm = koinViewModel<PhotosDbViewModel>()
+                val photosDbState by photosDbVm.state.collectAsStateWithLifecycle()
+                val context = LocalContext.current
+                val sharedPreferences =
+                    context.getSharedPreferences("isUserLogged", Context.MODE_PRIVATE)
+                sharedPreferences.getString("username", "")?.let { Log.d("share", it) }
+                Log.d("userState", usersState.users.toString())
+                if (usersState.users.isNotEmpty()){
+                    val user = requireNotNull(usersState.users.find {
+                        it.username == sharedPreferences.getString("username", "")
+                    })
+
+                    val imagePickerLauncher =
+                        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                            if (result.resultCode == RESULT_OK) {
+                                result.data?.data?.let { uri ->
+                                    imageUri = uri
+                                    photosDbVm.addPhoto(
+                                        Photo(
+                                            imageUri = imageUri.toString(),
+                                            username = user.username,//sharedPreferences.getInt("userId", 0),
+                                            timestamp = System.currentTimeMillis()
+                                        )
+                                    )
+                                } ?: run {
+                                    imageUri?.let { uri ->
+                                        photosDbVm.addPhoto(
+                                            Photo(
+                                                imageUri = uri.toString(),
+                                                username = user.username,//userId = sharedPreferences.getInt("userId", 0),
+                                                timestamp = System.currentTimeMillis()
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    LaunchedEffect(Unit) {
+                        imagePickerLauncher.launch(cameraIntent)
+                    }
+                    /*if (usersState.users.isNotEmpty()) {
+                        sharedPreferences.getString("username", null)
+                            ?.let { Log.d("TakePhotoActivity", it) }
+                        val user = requireNotNull(usersState.users.find {
+                            it.username == sharedPreferences.getString("username", null)
+                        })*/
+                        PhotoScreen(
+                            user = user,
+                            photosDbVm = photosDbVm,
+                            photosDbState = photosDbState
+                        )
+                    //}
+                } else {
+                    Log.d("if", "son qui")
+                }
+            }
+        } else {
+            Log.e("TakePhotoActivity", "Impossibile creare l'URI per l'immagine")
+        }
+    }
+
+    private fun createImageUri(): Uri? {
+        val resolver = contentResolver
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, "profile_picture.jpg")
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+        }
+        return resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
     }
 }

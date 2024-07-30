@@ -37,14 +37,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.smartlagoon.ui.composables.getMyDrawerState
 import com.example.smartlagoon.data.database.Favourite
 import com.example.smartlagoon.data.database.Track
 import com.example.smartlagoon.data.database.User
 import com.example.smartlagoon.ui.viewmodel.FavouritesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.TracksDbState
 import com.example.smartlagoon.ui.viewmodel.TracksDbViewModel
-import com.example.smartlagoon.ui.composables.BottomAppBar
 import com.example.smartlagoon.ui.composables.FilterBar
 import com.example.smartlagoon.ui.composables.FilterOption
 import com.example.smartlagoon.ui.composables.SideBarMenu
@@ -60,7 +58,6 @@ fun TracksScreen(
     actions: TracksActions,
     tracksDbVm: TracksDbViewModel,
     tracksDbState: TracksDbState,
-    showFilter: Boolean,
     favouritesDbVm: FavouritesDbViewModel,
     isSpecificTrack: Boolean
 ) {
@@ -76,15 +73,11 @@ fun TracksScreen(
                 TopAppBar(
                     navController = navController,
                     currentRoute = "Percorsi",
-                    /*showSearch = false,
-                    drawerState = getMyDrawerState(),*/
-                    trackActions = actions,
+                    /*trackActions = actions,
                     scope = scope,
-                    //showFilter = showFilter,
-                    filterState = state
+                    filterState = state*/
                 )
             },
-            bottomBar = { BottomAppBar(navController, user) },
         ) { contentPadding ->
             LazyColumn (
                 modifier = Modifier

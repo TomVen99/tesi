@@ -51,17 +51,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(
-    navController: NavHostController,
+    navController: NavHostController?,
     currentRoute: String,
-    //showSearch: Boolean = false,
-    actions: HomeScreenActions? = null,
-    trackActions: TracksActions? = null,
-    filterState: TracksState? = null,
-    //drawerState: DrawerState,
-    scope: CoroutineScope,
-    //showFilter: Boolean = false,
-    //showLogout: Boolean = false,
-    sharedPreferences: SharedPreferences? = null
 ) {
     Log.d("TAG", drawerState.toString())
     TopAppBar(
@@ -80,7 +71,7 @@ fun TopAppBar(
         navigationIcon = {
                 IconButton(onClick = {
                     Log.d("TAG", "cliccato indietro")
-                    navController.navigateUp()
+                    navController?.navigateUp()
                 }) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,

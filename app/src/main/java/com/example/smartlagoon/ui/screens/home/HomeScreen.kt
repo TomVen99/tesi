@@ -99,7 +99,7 @@ fun HomeScreen(
                     .height(150.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            MenuGrid(navController)
+            MenuGrid(navController, user)
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
@@ -126,7 +126,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun MenuGrid(navController: NavController) {
+fun MenuGrid(navController: NavController, user: User) {
     Column {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -141,21 +141,21 @@ fun MenuGrid(navController: NavController) {
             modifier = Modifier.fillMaxWidth()
         ) {
             MenuItem("Profilo", R.drawable.ic_profilo, SmartlagoonRoute.Profile, navController)
-            MenuItem("Badge", R.drawable.ic_badge, SmartlagoonRoute.Badge, navController)
+            MenuItem("Photo", R.drawable.ic_badge, SmartlagoonRoute.Photo, navController)
         }
         Spacer(modifier = Modifier.height(16.dp))
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
-            MenuItem("Ricicla", R.drawable.ic_ricicla, SmartlagoonRoute.Recycle, navController)
+            MenuItem("Ricicla", R.drawable.ic_ricicla, SmartlagoonRoute.Recycle, navController, user)
             MenuItem("Info", R.drawable.ic_info, SmartlagoonRoute.Info, navController)
         }
     }
 }
 
 @Composable
-fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: NavController) {
+fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: NavController, user: User? = null) {
     val context = LocalContext.current
     Card(
         shape = RoundedCornerShape(8.dp),
@@ -166,7 +166,10 @@ fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: 
             .clickable {
                 if(route.route == "recycle")
                 {
-                    val intent = Intent(context, TakePhotoActivity::class.java)
+                    val intent = Intent(context, TakePhotoActivity::class.java).apply{
+                        putExtra("username", user?.username)
+                        putExtra("userId", user?.id)
+                    }
                     context.startActivity(intent)
                 }else {
                     navController.navigate(route.route)

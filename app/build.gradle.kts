@@ -73,6 +73,9 @@ dependencies {
     //fine notifiche
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     //
+    //immagini
+    implementation("io.coil-kt:coil-compose:2.3.0")
+    //fine immagini
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
     implementation("com.google.android.gms:play-services-maps:19.0.0")
     val roomVersion = "2.6.1"

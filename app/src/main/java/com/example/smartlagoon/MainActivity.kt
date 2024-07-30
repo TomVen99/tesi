@@ -32,17 +32,6 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
 
-    //private lateinit var locationService: LocationService
-    //private val settingsViewModel: SettingsViewModel by viewModel()
-    /*private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                // L'autorizzazione è stata concessa, puoi inviare notifiche
-                sendNotification(this)
-            } else {
-                // L'autorizzazione è stata negata, gestisci di conseguenza
-            }
-        }*/
     private lateinit var permissionHelper: PermissionsManager
 
     private val requestPermissionLauncher =
@@ -122,7 +111,7 @@ class MainActivity : ComponentActivity() {
         scheduleAlarm(this)*/
 
     private fun scheduleNotifications() {
-        val workRequest = PeriodicWorkRequestBuilder<NotificationWorker>(15, TimeUnit.SECONDS)
+        val workRequest = PeriodicWorkRequestBuilder<NotificationWorker>(15, TimeUnit.MINUTES)
             .build()
         WorkManager.getInstance(this).enqueue(workRequest)
     }

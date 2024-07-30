@@ -30,7 +30,8 @@
             android:parentActivityName=".MainActivity"
             android:launchMode="singleTask"
             android:taskAffinity=""
-            android:excludeFromRecents="true">
+            android:excludeFromRecents="true"
+            android:theme="@style/Theme.SMARTLAGOON">
         </activity>
     </application>
 

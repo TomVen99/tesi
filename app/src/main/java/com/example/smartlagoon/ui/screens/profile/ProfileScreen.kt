@@ -174,8 +174,8 @@ fun ProfileScreen(
                 TopAppBar(
                     navController = navController,
                     currentRoute = "Profilo",
-                    scope = scope,
-                    sharedPreferences = sharedPreferences
+                    /*scope = scope,
+                    sharedPreferences = sharedPreferences*/
                 )
             },
         ) { contentPadding ->
