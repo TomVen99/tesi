@@ -14,6 +14,15 @@ interface UsersDAO {
     @Query("SELECT * FROM user WHERE username = :user")
     fun getUser(user: String): Flow<User?>
 
+    @Query("SELECT points FROM user WHERE username = :username")
+    fun getUserPoints(username: String): Int
+
+    @Query("SELECT * FROM user ORDER BY points DESC")
+    fun getAllUserRanking() : Flow<List<User>>
+
+    @Query("UPDATE user SET points = points + :points WHERE username = :username")
+    suspend fun addPoints(username: String, points: Int)
+
     @Query("UPDATE user SET urlProfilePicture = :profileImg WHERE username = :username")
     suspend fun updateProfileImg(username: String, profileImg: String)
 

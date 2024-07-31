@@ -66,10 +66,9 @@ fun ProfileScreen(
     navController: NavHostController,
     user: User,
     usersViewModel : UsersViewModel,
-    sharedPreferences: SharedPreferences,
-    tracksDbState: TracksDbState,
-    userPoints: Int,
+    userPoints: Int
 ) {
+    Log.d("points", user.points.toString())
     val scope = rememberCoroutineScope()
     val ctx = LocalContext.current
 
@@ -81,7 +80,7 @@ fun ProfileScreen(
     fun createImageUri(): Uri {
         val resolver = ctx.contentResolver
         val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, "profile_picture.jpg")
+            //put(MediaStore.MediaColumns.DISPLAY_NAME, "profile_picture.jpg")
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
         }
         return resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
@@ -166,129 +165,120 @@ fun ProfileScreen(
             }
         }
     }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                navController = navController,
+                currentRoute = "Profilo",
+                /*scope = scope,
+                sharedPreferences = sharedPreferences*/
+            )
+        },
+    ) { contentPadding ->
+        Column(
+            modifier = Modifier
+                .padding(contentPadding)
+                .padding(top = 20.dp)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            setProfileImage()
+            Spacer(modifier = Modifier.size(15.dp))
 
-    val myScaffold: @Composable () -> Unit = {
-
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    navController = navController,
-                    currentRoute = "Profilo",
-                    /*scope = scope,
-                    sharedPreferences = sharedPreferences*/
-                )
-            },
-        ) { contentPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(contentPadding)
-                    .padding(top = 20.dp)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Button(
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                ),
+                onClick = {
+                    requestCameraPermission.launch(Manifest.permission.CAMERA)
+                    usersViewModel.addPoints(user.username, 50)
+                },
             ) {
-                setProfileImage()
-                Spacer(modifier = Modifier.size(15.dp))
-
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
-                    ),
-                    onClick = {
-                        requestCameraPermission.launch(Manifest.permission.CAMERA)
-                    },
-                ) {
-                    Icon(
-                        Icons.Filled.PhotoCamera,
-                        contentDescription = "Camera icon",
-                        modifier = Modifier.size(ButtonDefaults.IconSize)
-                    )
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                    Text("Scegli foto")
-                }
-                Spacer(modifier = Modifier.size(15.dp))
+                Icon(
+                    Icons.Filled.PhotoCamera,
+                    contentDescription = "Camera icon",
+                    modifier = Modifier.size(ButtonDefaults.IconSize)
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text("Scegli foto")
+            }
+            Spacer(modifier = Modifier.size(15.dp))
+            Text(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape )
+                    .padding(8.dp),
+                text = user.name + " " + user.surname,
+                fontSize = 25.sp,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Spacer(modifier = Modifier.size(15.dp))
+            Row(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape )
+                    .padding(8.dp),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Icon(
+                    Icons.Filled.AccountCircle,
+                    contentDescription = "account image"
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape )
-                        .padding(8.dp),
-                    text = user.name + " " + user.surname,
-                    fontSize = 25.sp,
+                    text = user.username,
+                    fontSize = 20.sp,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
-                Spacer(modifier = Modifier.size(15.dp))
-                Row(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape )
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    Icon(
-                        Icons.Filled.AccountCircle,
-                        contentDescription = "account image"
-                    )
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                    Text(
-                        text = user.username,
-                        fontSize = 20.sp,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
+            }
 
-                Spacer(modifier = Modifier.size(15.dp))
+            Spacer(modifier = Modifier.size(15.dp))
 
-                Row(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape )
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    Icon(
-                        Icons.Filled.Mail,
-                        contentDescription = "email"
-                    )
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Row(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape )
+                    .padding(8.dp),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Icon(
+                    Icons.Filled.Mail,
+                    contentDescription = "email"
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
 
-                    Text(
-                        text = user.mail,
-                        fontSize = 20.sp,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-                Spacer(modifier = Modifier.size(15.dp))
+                Text(
+                    text = user.mail,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+            Spacer(modifier = Modifier.size(15.dp))
 
-                Row(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape )
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    /*Icon(
-                        Icons.Filled.Numbers,
-                        contentDescription = "Punti"
-                    )
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))*/
-                    Text(
-                        text = "Punti: $userPoints",
-                        fontSize = 20.sp,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
+            Row(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape )
+                    .padding(8.dp),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                /*Icon(
+                    Icons.Filled.Numbers,
+                    contentDescription = "Punti"
+                )
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))*/
+                Text(
+                    text = "Punti: $userPoints",
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
         }
     }
-
-    SideBarMenu(
-        myScaffold = myScaffold,
-        navController,
-        tracksDbState,
-    )
 }
 

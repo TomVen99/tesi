@@ -7,11 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.smartlagoon.data.database.User
 import com.example.smartlagoon.data.repositories.UsersRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.security.MessageDigest
 import java.security.SecureRandom
 
@@ -30,11 +32,43 @@ class UsersViewModel(
     private val _loginLog = MutableLiveData<String?>()
     val loginLog: LiveData<String?> = _loginLog
 
+    private val _userPoints = MutableLiveData<Int>()
+    val userPoints: LiveData<Int> = _userPoints
+
     val state = repository.users.map { UsersState(users = it) }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = UsersState(emptyList())
     )
+
+    val rankingState = repository.usersRanking.map { UsersState(users = it) }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = UsersState(emptyList())
+    )
+
+    fun getUserPoints(username: String) = viewModelScope.launch {
+        val userPoints = withContext(Dispatchers.IO) {
+            repository.getUserPoints(username)
+        }
+        _userPoints.value = userPoints
+    }
+
+    fun addPoints(username: String, points: Int) {
+        Log.d("points", "son qui")
+        viewModelScope.launch {
+            /*repository.addPoints(username, points)
+            _userPoints.value = repository.getUserPoints(username)*/
+            withContext(Dispatchers.IO) {
+                repository.addPoints(username, points)
+            }
+            // Dopo l'aggiornamento, otteniamo il nuovo valore dei punti
+            val newPoints = withContext(Dispatchers.IO) {
+                repository.getUserPoints(username)
+            }
+            _userPoints.value = newPoints
+        }
+    }
 
     fun addUser(user: User) {
         Log.d("TAG", "addUser")

@@ -18,7 +18,7 @@ class PhotosRepository(
             val imageUri = saveImageToStorage(
                 Uri.parse(photo.imageUri),
                 contentResolver,
-                "Smartlagoon_Photo${photo.id}"
+                "Smartlagoon_Photo"//${photo.id}"
             )
             photoDAO.upsertPhoto(photo.copy(imageUri = imageUri.toString()))
         } else {

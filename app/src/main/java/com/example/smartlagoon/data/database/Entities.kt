@@ -31,6 +31,9 @@ data class User (
     var urlProfilePicture : String?,
 
     @ColumnInfo
+    var points : Int = 0,
+
+    @ColumnInfo
     var salt : ByteArray
 ) {
     override fun equals(other: Any?): Boolean {

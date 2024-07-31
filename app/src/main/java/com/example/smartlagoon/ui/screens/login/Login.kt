@@ -1,6 +1,7 @@
 package com.example.smartlagoon.ui.screens.login
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -55,6 +56,7 @@ fun Login(
     viewModel: UsersViewModel,
     sharedPreferences: SharedPreferences,
 ) {
+    Log.d("LoginScreen", "dentro login screen")
     val signinResult by viewModel.loginResult.observeAsState()
     val signinLog by viewModel.loginLog.observeAsState()
 

@@ -109,7 +109,7 @@ fun HomeScreen(
                         edit.putString("username", "")
                         edit.apply()
                     }
-                    Log.d("Log",SmartlagoonRoute.Login.route)
+                    Log.d("Logout",SmartlagoonRoute.Login.route)
                     navController.navigate(SmartlagoonRoute.Login.route)
                           },
                 modifier = Modifier
@@ -149,7 +149,7 @@ fun MenuGrid(navController: NavController, user: User) {
             modifier = Modifier.fillMaxWidth()
         ) {
             MenuItem("Scatta", R.drawable.ic_ricicla, SmartlagoonRoute.Recycle, navController, user)
-            MenuItem("Info", R.drawable.ic_info, SmartlagoonRoute.Info, navController)
+            MenuItem("About", R.drawable.ic_info, SmartlagoonRoute.About, navController)
         }
     }
 }

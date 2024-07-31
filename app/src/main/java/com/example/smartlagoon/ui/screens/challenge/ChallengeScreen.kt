@@ -1,4 +1,4 @@
-package com.example.smartlagoon.ui.screens.ranking
+package com.example.smartlagoon.ui.screens.challenge
 
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -27,28 +27,33 @@ import com.example.smartlagoon.data.database.User
 import com.example.smartlagoon.ui.viewmodel.TracksDbState
 import com.example.smartlagoon.ui.viewmodel.TracksDbViewModel
 import com.example.smartlagoon.ui.composables.TopAppBar
-import com.example.smartlagoon.ui.screens.tracks.RankingActions
-import com.example.smartlagoon.ui.screens.tracks.RankingState
-import com.example.smartlagoon.ui.screens.tracks.RankingViewModel
 import com.example.smartlagoon.ui.screens.tracks.TracksActions
 import com.example.smartlagoon.ui.screens.tracks.TracksState
-import com.example.smartlagoon.ui.viewmodel.UsersState
-import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RankingScreen(
+fun ChallengeScreen(
     navController: NavHostController,
     user: User,
-    state: UsersState,
+    state: TracksState,
+    actions: TracksActions,
+    tracksDbVm: TracksDbViewModel,
+    tracksDbState: TracksDbState,
 ) {
+    //val specificTracksList by tracksDbVm.specificTracksList.observeAsState()
+    //var actualFilterOption by remember { mutableIntStateOf(FilterOption.ALL_TRACKS.ordinal) }
+    //val specificFavouritesList by favouritesDbVm.specificFavouritesList.observeAsState()
+
+    //Log.d("trackList", specificTracksList.toString())
     val scope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             TopAppBar(
                 navController = navController,
                 currentRoute = "Classifica",
+                /*trackActions = actions,
+                scope = scope,*/
             )
         },
     ) { contentPadding ->
@@ -65,12 +70,15 @@ fun RankingScreen(
                 ) {
                     Column(
                         modifier = Modifier
-                            .padding(top = 5.dp),
-                            //.border(1.dp, MaterialTheme.colorScheme.primaryContainer),
+                            .padding(top = 5.dp)
+                            .border(1.dp, MaterialTheme.colorScheme.primaryContainer),
                         verticalArrangement = Arrangement.Top
                     ) {
-                        PrintRanking(
-                            state.users
+
+                        PrintChallanges(
+                            getChallangeListToPrint(
+                                user
+                            )
                         )
                     }
                 }
@@ -79,32 +87,28 @@ fun RankingScreen(
     }
 }
 
-private fun getUserListToPrint(user: User) : List<User> {
+private fun getChallangeListToPrint(user: User) : List<User> {
     return listOf(user)
 }
 
 @Composable
-private fun PrintRanking(users: List<User> ) {
+private fun PrintChallanges(users: List<User> ) {
     Log.d("classifica", "son qui")
     for(user in users) {
-        /*Card(
+        Card(
             modifier = Modifier
                 .fillMaxWidth(),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer
             )
-        ) {*/
+        ) {
             ListItem(
                 headlineContent = { Text(text = user.username) },
                 supportingContent = {
                     Text(text = user.name)
                 },
-                trailingContent = { Text(text = user.points.toString())},
-                modifier = Modifier
-                    .padding(top = 5.dp)
-                    .border(1.dp, MaterialTheme.colorScheme.primaryContainer),
             )
-        //}
+        }
     }
 }
 
