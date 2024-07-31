@@ -57,8 +57,6 @@ class UsersViewModel(
     fun addPoints(username: String, points: Int) {
         Log.d("points", "son qui")
         viewModelScope.launch {
-            /*repository.addPoints(username, points)
-            _userPoints.value = repository.getUserPoints(username)*/
             withContext(Dispatchers.IO) {
                 repository.addPoints(username, points)
             }

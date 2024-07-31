@@ -193,6 +193,7 @@ fun ProfileScreen(
                 onClick = {
                     requestCameraPermission.launch(Manifest.permission.CAMERA)
                     usersViewModel.addPoints(user.username, 50)
+                    Log.d("punti aggiornati", user.points.toString())
                 },
             ) {
                 Icon(

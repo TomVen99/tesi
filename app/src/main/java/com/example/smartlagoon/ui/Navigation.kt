@@ -240,7 +240,6 @@ fun SmartlagoonNavGraph(
 
     val usersVm = koinViewModel<UsersViewModel>()
     val usersState by usersVm.state.collectAsStateWithLifecycle()
-    val usersRankingState by usersVm.rankingState.collectAsStateWithLifecycle()
     var userDefault by remember{ mutableStateOf("null") }
     val tracksDbVm = koinViewModel<TracksDbViewModel>()
     val photosDbVm = koinViewModel<PhotosDbViewModel>()
@@ -368,16 +367,14 @@ fun SmartlagoonNavGraph(
             }
         }
         with(SmartlagoonRoute.Ranking) {
-            composable(route, arguments) {backStackEntry ->
-                val tracksVm = koinViewModel<TracksViewModel>()
-                val state by tracksVm.state.collectAsStateWithLifecycle()
+            composable(route, arguments) {
                 if(usersState.users.isNotEmpty()) {
                     val user = requireNotNull(usersState.users.find {
                         it.username == sharedPreferences.getString("username", null)
                     })
-                    Log.d("no", backStackEntry.arguments?.getBoolean("specificTrack").toString())
-                    val isSpecificTrack = backStackEntry.arguments?.getBoolean("specificTrack") ?: false
-                    Log.d("non devo passa", isSpecificTrack.toString())
+                    val usersViewModel = koinViewModel<UsersViewModel>()
+                    val usersRankingState by usersViewModel.rankingState.collectAsStateWithLifecycle()
+                    usersViewModel.getUserPoints(user.username)
                     RankingScreen(
                         navController = navController,
                         user = user,
