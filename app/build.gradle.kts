@@ -54,8 +54,8 @@ android {
 dependencies {
 
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
-    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+    implementation("androidx.activity:activity-compose:1.9.1")
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     //Da qui partono i miei import
     implementation("androidx.compose.ui:ui")
@@ -64,19 +64,23 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
-    implementation ("androidx.compose.runtime:runtime-livedata:1.6.7")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.6.8")
     //notifiche
-    implementation ("androidx.work:work-runtime:2.8.1")
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation ("androidx.work:work-runtime:2.9.0")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
     //fine notifiche
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     //
     //immagini
     implementation("io.coil-kt:coil-compose:2.3.0")
     //fine immagini
+    //google vision cloud
+    implementation ("com.google.cloud:google-cloud-vision:2.10.0")
+    implementation ("com.google.auth.oauth2:google-auth-library-oauth2-http:1.13.0")
+    //fine google vision cloud
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
     implementation("com.google.android.gms:play-services-maps:19.0.0")
     val roomVersion = "2.6.1"
