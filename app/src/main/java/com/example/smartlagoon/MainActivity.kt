@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissionHelper.checkAndRequestPermissionNotification(
                 onPermissionGranted = {
-                    //scheduleNotifications()
+                    scheduleNotifications()
                     //sendNotification(this)
                                       },
                 onPermissionDenied = {

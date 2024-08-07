@@ -124,7 +124,7 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters)
         }*/
         //val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE)
         val notification = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_badge)
+            .setSmallIcon(R.drawable.logo_notifica)
             .setContentTitle("Berillo")
             .setContentText("È il momento della sfida giornaliera!")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
