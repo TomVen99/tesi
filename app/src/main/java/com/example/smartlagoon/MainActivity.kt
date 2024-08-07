@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissionHelper.checkAndRequestPermissionNotification(
                 onPermissionGranted = {
-                    scheduleNotifications()
+                    //scheduleNotifications()
                     //sendNotification(this)
                                       },
                 onPermissionDenied = {
@@ -110,11 +110,6 @@ class MainActivity : ComponentActivity() {
         /*createNotificationChannel(this)
         scheduleAlarm(this)*/
 
-    private fun scheduleNotifications() {
-        val workRequest = PeriodicWorkRequestBuilder<NotificationWorker>(15, TimeUnit.MINUTES)
-            .build()
-        WorkManager.getInstance(this).enqueue(workRequest)
-    }
 
     override fun onPause() {
         super.onPause()

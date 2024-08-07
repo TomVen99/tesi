@@ -26,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.smartlagoon.data.database.Photo
 import com.example.smartlagoon.data.database.User
@@ -39,7 +40,7 @@ import java.util.Date
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PhotoScreen(
-    //navController: NavHostController,
+    navController: NavHostController,
     user: User,
     photosDbVm: PhotosDbViewModel,
     photosDbState: PhotosDbState,
@@ -48,7 +49,7 @@ fun PhotoScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    navController = null,
+                    navController = navController,
                     currentRoute = "Photo",
                 )
             },

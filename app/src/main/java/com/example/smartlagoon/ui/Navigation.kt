@@ -405,7 +405,8 @@ fun SmartlagoonNavGraph(
                     PhotoScreen(
                         user = user,
                         photosDbVm = photosDbVm,
-                        photosDbState = photosDbState
+                        photosDbState = photosDbState,
+                        navController = navController
                     )
                 }
             }
