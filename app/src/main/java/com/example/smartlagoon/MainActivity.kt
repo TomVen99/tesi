@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 // L'autorizzazione è stata concessa, puoi schedulare le notifiche
-                scheduleNotifications()
+                //scheduleNotifications()
             } else {
                 // L'autorizzazione è stata negata, gestisci di conseguenza
             }
@@ -82,7 +82,6 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            //val theme by settingsViewModel.theme.collectAsState(initial = "")
             SmartlagoonTheme(/*darkTheme = theme == "Dark"*/) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
