@@ -1,6 +1,7 @@
 package com.example.smartlagoon.ui.screens.signin
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -66,7 +68,7 @@ fun SigninScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .padding(10.dp)
-                    .border(1.dp, MaterialTheme.colorScheme.onBackground, RectangleShape)
+                    .border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
             ) {
 
                 val focusManager = LocalFocusManager.current
@@ -78,12 +80,26 @@ fun SigninScreen(
                 val buttonFocusRequester = remember { FocusRequester() }
 
 
-                Image(
+                /*Image(
                     painter = painterResource(id = R.drawable.smartlagoon_logo),
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp)
+                )*/
+                Image(
+                    painter = painterResource(id = R.drawable.smartlagoon_logo_nosfondo),
+                    contentDescription = "Logo",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp)
+                        .padding(2.dp)
+                )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)  // Altezza del tuo spacer
+                        .background(MaterialTheme.colorScheme.onTertiaryContainer)  // Colore del tuo spacer
                 )
                 OutlinedTextField(
                     value = state.name,
@@ -166,21 +182,24 @@ fun SigninScreen(
                                 mail = state.mail
                             ))
                     },
-                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                    //contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     ),
-                    modifier = Modifier.align(Alignment.End)
+                    /*modifier = Modifier//.align(Alignment.End)
                         .padding(end = 15.dp, bottom = 15.dp)
-                        .focusRequester(buttonFocusRequester)
+                        .focusRequester(buttonFocusRequester)*/
+                    modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(15.dp)
                 ) {
-                    Icon(
+                    /*Icon(
                         Icons.Outlined.DoneOutline,
                         contentDescription = "done icon",
                         modifier = Modifier.size(ButtonDefaults.IconSize)
                     )
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))*/
                     Text("Registrati")
                 }
                 if (signinResult == false) {
