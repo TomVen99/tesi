@@ -12,18 +12,12 @@ import com.example.smartlagoon.data.repositories.ThemeRepository
 import com.example.smartlagoon.data.repositories.TracksRepository
 import com.example.smartlagoon.data.repositories.UsersRepository
 import com.example.smartlagoon.ui.viewmodel.UsersViewModel
-import com.example.smartlagoon.ui.screens.addtrack.AddTrackViewModel
-import com.example.smartlagoon.ui.screens.addtrackdetails.AddTrackDetailsViewModel
 import com.example.smartlagoon.ui.screens.home.HomeScreenViewModel
 import com.example.smartlagoon.ui.screens.login.LoginViewModel
 import com.example.smartlagoon.ui.screens.photo.PhotoViewModel
 import com.example.smartlagoon.ui.screens.profile.ProfileViewModel
-import com.example.smartlagoon.ui.screens.settings.SettingsViewModel
 import com.example.smartlagoon.ui.screens.signin.SigninViewModel
-import com.example.smartlagoon.ui.screens.tracking.TrackingViewModel
-import com.example.smartlagoon.ui.screens.tracks.TracksViewModel
 import com.example.smartlagoon.ui.theme.ThemeViewModel
-import com.example.smartlagoon.ui.viewmodel.FavouritesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 import com.example.smartlagoon.ui.viewmodel.TracksDbViewModel
 import io.ktor.client.HttpClient
@@ -86,10 +80,6 @@ val appModule = module {
 
     viewModel { HomeScreenViewModel() }
 
-    viewModel { TracksViewModel() }
-
-    viewModel { SettingsViewModel(get()) }
-
     viewModel { ThemeViewModel(get()) }
 
     viewModel { UsersViewModel(get()) }
@@ -97,8 +87,6 @@ val appModule = module {
     viewModel { TracksDbViewModel(get()) }
 
     viewModel { PhotosDbViewModel(get()) }
-
-    viewModel { FavouritesDbViewModel(get()) }
 
     viewModel { LoginViewModel() }
 
@@ -108,10 +96,18 @@ val appModule = module {
 
     viewModel { ProfileViewModel() }
 
+    /*
     viewModel { AddTrackViewModel() }
 
     viewModel { AddTrackDetailsViewModel() }
 
     viewModel { TrackingViewModel() }
+
+    viewModel { FavouritesDbViewModel(get()) }
+
+    viewModel { TracksViewModel() }
+
+    viewModel { SettingsViewModel(get()) }
+    */
 
 }

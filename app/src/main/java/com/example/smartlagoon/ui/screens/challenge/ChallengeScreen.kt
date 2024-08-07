@@ -24,11 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.smartlagoon.data.database.User
-import com.example.smartlagoon.ui.viewmodel.TracksDbState
-import com.example.smartlagoon.ui.viewmodel.TracksDbViewModel
 import com.example.smartlagoon.ui.composables.TopAppBar
-import com.example.smartlagoon.ui.screens.tracks.TracksActions
-import com.example.smartlagoon.ui.screens.tracks.TracksState
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -36,10 +32,10 @@ import com.example.smartlagoon.ui.screens.tracks.TracksState
 fun ChallengeScreen(
     navController: NavHostController,
     user: User,
-    state: TracksState,
+    /*state: TracksState,
     actions: TracksActions,
     tracksDbVm: TracksDbViewModel,
-    tracksDbState: TracksDbState,
+    tracksDbState: TracksDbState,*/
 ) {
     //val specificTracksList by tracksDbVm.specificTracksList.observeAsState()
     //var actualFilterOption by remember { mutableIntStateOf(FilterOption.ALL_TRACKS.ordinal) }

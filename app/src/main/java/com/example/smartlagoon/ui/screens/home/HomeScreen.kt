@@ -74,12 +74,12 @@ import com.google.android.gms.maps.model.LatLng
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    state: HomeScreenState,
-    actions: HomeScreenActions,
+    /*state: HomeScreenState,
+    actions: HomeScreenActions,*/
     user : User,
-    tracksDbVm: TracksDbViewModel,
+    /*tracksDbVm: TracksDbViewModel,
     tracksDbState: TracksDbState,
-    groupedTracksState: GroupedTracksState,
+    groupedTracksState: GroupedTracksState,*/
     sharedPreferences: SharedPreferences? = null
 ) {
 

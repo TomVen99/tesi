@@ -1,28 +1,9 @@
 package com.example.smartlagoon.utils
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
-import android.util.Log
 import androidx.activity.result.ActivityResultRegistry
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import com.example.smartlagoon.R
 import com.example.smartlagoon.ui.viewmodel.TracksDbViewModel
-import com.example.smartlagoon.ui.screens.addtrack.AddTrackActions
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.PolylineOptions
-import java.io.IOException
-import java.util.Collections
-import java.util.Locale
 
 class MapPresenter(private val context: Context,
                    private val registry: ActivityResultRegistry,
