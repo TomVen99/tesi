@@ -4,12 +4,15 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -20,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextDirection.Companion.Content
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -33,7 +37,14 @@ import com.example.smartlagoon.ui.theme.SmartlagoonTheme
 import com.example.smartlagoon.utils.NotificationWorker
 import com.example.smartlagoon.utils.PermissionsManager
 import com.example.smartlagoon.utils.sendNotifications
+import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
+import com.google.auth.oauth2.GoogleCredentials
+import com.google.cloud.vision.v1.*
+/*import com.google.cloud.vision.v1.ImageAnnotatorRequest.Feature
+import com.google.cloud.vision.v1.ImageAnnotatorRequest.Feature.Type
+import com.google.cloud.vision.v1.Image.Content*/
+import com.google.common.collect.ImmutableList
 
 class MainActivity : ComponentActivity() {
 
@@ -112,11 +123,6 @@ class MainActivity : ComponentActivity() {
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
-        //settingsViewModel.resetTheme()
-        //locationService = get<LocationService>()
-
-        /*createNotificationChannel(this)
-        scheduleAlarm(this)*/
 
     private fun scheduleNotifications() {
         val workRequest = PeriodicWorkRequestBuilder<NotificationWorker>(15, TimeUnit.MINUTES)
