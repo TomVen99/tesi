@@ -71,7 +71,6 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            //val theme by settingsViewModel.theme.collectAsState(initial = "")
             SmartlagoonTheme(/*darkTheme = theme == "Dark"*/) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
