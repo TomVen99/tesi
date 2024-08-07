@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 // L'autorizzazione è stata concessa, puoi schedulare le notifiche
-                scheduleNotifications()
+                //scheduleNotifications()
             } else {
                 // L'autorizzazione è stata negata, gestisci di conseguenza
             }
