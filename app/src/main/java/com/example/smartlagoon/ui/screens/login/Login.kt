@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -70,18 +71,25 @@ fun Login(
             modifier = Modifier
                 .padding(10.dp)
                 .background(MaterialTheme.colorScheme.background)
-                .border(1.dp, MaterialTheme.colorScheme.onBackground, RectangleShape)
+                .border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
         ) {
-            val focusManager = LocalFocusManager.current
-            val usernameFocusRequester = remember { FocusRequester() }
-            val passwordFocusRequester = remember { FocusRequester() }
             Image(
-                painter = painterResource(id = R.drawable.smartlagoon_logo),
+                painter = painterResource(id = R.drawable.smartlagoon_logo_nosfondo),
                 contentDescription = "Logo",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp)
+                    .height(150.dp)
+                    .padding(2.dp)
             )
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)  // Altezza del tuo spacer
+                    .background(MaterialTheme.colorScheme.onTertiaryContainer)  // Colore del tuo spacer
+            )
+            val focusManager = LocalFocusManager.current
+            val usernameFocusRequester = remember { FocusRequester() }
+            val passwordFocusRequester = remember { FocusRequester() }
             OutlinedTextField(
                 value = state.username,
                 onValueChange = actions::setUsername,

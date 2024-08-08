@@ -74,6 +74,26 @@ data class Photo(
     val timestamp: Long,
 )
 
+@Entity(primaryKeys = ["username", "challengeId"])
+data class UserChallenge (
+
+    val username: String,
+
+    val challengeId: Int
+)
+
+@Entity
+data class Challenge (
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+
+    @ColumnInfo
+    val title: String,
+
+    @ColumnInfo
+    val description: String,
+)
+
 @Entity
 data class Track (
     @PrimaryKey(autoGenerate = true)

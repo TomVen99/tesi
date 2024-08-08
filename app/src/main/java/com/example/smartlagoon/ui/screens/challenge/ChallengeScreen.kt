@@ -23,12 +23,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.smartlagoon.data.database.Challenge
 import com.example.smartlagoon.data.database.User
-import com.example.smartlagoon.ui.viewmodel.TracksDbState
-import com.example.smartlagoon.ui.viewmodel.TracksDbViewModel
 import com.example.smartlagoon.ui.composables.TopAppBar
-import com.example.smartlagoon.ui.screens.tracks.TracksActions
-import com.example.smartlagoon.ui.screens.tracks.TracksState
+import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -36,10 +34,12 @@ import com.example.smartlagoon.ui.screens.tracks.TracksState
 fun ChallengeScreen(
     navController: NavHostController,
     user: User,
-    state: TracksState,
+    challengesDbVm: ChallengesDbViewModel,
+    challengeList: List<Challenge>
+    /*state: TracksState,
     actions: TracksActions,
     tracksDbVm: TracksDbViewModel,
-    tracksDbState: TracksDbState,
+    tracksDbState: TracksDbState,*/
 ) {
     //val specificTracksList by tracksDbVm.specificTracksList.observeAsState()
     //var actualFilterOption by remember { mutableIntStateOf(FilterOption.ALL_TRACKS.ordinal) }
@@ -51,7 +51,7 @@ fun ChallengeScreen(
         topBar = {
             TopAppBar(
                 navController = navController,
-                currentRoute = "Classifica",
+                currentRoute = "Sfide",
                 /*trackActions = actions,
                 scope = scope,*/
             )
@@ -75,10 +75,8 @@ fun ChallengeScreen(
                         verticalArrangement = Arrangement.Top
                     ) {
 
-                        PrintChallanges(
-                            getChallangeListToPrint(
-                                user
-                            )
+                        PrintChallenges(
+                            challengeList
                         )
                     }
                 }
@@ -87,14 +85,14 @@ fun ChallengeScreen(
     }
 }
 
-private fun getChallangeListToPrint(user: User) : List<User> {
+private fun getChallengeListToPrint(user: User) : List<User> {
     return listOf(user)
 }
 
 @Composable
-private fun PrintChallanges(users: List<User> ) {
-    Log.d("classifica", "son qui")
-    for(user in users) {
+private fun PrintChallenges(challenges: List<Challenge> ) {
+    Log.d("challenges", challenges.toString())
+    for(challenge in challenges) {
         Card(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -103,9 +101,9 @@ private fun PrintChallanges(users: List<User> ) {
             )
         ) {
             ListItem(
-                headlineContent = { Text(text = user.username) },
+                headlineContent = { Text(text = challenge.title) },
                 supportingContent = {
-                    Text(text = user.name)
+                    Text(text = challenge.description)
                 },
             )
         }

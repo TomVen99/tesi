@@ -23,7 +23,7 @@ fun sendNotifications(context: Context) {
     val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
     val builder = NotificationCompat.Builder(context, "channel_id")
-        .setSmallIcon(R.drawable.ic_badge)
+        .setSmallIcon(R.drawable.logo_notifica)
         .setContentTitle("Berillo")
         .setContentText("È il momento della sfida giornaliera!")
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)

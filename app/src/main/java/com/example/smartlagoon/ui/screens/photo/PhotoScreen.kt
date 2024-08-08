@@ -1,31 +1,24 @@
 package com.example.smartlagoon.ui.screens.photo
 
-import android.annotation.SuppressLint
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,11 +30,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.smartlagoon.data.database.Photo
 import com.example.smartlagoon.data.database.User
-import com.example.smartlagoon.ui.viewmodel.TracksDbState
-import com.example.smartlagoon.ui.viewmodel.TracksDbViewModel
 import com.example.smartlagoon.ui.composables.TopAppBar
-import com.example.smartlagoon.ui.screens.tracks.TracksActions
-import com.example.smartlagoon.ui.screens.tracks.TracksState
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
 import com.example.smartlagoon.ui.viewmodel.PhotosDbState
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
@@ -51,7 +40,7 @@ import java.util.Date
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PhotoScreen(
-    //navController: NavHostController,
+    navController: NavHostController,
     user: User,
     photosDbVm: PhotosDbViewModel,
     photosDbState: PhotosDbState,
@@ -60,7 +49,7 @@ fun PhotoScreen(
         Scaffold(
             topBar = {
                 TopAppBar(
-                    navController = null,
+                    navController = navController,
                     currentRoute = "Photo",
                 )
             },

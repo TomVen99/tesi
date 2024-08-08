@@ -3,49 +3,26 @@ package com.example.smartlagoon
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextDirection.Companion.Content
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.example.smartlagoon.ui.SmartlagoonNavGraph
 import com.example.smartlagoon.ui.SmartlagoonRoute
-import com.example.smartlagoon.ui.screens.addtrack.ShowDialog
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
-import com.example.smartlagoon.utils.NotificationWorker
 import com.example.smartlagoon.utils.PermissionsManager
 import com.example.smartlagoon.utils.sendNotifications
-import java.io.ByteArrayOutputStream
-import java.util.concurrent.TimeUnit
-import com.google.auth.oauth2.GoogleCredentials
-import com.google.cloud.vision.v1.*
-/*import com.google.cloud.vision.v1.ImageAnnotatorRequest.Feature
-import com.google.cloud.vision.v1.ImageAnnotatorRequest.Feature.Type
-import com.google.cloud.vision.v1.Image.Content*/
-import com.google.common.collect.ImmutableList
-
 class MainActivity : ComponentActivity() {
 
     private lateinit var permissionHelper: PermissionsManager
@@ -123,11 +100,6 @@ class MainActivity : ComponentActivity() {
         notificationManager.createNotificationChannel(channel)
     }
 
-    private fun scheduleNotifications() {
-        val workRequest = PeriodicWorkRequestBuilder<NotificationWorker>(15, TimeUnit.MINUTES)
-            .build()
-        WorkManager.getInstance(this).enqueue(workRequest)
-    }
 
     override fun onPause() {
         super.onPause()

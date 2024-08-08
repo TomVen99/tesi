@@ -66,7 +66,7 @@ fun getMyDrawerState() : DrawerState {
     return drawerState
 }
 
-val items = listOf(
+/*val items = listOf(
     NavigationItem(
         title = "Mappa",
         selectedIcon = Icons.Filled.Map,
@@ -98,7 +98,7 @@ val items = listOf(
         unselectedIcon = Icons.Outlined.Settings,
         route = SmartlagoonRoute.Settings
     ),
-)
+)*/
 var currentRoute by mutableStateOf("")
 @Composable
 fun SideBarMenu (
@@ -151,7 +151,7 @@ fun SideBarMenu (
                     )
 
                     Spacer(modifier = Modifier.height(30.dp))
-                    items.forEachIndexed { index, item ->
+                    /*items.forEachIndexed { index, item ->
                         NavigationDrawerItem(
                             colors = NavigationDrawerItemDefaults.colors(
                                 selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -191,7 +191,7 @@ fun SideBarMenu (
                             },
                         )
 
-                    }
+                    }*/
                 }
             },
             drawerState = drawerState

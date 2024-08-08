@@ -14,15 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.smartlagoon.ui.SmartlagoonRoute
-import com.example.smartlagoon.ui.screens.tracks.TracksActions
 
 enum class FilterOption(val title: String) {
     ALL_TRACKS("Tutti i percorsi"),
@@ -31,7 +26,7 @@ enum class FilterOption(val title: String) {
 }
 @Composable
 fun FilterBar(
-    actions: TracksActions,
+    //actions: TracksActions,
     filterOption: Int,
 ) {
     Log.d("TAG", "Dentro filter bar")
@@ -54,11 +49,11 @@ fun FilterBar(
                 modifier = Modifier.padding(horizontal = 2.dp),
                 onClick = {
                     selectedItemIndex = index
-                    when (FilterOption.entries[selectedItemIndex]) {
+                    /*when (FilterOption.entries[selectedItemIndex]) {
                         FilterOption.YOUR_TRACKS -> actions.setFilter(FilterOption.YOUR_TRACKS)
                         FilterOption.ALL_TRACKS -> actions.setFilter(FilterOption.ALL_TRACKS)
                         FilterOption.FAVOURITES -> actions.setFilter(FilterOption.FAVOURITES)
-                    }
+                    }*/
                 },
                 icon = {  },
                 selected = index == selectedItemIndex,

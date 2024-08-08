@@ -19,7 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.rememberNavController
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.smartlagoon.data.database.Photo
 import com.example.smartlagoon.ui.screens.photo.PhotoScreen
@@ -119,10 +121,13 @@ class TakePhotoActivity : ComponentActivity() {
                         val cutoff = currentTime - 24 * 60 * 60 * 1000 // 24 ore in millisecondi
                         photosDbVm.deleteOldPhoto(cutoff)
                     }
+                    scheduleNotification()
+                    val navController = rememberNavController()
                     PhotoScreen(
                         user = user,
                         photosDbVm = photosDbVm,
-                        photosDbState = photosDbState
+                        photosDbState = photosDbState,
+                        navController = navController
                     )
                 } else {
                     Log.d("if", "son qui")
@@ -132,6 +137,12 @@ class TakePhotoActivity : ComponentActivity() {
             Log.e("TakePhotoActivity", "Impossibile creare l'URI per l'immagine")
         }
     }
+
+    /*private fun scheduleNotification() {
+        val workRequest = PeriodicWorkRequestBuilder<NotificationWorker>(15, TimeUnit.MINUTES)
+            .build()
+        WorkManager.getInstance(this).enqueue(workRequest)
+    }*/
 
     private fun createImageUri(): Uri? {
         val resolver = contentResolver

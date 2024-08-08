@@ -2,6 +2,8 @@ package com.example.smartlagoon.data.database
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -89,6 +91,27 @@ interface TracksDAO {
     @Query("SELECT count(*) AS numeroPercorsi FROM Track t WHERE t.userId =:userId ")
     suspend fun getUserTracksNumber(userId: Int): Int
 }
+
+@Dao
+interface ChallengesDAO {
+    @Query("""
+        SELECT * FROM Challenge 
+        WHERE id NOT IN (
+            SELECT challengeId FROM UserChallenge WHERE username = :username
+        )
+    """)
+    suspend fun getUncompletedChallengesForUser(username: String): List<Challenge>
+
+    @Query("SELECT * FROM Challenge")
+    fun getAllChallenges(): Flow<List<Challenge>>
+
+    @Query("INSERT OR IGNORE INTO UserChallenge (username, challengeId) VALUES (:username, :challengeId)")
+    suspend fun insertChallengeDone(challengeId: Int, username: String)
+
+    @Insert
+    suspend fun insertChallenge(challenge: Challenge)
+}
+
 
 @Dao
 interface PhotoDAO {

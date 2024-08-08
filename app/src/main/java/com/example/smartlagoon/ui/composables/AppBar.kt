@@ -36,17 +36,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.smartlagoon.data.database.User
-import com.example.smartlagoon.ui.SmartlagoonRoute
-import com.example.smartlagoon.ui.screens.home.HomeScreenActions
-import com.example.smartlagoon.ui.screens.tracks.TracksActions
-import com.example.smartlagoon.ui.screens.tracks.TracksState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -140,7 +132,7 @@ fun BottomAppBar(
     navController: NavHostController,
     user: User
 ) {
-    BottomAppBar(
+    /*BottomAppBar(
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         content = {
             Row(
@@ -251,6 +243,6 @@ fun BottomAppBar(
                 }
             }
         }
-    )
+    )*/
 }
 
