@@ -23,6 +23,7 @@ import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
 import com.example.smartlagoon.utils.PermissionsManager
 import com.example.smartlagoon.utils.sendNotifications
+
 class MainActivity : ComponentActivity() {
 
     private lateinit var permissionHelper: PermissionsManager

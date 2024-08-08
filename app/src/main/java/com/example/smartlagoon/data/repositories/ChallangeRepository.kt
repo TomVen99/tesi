@@ -41,6 +41,10 @@ class ChallengeRepository(
             title = "Sfida 3",
             description = "Descrizione sfida 3"
         ))
+        insertChallenge(Challenge(
+            title = "Sfida 4",
+            description = "Descrizione sfida 4"
+        ))
     }
 
     suspend fun generateDoneChallenge() {
