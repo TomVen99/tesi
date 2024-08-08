@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ListItem
@@ -36,24 +38,12 @@ fun ChallengeScreen(
     user: User,
     challengesDbVm: ChallengesDbViewModel,
     challengeList: List<Challenge>
-    /*state: TracksState,
-    actions: TracksActions,
-    tracksDbVm: TracksDbViewModel,
-    tracksDbState: TracksDbState,*/
 ) {
-    //val specificTracksList by tracksDbVm.specificTracksList.observeAsState()
-    //var actualFilterOption by remember { mutableIntStateOf(FilterOption.ALL_TRACKS.ordinal) }
-    //val specificFavouritesList by favouritesDbVm.specificFavouritesList.observeAsState()
-
-    //Log.d("trackList", specificTracksList.toString())
-    val scope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             TopAppBar(
                 navController = navController,
                 currentRoute = "Sfide",
-                /*trackActions = actions,
-                scope = scope,*/
             )
         },
     ) { contentPadding ->
@@ -64,48 +54,17 @@ fun ChallengeScreen(
             contentPadding = PaddingValues(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            stickyHeader {
-                Box(
-                    modifier = Modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(top = 5.dp)
-                            .border(1.dp, MaterialTheme.colorScheme.primaryContainer),
-                        verticalArrangement = Arrangement.Top
-                    ) {
-
-                        PrintChallenges(
-                            challengeList
-                        )
-                    }
-                }
+            itemsIndexed(challengeList){ _, challenge ->
+                ListItem(
+                    headlineContent = { Text(text = challenge.title) },
+                    supportingContent = {
+                        Text(text = challenge.description)
+                    },
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(16.dp)),
+                )
             }
-        }
-    }
-}
-
-private fun getChallengeListToPrint(user: User) : List<User> {
-    return listOf(user)
-}
-
-@Composable
-private fun PrintChallenges(challenges: List<Challenge> ) {
-    Log.d("challenges", challenges.toString())
-    for(challenge in challenges) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.tertiaryContainer
-            )
-        ) {
-            ListItem(
-                headlineContent = { Text(text = challenge.title) },
-                supportingContent = {
-                    Text(text = challenge.description)
-                },
-            )
         }
     }
 }

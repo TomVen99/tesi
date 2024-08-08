@@ -18,15 +18,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.example.smartlagoon.ui.SmartlagoonNavGraph
 import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
-import com.example.smartlagoon.utils.NotificationWorker
 import com.example.smartlagoon.utils.PermissionsManager
 import com.example.smartlagoon.utils.sendNotifications
-import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
 
