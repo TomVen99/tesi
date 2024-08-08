@@ -5,6 +5,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.example.smartlagoon.data.database.SmartlagoonDatabase
 import com.example.smartlagoon.data.remote.OSMDataSource
+import com.example.smartlagoon.data.repositories.ChallengeRepository
 import com.example.smartlagoon.data.repositories.FavoritesRepository
 import com.example.smartlagoon.data.repositories.PhotosRepository
 import com.example.smartlagoon.data.repositories.SettingsRepository
@@ -18,6 +19,7 @@ import com.example.smartlagoon.ui.screens.photo.PhotoViewModel
 import com.example.smartlagoon.ui.screens.profile.ProfileViewModel
 import com.example.smartlagoon.ui.screens.signin.SigninViewModel
 import com.example.smartlagoon.ui.theme.ThemeViewModel
+import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 import com.example.smartlagoon.ui.viewmodel.TracksDbViewModel
 import io.ktor.client.HttpClient
@@ -54,7 +56,7 @@ val appModule = module {
 
     single { OSMDataSource(get()) }
 
-    //single { LocationService(get()) }
+    single { ChallengeRepository(get<SmartlagoonDatabase>().challengesDAO()) }
 
     single { SettingsRepository(get()) }
 
@@ -87,6 +89,8 @@ val appModule = module {
     viewModel { TracksDbViewModel(get()) }
 
     viewModel { PhotosDbViewModel(get()) }
+
+    viewModel { ChallengesDbViewModel(get()) }
 
     viewModel { LoginViewModel() }
 

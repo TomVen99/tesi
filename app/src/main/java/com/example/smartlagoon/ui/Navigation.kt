@@ -32,6 +32,7 @@ import com.example.smartlagoon.ui.screens.challenge.ChallengeScreen
 import com.example.smartlagoon.ui.screens.ranking.RankingScreen
 import com.example.smartlagoon.ui.screens.signin.SigninScreen
 import com.example.smartlagoon.ui.screens.signin.SigninViewModel
+import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -47,7 +48,7 @@ sealed class SmartlagoonRoute(
 
     data object Signin : SmartlagoonRoute("signin", "Smartlagoon - Signin", "")
 
-    data object Challenge : SmartlagoonRoute("challange", "Channalnge", "")
+    data object Challenge : SmartlagoonRoute("challenge", "Challenge", "")
 
     data object Ranking : SmartlagoonRoute("ranking", "Ranking", "")
 
@@ -375,17 +376,30 @@ fun SmartlagoonNavGraph(
             ) { backStackEntry ->
                 /*val tracksVm = koinViewModel<TracksViewModel>()
                 val state by tracksVm.state.collectAsStateWithLifecycle()*/
+                val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
+                val challengeDbState = challengeDbVm.state.collectAsStateWithLifecycle()
+                val userUncompleteChallenge by challengeDbVm.userUncompleteChallenges.observeAsState(
+                    emptyList()
+                )
+                if(challengeDbState.value.challenges.isEmpty()) {
+                    challengeDbVm.insertTest()
+                    Log.d("Challenge","challange di test caricato ")
+                }
                 if(usersState.users.isNotEmpty()) {
                     val user = requireNotNull(usersState.users.find {
                         it.username == sharedPreferences.getString("username", null)
                     })
                     Log.d("no", backStackEntry.arguments?.getBoolean("specificTrack").toString())
+                    challengeDbVm.getUncompletedChallengesForUser(user.username)
+                    Log.d("Challenge",userUncompleteChallenge.toString())
+                    Log.d("Challenge2",challengeDbVm.userUncompleteChallenges.value.toString())
                     ChallengeScreen(
                         navController = navController,
                         user = user,
+                        challengeList = userUncompleteChallenge,
+                        challengesDbVm = challengeDbVm,
                         /*state = state,
                         actions = tracksVm.actions,
-                        tracksDbVm = tracksDbVm,
                         tracksDbState = tracksDbState,*/
                     )
                 }
