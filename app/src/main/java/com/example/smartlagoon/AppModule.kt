@@ -9,6 +9,7 @@ import com.example.smartlagoon.data.repositories.ChallengeRepository
 import com.example.smartlagoon.data.repositories.PhotosRepository
 import com.example.smartlagoon.data.repositories.SettingsRepository
 import com.example.smartlagoon.data.repositories.ThemeRepository
+import com.example.smartlagoon.data.repositories.UserChallengeRepository
 import com.example.smartlagoon.data.repositories.UsersRepository
 import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 import com.example.smartlagoon.ui.screens.home.HomeScreenViewModel
@@ -18,6 +19,7 @@ import com.example.smartlagoon.ui.screens.signin.SigninViewModel
 import com.example.smartlagoon.ui.theme.ThemeViewModel
 import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
+import com.example.smartlagoon.ui.viewmodel.UserChallengeViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -54,6 +56,8 @@ val appModule = module {
 
     single { ChallengeRepository(get<SmartlagoonDatabase>().challengesDAO()) }
 
+    single { UserChallengeRepository(get<SmartlagoonDatabase>().userChallengeDAO()) }
+
     single { SettingsRepository(get()) }
 
     single { ThemeRepository(get()) }
@@ -79,7 +83,7 @@ val appModule = module {
 
     viewModel { LoginViewModel() }
 
-    //viewModel { PhotoViewModel() }
+    viewModel { UserChallengeViewModel(get()) }
 
     viewModel { SigninViewModel() }
 

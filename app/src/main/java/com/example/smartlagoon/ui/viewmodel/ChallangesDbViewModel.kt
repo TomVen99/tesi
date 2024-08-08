@@ -37,9 +37,8 @@ class ChallengesDbViewModel(
         _userUncompletedChallenges.value = userUncompletedChallenges
     }
 
-    fun insertTest() = viewModelScope.launch{
+    fun createChallangeTest() = viewModelScope.launch{
         repository.generateChallengeTest()
-        repository.generateDoneChallenge()
     }
 
 }

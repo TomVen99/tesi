@@ -37,81 +37,29 @@ interface UsersDAO {
 }
 
 @Dao
-interface FavouritesDAO {
-    @Upsert
-    suspend fun upsertFavourite(favourite: Favourite)
-
-    @Delete
-    suspend fun deteleFavourite(favourite: Favourite)
-
-    @Query("SELECT trackId FROM FAVOURITE WHERE userId = :userId")
-    suspend fun getFavouritesByUser(userId: Int): List<Int>
-}
-
-
-@Dao
-interface TracksDAO {
-    @Upsert
-    suspend fun upsertTrack(track: Track)
-
-    @Query("SELECT * FROM Track ")
-    fun getAllTracks(): Flow<List<Track>>
-
-    @Query("SELECT * FROM Track WHERE userId = :id ")
-    suspend fun getUserTracks(id: Int): List<Track>
-
-    @Query("SELECT * FROM Track WHERE id in (SELECT trackId FROM favourite WHERE userId = :userId)")
-    suspend fun getFavoriteTracks(userId: Int): List<Track>
-
-    @Query("""
-    SELECT 
-        MIN(startLat) + (MAX(startLat) - MIN(startLat)) / 2 AS groupedLat, 
-        MIN(startLng) + (MAX(startLng) - MIN(startLng)) / 2 AS groupedLng
-    FROM 
-        track
-    GROUP BY 
-        CAST(startLat * 100 AS INTEGER), CAST(startLng * 100 AS INTEGER)
-    """)
-    fun getGroupedTracks(): Flow<List<GroupedTrack>>
-
-    @Query("""
-    SELECT 
-        *
-    FROM 
-        track
-    WHERE 
-        CAST(startLat * 100 AS INTEGER) = CAST(:startLat * 100 AS INTEGER)
-        AND CAST(startLng * 100 AS INTEGER) = CAST(:startLng * 100 AS INTEGER)
-    """)
-    suspend fun getTracksInRange(startLat: Double, startLng: Double): List<Track>
-
-    @Delete
-    suspend fun deleteTrack(track: Track)
-
-    @Query("SELECT count(*) AS numeroPercorsi FROM Track t WHERE t.userId =:userId ")
-    suspend fun getUserTracksNumber(userId: Int): Int
-}
-
-@Dao
 interface ChallengesDAO {
-    @Query("""
+    @Query(
+        """
         SELECT * FROM Challenge 
         WHERE id NOT IN (
             SELECT challengeId FROM UserChallenge WHERE username = :username
         )
-    """)
+    """
+    )
     suspend fun getUncompletedChallengesForUser(username: String): List<Challenge>
 
     @Query("SELECT * FROM Challenge")
     fun getAllChallenges(): Flow<List<Challenge>>
 
-    @Query("INSERT OR IGNORE INTO UserChallenge (username, challengeId) VALUES (:username, :challengeId)")
-    suspend fun insertChallengeDone(challengeId: Int, username: String)
-
     @Insert
     suspend fun insertChallenge(challenge: Challenge)
 }
 
+@Dao
+interface UserChallengeDAO{
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertChallengeDone(userChallenge: UserChallenge)
+}
 
 @Dao
 interface PhotoDAO {
@@ -131,7 +79,3 @@ interface PhotoDAO {
     suspend fun getUserPhotoNumber(username: String): Int
 }
 
-data class GroupedTrack(
-    val groupedLat: Double,
-    val groupedLng: Double
-)
