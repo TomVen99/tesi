@@ -4,20 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.example.smartlagoon.data.database.Challenge
-import com.example.smartlagoon.data.database.Photo
 import com.example.smartlagoon.data.repositories.ChallengeRepository
-import com.example.smartlagoon.data.repositories.PhotosRepository
-import com.example.smartlagoon.data.repositories.TracksRepository
-import com.example.smartlagoon.utils.NotificationWorker
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 data class ChallengesDbState(val challenges: List<Challenge>)
 

@@ -46,7 +46,6 @@ fun TopAppBar(
     navController: NavHostController?,
     currentRoute: String,
 ) {
-    Log.d("TAG", drawerState.toString())
     TopAppBar(
         title = {
             Column (

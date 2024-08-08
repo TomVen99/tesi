@@ -24,7 +24,7 @@ fun sendNotifications(context: Context) {
 
     val builder = NotificationCompat.Builder(context, "channel_id")
         .setSmallIcon(R.drawable.logo_notifica)
-        .setContentTitle("Berillo")
+        .setContentTitle("BeLagoon")
         .setContentText("È il momento della sfida giornaliera!")
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .setContentIntent(pendingIntent)

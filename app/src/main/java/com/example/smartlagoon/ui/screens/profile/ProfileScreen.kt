@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
@@ -55,10 +54,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.smartlagoon.R
 import com.example.smartlagoon.data.database.User
-import com.example.smartlagoon.ui.viewmodel.TracksDbState
 import com.example.smartlagoon.ui.viewmodel.UsersViewModel
-import com.example.smartlagoon.ui.composables.BottomAppBar
-import com.example.smartlagoon.ui.composables.SideBarMenu
 import com.example.smartlagoon.ui.composables.TopAppBar
 
 @Composable
