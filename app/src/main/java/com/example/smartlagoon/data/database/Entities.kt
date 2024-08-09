@@ -3,7 +3,6 @@ package com.example.smartlagoon.data.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.android.gms.maps.model.LatLng
 import kotlinx.serialization.Serializable
 
 @Entity
@@ -92,44 +91,4 @@ data class Challenge (
 
     @ColumnInfo
     val description: String,
-)
-
-@Entity
-data class Track (
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-
-    @ColumnInfo
-    var name: String,
-
-    @ColumnInfo
-    var description: String,
-
-    @ColumnInfo
-    var city: String,
-
-    @ColumnInfo
-    var startLat: Double,
-
-    @ColumnInfo
-    var startLng: Double,
-
-    @ColumnInfo
-    var trackPositions: List<LatLng>,
-
-    @ColumnInfo
-    val imageUri: String?,
-
-    @ColumnInfo
-    var duration: Long,
-
-    @ColumnInfo
-    val userId: Int,
-)
-
-@Entity(primaryKeys = ["trackId", "userId"])
-data class Favourite(
-    val trackId: Int,
-
-    val userId: Int
 )

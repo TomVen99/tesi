@@ -34,6 +34,7 @@ import com.example.smartlagoon.ui.screens.signin.SigninScreen
 import com.example.smartlagoon.ui.screens.signin.SigninViewModel
 import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
+import com.example.smartlagoon.ui.viewmodel.UserChallengeViewModel
 import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import org.koin.androidx.compose.koinViewModel
@@ -381,11 +382,18 @@ fun SmartlagoonNavGraph(
                 val userUncompleteChallenge by challengeDbVm.userUncompleteChallenges.observeAsState(
                     emptyList()
                 )
-                if(challengeDbState.value.challenges.isEmpty()) {
-                    challengeDbVm.insertTest()
-                    Log.d("Challenge","challange di test caricato ")
+                val userChallengeVm = koinViewModel<UserChallengeViewModel>()
+                val handler = Handler(Looper.getMainLooper())
+                val runnable = Runnable {
+                    if (challengeDbState.value.challenges.isEmpty()) {
+                        challengeDbVm.createChallangeTest()
+                        userChallengeVm.insertTest()
+                        Log.d("Challenge", "challange di test caricato ")
+                    }
                 }
+                handler.postDelayed(runnable, 5000L)
                 if(usersState.users.isNotEmpty()) {
+                    handler.removeCallbacks(runnable)
                     val user = requireNotNull(usersState.users.find {
                         it.username == sharedPreferences.getString("username", null)
                     })

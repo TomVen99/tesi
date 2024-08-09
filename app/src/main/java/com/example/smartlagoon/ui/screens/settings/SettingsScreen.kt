@@ -27,11 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.smartlagoon.data.database.User
-import com.example.smartlagoon.ui.viewmodel.TracksDbState
-import com.example.smartlagoon.ui.composables.BottomAppBar
-import com.example.smartlagoon.ui.composables.SideBarMenu
 import com.example.smartlagoon.ui.composables.TopAppBar
-import com.example.smartlagoon.ui.composables.getMyDrawerState
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
 
 @Composable
@@ -39,7 +35,6 @@ fun SettingsScreen(
     settingsVm : SettingsViewModel,
     navController: NavHostController,
     user: User,
-    tracksDbState: TracksDbState,
 ) {
     val scope = rememberCoroutineScope()
     val myScaffold: @Composable () -> Unit = {
@@ -54,12 +49,12 @@ fun SettingsScreen(
                         //scope = scope
                     )
                 },
-                bottomBar = {
+                /*bottomBar = {
                     BottomAppBar(
                         navController = navController,
                         user = user
                     )
-                }
+                }*/
             ) { paddingValues ->
                 Column(
                     Modifier
@@ -113,9 +108,4 @@ fun SettingsScreen(
 
         }
     }
-    SideBarMenu(
-        myScaffold = myScaffold,
-        navController,
-        tracksDbState,
-    )
 }

@@ -15,8 +15,6 @@ class ChallengeRepository(
 
     fun getAllChallenges() = challengesDAO.getAllChallenges()
 
-    suspend fun insertChallengeDone(challengeId: Int, username: String) = challengesDAO.insertChallengeDone(challengeId, username)
-
     suspend fun insertChallenge(challenge: Challenge) = challengesDAO.insertChallenge(challenge)
 
     /*suspend fun deleteOldPhoto(cutoff: Long) = photoDAO.deleteOldPhotos(cutoff)
@@ -47,7 +45,4 @@ class ChallengeRepository(
         ))
     }
 
-    suspend fun generateDoneChallenge() {
-        insertChallengeDone(1, "a")
-    }
 }

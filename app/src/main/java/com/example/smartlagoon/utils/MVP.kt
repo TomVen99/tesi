@@ -3,12 +3,11 @@ package com.example.smartlagoon.utils
 import android.content.Context
 import androidx.activity.result.ActivityResultRegistry
 import androidx.lifecycle.MutableLiveData
-import com.example.smartlagoon.ui.viewmodel.TracksDbViewModel
 
 class MapPresenter(private val context: Context,
                    private val registry: ActivityResultRegistry,
                    private val isStarted: MutableLiveData<Boolean>,
-                   private val tracksDbVm: TracksDbViewModel
+                   //private val tracksDbVm: TracksDbViewModel
 ) {
 
     /*lateinit var ui: MutableLiveData<Ui>
