@@ -61,20 +61,6 @@ fun PhotoScreen(
                 contentPadding = PaddingValues(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                /*stickyHeader {
-                    Box(
-                        modifier = Modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(top = 5.dp)
-                                .border(1.dp, MaterialTheme.colorScheme.primaryContainer),
-                            verticalArrangement = Arrangement.Top
-                        ) {
-                            Text("Header Content") // Inserisci il contenuto dell'intestazione qui
-                        }
-                    }
-                }*/
                 items(photosDbState.photos) { photo ->
                     PhotoItem(photo = photo, user = user)
                 }
@@ -82,19 +68,6 @@ fun PhotoScreen(
         }
     }
 }
-
-/*@Composable
-fun PhotoList(photos: List<Photo>){
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(photos) { photo ->
-            PhotoItem(photo = photo)
-        }
-    }
-}*/
 
 @Composable
 fun PhotoItem(photo: Photo, user: User) {
