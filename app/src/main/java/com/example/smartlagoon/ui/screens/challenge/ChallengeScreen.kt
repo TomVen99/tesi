@@ -56,7 +56,7 @@ fun ChallengeScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             itemsIndexed(challengeList){ _, challenge ->
-                AnimatedButton(challenge.title)
+                AnimatedButton(challenge)
                 /*ListItem(
                     headlineContent = { Text(text = challenge.title) },
                     supportingContent = {

@@ -1,17 +1,17 @@
 package com.example.smartlagoon.ui.composables
 
+import android.content.Intent
 import android.view.MotionEvent
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,17 +20,23 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.smartlagoon.TakePhotoActivity
+import com.example.smartlagoon.data.database.Challenge
+import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.theme.myButtonColors
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun AnimatedButton(text: String) {
+fun AnimatedButton(challenge: Challenge) {
     var isPressed by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current  // Ottieni il Context corrente
 
     // Animazione di scaling
     val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.9f else 1f,  // Riduce la dimensione del bottone al 90% quando premuto
+        targetValue = if (isPressed) 0.9f else 1f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMedium
@@ -38,11 +44,14 @@ fun AnimatedButton(text: String) {
     )
 
     Button(
-        onClick = { /* Azione del bottone */ },
+        onClick = {
+            //onClick() // Esegui l'azione associata al click
+            showDialog = true // Mostra il popup quando si rilascia il bottone
+        },
         modifier = Modifier
             .padding(16.dp)
-            .scale(scale)  // Applica l'animazione di scaling
-            .pointerInteropFilter {
+            .scale(scale)
+            /*.pointerInteropFilter {
                 when (it.action) {
                     MotionEvent.ACTION_DOWN -> {
                         isPressed = true
@@ -51,11 +60,36 @@ fun AnimatedButton(text: String) {
                         isPressed = false
                     }
                 }
-                true // Modifica qui: ritorna true per indicare che l'evento è gestito
-            }
+                true
+            }*/
             .fillMaxWidth(),
         colors = myButtonColors()
     ) {
-        Text(text)
+        Text(challenge.title)
+    }
+
+    // Popup Dialog
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text(text = challenge.title)
+            },
+            text = {
+                Text(text = challenge.description)
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDialog = false // Chiude il popup
+                        val intent = Intent(context, TakePhotoActivity::class.java)
+                        context.startActivity(intent)
+                    },
+                    colors = myButtonColors(),
+                ) {
+                    Text("Scatta")
+                }
+            }
+        )
     }
 }
