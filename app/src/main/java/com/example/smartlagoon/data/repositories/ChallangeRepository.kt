@@ -29,19 +29,23 @@ class ChallengeRepository(
 
         insertChallenge(Challenge(
             title = "Sfida 1",
-            description = "Descrizione sfida 1"
+            description = "Descrizione sfida 1",
+            points = 10
         ))
         insertChallenge(Challenge(
             title = "Sfida 2",
-            description = "Descrizione sfida 2"
+            description = "Descrizione sfida 2",
+            points = 20
         ))
         insertChallenge(Challenge(
             title = "Sfida 3",
-            description = "Descrizione sfida 3"
+            description = "Descrizione sfida 3",
+            points = 30
         ))
         insertChallenge(Challenge(
             title = "Sfida 4",
-            description = "Descrizione sfida 4"
+            description = "Descrizione sfida 4",
+            points = 40
         ))
     }
 

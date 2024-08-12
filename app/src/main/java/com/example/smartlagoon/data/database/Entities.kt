@@ -91,4 +91,7 @@ data class Challenge (
 
     @ColumnInfo
     val description: String,
+
+    @ColumnInfo
+    val points: Int,
 )

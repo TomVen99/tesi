@@ -37,6 +37,8 @@ class TakePhotoActivity : ComponentActivity() {
     private lateinit var permissionHelper: PermissionsManager
     private var imageUri: Uri? = null
 
+    private val challengePoints = intent.getIntExtra("challengePoints", 0)  // 0 è il valore predefinito se l'extra non è trovato
+
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
@@ -52,6 +54,7 @@ class TakePhotoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Log.d("Punti ricevuti intent", challengePoints.toString())
         permissionHelper = PermissionsManager(this, requestPermissionLauncher)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissionHelper.checkAndRequestPermissionPhoto(
