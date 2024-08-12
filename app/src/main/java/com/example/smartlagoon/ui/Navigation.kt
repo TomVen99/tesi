@@ -182,7 +182,7 @@ fun SmartlagoonNavGraph(
             composable(route, arguments) {backStackEntry ->
                 Log.d("LOG", "sono qui")
                 val homeScreenVm = koinViewModel<HomeScreenViewModel>()
-                val state by homeScreenVm.state.collectAsStateWithLifecycle()
+                //val state by homeScreenVm.state.collectAsStateWithLifecycle()
                 var userName =  backStackEntry.arguments?.getString("userUsername") ?: userDefault
                 userName = if (userName == "null") userDefault else userName
                 userDefault = userName

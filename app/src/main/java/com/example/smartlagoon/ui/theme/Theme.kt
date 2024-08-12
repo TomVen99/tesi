@@ -2,6 +2,8 @@ package com.example.smartlagoon.ui.theme
 
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -42,6 +44,14 @@ private val LightColorScheme = lightColorScheme(
     background = Color.White,
     onBackground = Color.Black
 )
+
+@Composable
+fun myButtonColors(): ButtonColors {
+    return ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+    )
+}
 
 @Composable
 fun SmartlagoonTheme(

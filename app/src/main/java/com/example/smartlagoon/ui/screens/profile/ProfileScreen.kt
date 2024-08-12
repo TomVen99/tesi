@@ -38,10 +38,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -54,8 +57,10 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.smartlagoon.R
 import com.example.smartlagoon.data.database.User
+import com.example.smartlagoon.ui.composables.AnimatedButton
 import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 import com.example.smartlagoon.ui.composables.TopAppBar
+import com.example.smartlagoon.ui.theme.myButtonColors
 
 @Composable
 fun ProfileScreen(
@@ -182,15 +187,19 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.size(15.dp))
 
             Button(
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
+                colors = myButtonColors(),
                 onClick = {
                     requestCameraPermission.launch(Manifest.permission.CAMERA)
                     usersViewModel.addPoints(user.username, 50)
                     Log.d("punti aggiornati", user.points.toString())
                 },
+                elevation = ButtonDefaults.buttonElevation(
+                    defaultElevation = 8.dp, // Elevazione normale
+                    pressedElevation = 12.dp, // Elevazione quando il bottone è premuto
+                    hoveredElevation = 4.dp, // Elevazione quando il bottone è "hovered"
+                    focusedElevation = 6.dp, // Elevazione quando il bottone è a fuoco
+                    disabledElevation = 0.dp  // Elevazione quando il bottone è disabilitato
+                ),
             ) {
                 Icon(
                     Icons.Filled.PhotoCamera,
@@ -201,6 +210,7 @@ fun ProfileScreen(
                 Text("Scegli foto")
             }
             Spacer(modifier = Modifier.size(15.dp))
+
             Text(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape )

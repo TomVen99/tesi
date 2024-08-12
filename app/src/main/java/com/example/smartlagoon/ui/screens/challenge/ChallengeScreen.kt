@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.smartlagoon.data.database.Challenge
 import com.example.smartlagoon.data.database.User
+import com.example.smartlagoon.ui.composables.AnimatedButton
 import com.example.smartlagoon.ui.composables.TopAppBar
 import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 
@@ -55,7 +56,8 @@ fun ChallengeScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             itemsIndexed(challengeList){ _, challenge ->
-                ListItem(
+                AnimatedButton(challenge.title)
+                /*ListItem(
                     headlineContent = { Text(text = challenge.title) },
                     supportingContent = {
                         Text(text = challenge.description)
@@ -63,7 +65,7 @@ fun ChallengeScreen(
                     modifier = Modifier
                         .padding(2.dp)
                         .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(16.dp)),
-                )
+                )*/
             }
         }
     }
