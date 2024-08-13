@@ -10,23 +10,16 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.example.smartlagoon.MainActivity
 import com.example.smartlagoon.R
 import com.example.smartlagoon.TakePhotoActivity
+import com.example.smartlagoon.ui.SmartlagoonRoute
 
 class NotificationWorker(appContext: Context, workerParams: WorkerParameters)
     : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result {
-        // Recupera l'ID della foto dai parametri di input
-        /*val photoId = inputData.getInt("photoId", -1)
-
-        if (photoId != -1) {
-            // Recupera la foto dal database utilizzando il repository
-            val photo = repository.getPhotoById(photoId)
-            photo?.let {*/
-                sendNotification(applicationContext)//, photo)
-            /*}
-        }*/
+        sendNotification(applicationContext)
 
         return Result.success()
     }
@@ -39,7 +32,10 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters)
         val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
         notificationManager.createNotificationChannel(channel)
         // Create an Intent for the activity you want to start.
-        val resultIntent = Intent(context, TakePhotoActivity::class.java)
+        //val resultIntent = Intent(context, TakePhotoActivity::class.java)
+        val resultIntent = Intent(context, MainActivity::class.java).apply {
+            putExtra("route", SmartlagoonRoute.Challenge.route)
+        }
         // Create the TaskStackBuilder.
         val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
             // Add the intent, which inflates the back stack.
@@ -48,10 +44,6 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters)
             getPendingIntent(0,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
-        /*val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }*/
-        //val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_IMMUTABLE)
         val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.logo_notifica)
             .setContentTitle("BeLagoon")

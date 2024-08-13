@@ -36,7 +36,6 @@ import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 import com.example.smartlagoon.ui.viewmodel.UserChallengeViewModel
 import com.example.smartlagoon.ui.viewmodel.UsersViewModel
-import kotlinx.coroutines.DelicateCoroutinesApi
 import org.koin.androidx.compose.koinViewModel
 
 sealed class SmartlagoonRoute(
@@ -110,6 +109,7 @@ sealed class SmartlagoonRoute(
 fun SmartlagoonNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    startDestination: SmartlagoonRoute? = null
 ) {
 
     val usersVm = koinViewModel<UsersViewModel>()
@@ -132,11 +132,20 @@ fun SmartlagoonNavGraph(
     val context = LocalContext.current
 
     val sharedPreferences = context.getSharedPreferences("isUserLogged", Context.MODE_PRIVATE)
-    var startDestination = ""
-    startDestination = if (sharedPreferences.getBoolean("isUserLogged", false)) {
+    var start = ""
+    Log.d("Navigation", startDestination.toString())
+    start = if (sharedPreferences.getBoolean("isUserLogged", false)) {
+        Log.d("Navigation", "1")
         val username = sharedPreferences.getString("username", "")
+        Log.d("Navigation", "2")
         if(username != null && username != "") {
-            SmartlagoonRoute.Home.buildRoute(username)
+            Log.d("Navigation", "3")
+            if(startDestination != null) {
+                Log.d("Navigation", "4")
+                SmartlagoonRoute.Challenge.route
+            } else {
+                SmartlagoonRoute.Home.buildRoute(username)
+            }
         } else {
             SmartlagoonRoute.Login.route
         }
@@ -145,7 +154,7 @@ fun SmartlagoonNavGraph(
     }
     NavHost(
         navController = navController,
-        startDestination = startDestination,
+        startDestination = start,
         modifier = modifier
     )
     {
@@ -301,7 +310,8 @@ fun SmartlagoonNavGraph(
                         user = user,
                         photosDbVm = photosDbVm,
                         photosDbState = photosDbState,
-                        navController = navController
+                        navController = navController,
+                        comeFromTakePhoto = false
                     )
                 }
             }

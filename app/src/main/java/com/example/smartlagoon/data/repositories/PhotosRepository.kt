@@ -6,6 +6,9 @@ import com.example.camera.utils.saveImageToStorage
 import com.example.smartlagoon.data.database.Photo
 import com.example.smartlagoon.data.database.PhotoDAO
 import kotlinx.coroutines.flow.Flow
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class PhotosRepository(
     private val photoDAO: PhotoDAO,
@@ -14,11 +17,13 @@ class PhotosRepository(
     var photos: Flow<List<Photo>> = photoDAO.getAllPhotos()
 
     suspend fun upsertPhoto(photo: Photo) {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val fileName = "Smartlagoon_Photo_$timeStamp"
         if (photo.imageUri?.isNotEmpty() == true) {
             val imageUri = saveImageToStorage(
                 Uri.parse(photo.imageUri),
                 contentResolver,
-                "Smartlagoon_Photo"//${photo.id}"
+                fileName
             )
             photoDAO.upsertPhoto(photo.copy(imageUri = imageUri.toString()))
         } else {
