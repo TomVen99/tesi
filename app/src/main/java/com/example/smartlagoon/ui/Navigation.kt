@@ -125,7 +125,7 @@ fun SmartlagoonNavGraph(
     val userChallengeVm = koinViewModel<UserChallengeViewModel>()
     if (challengeDbState.value.challenges.isEmpty()) {
         challengeDbVm.createChallangeTest()
-        userChallengeVm.insertTest()
+        //userChallengeVm.insertTest()
         Log.d("Challenge", "challange di test caricato ")
     }
 
