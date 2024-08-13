@@ -36,7 +36,6 @@ import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 import com.example.smartlagoon.ui.viewmodel.UserChallengeViewModel
 import com.example.smartlagoon.ui.viewmodel.UsersViewModel
-import kotlinx.coroutines.DelicateCoroutinesApi
 import org.koin.androidx.compose.koinViewModel
 
 sealed class SmartlagoonRoute(
@@ -65,8 +64,6 @@ sealed class SmartlagoonRoute(
         "",
         listOf(
             navArgument("userUsername") { type = NavType.StringType },
-            /*navArgument("latitude") { type = NavType.FloatType },
-            navArgument("longitude") { type = NavType.FloatType }*/
         )
     ) {
         fun buildRoute(userUsername: String): String{
@@ -83,25 +80,6 @@ sealed class SmartlagoonRoute(
             currentRoute = route
         }
     }
-
-    /*data object TrackDetails : SmartlagoonRoute(
-        "trackdetails/{userUsername}/{trackId}",
-        "trackDetails",
-        "",
-        listOf(
-            navArgument("userUsername") { type = NavType.StringType },
-            navArgument("trackId") { type = NavType.IntType }
-        )
-    ) {
-        fun buildRoute(userUsername: String, trackId: Int): String{
-            setMyCurrentRoute("trackdetails/$userUsername/$trackId")
-            return currentRoute
-        }
-
-        private fun setMyCurrentRoute (route : String) {
-            currentRoute = route
-        }
-    }*/
 
     data object Profile : SmartlagoonRoute(
         "profile/{userUsername}",
@@ -121,132 +99,53 @@ sealed class SmartlagoonRoute(
         }
     }
 
-    /*data object Tracks : SmartlagoonRoute(
-        "tracks/{userUsername}/{specificTrack}",
-        "tracks",
-        "",
-        listOf(
-            navArgument("userUsername") { type = NavType.StringType },
-            navArgument("specificTrack") { type = NavType.BoolType },
-        )
-    ) {
-        fun buildRoute(userUsername: String, specificTrack: Boolean) : String {
-            setMyCurrentRoute("tracks/$userUsername/$specificTrack")
-            return currentRoute
-        }
-
-        private fun setMyCurrentRoute (route : String) {
-            currentRoute = route
-        }
-    }
-
-    data object Tracking : SmartlagoonRoute(
-        "tracking/{userUsername}",
-        "tracking",
-        "",
-        listOf(
-            navArgument("userUsername") { type = NavType.StringType },
-        )
-    ) {
-        fun buildRoute(userUsername: String) : String {
-            setMyCurrentRoute("tracking/$userUsername")
-            return currentRoute
-        }
-
-        private fun setMyCurrentRoute (route : String) {
-            currentRoute = route
-        }
-
-
-    }
-
-    data object Settings : SmartlagoonRoute(
-        "settings/{userUsername}",
-        "Settings",
-        "",
-        listOf(
-            navArgument("userUsername") { type = NavType.StringType }
-        )
-    ) {
-        fun buildRoute(userUsername: String): String{
-            setMyCurrentRoute("settings/$userUsername")
-            return currentRoute
-        }
-
-        private fun setMyCurrentRoute (route : String) {
-            currentRoute = route
-        }
-    }
-
-    data object AddTrack : SmartlagoonRoute(
-        "addtrack/{userUsername}",
-        "AddTrack",
-        "",
-        listOf(
-            navArgument("userUsername") { type = NavType.StringType }
-        )
-    ) {
-        fun buildRoute(userUsername: String): String{
-            setMyCurrentRoute("addtrack/$userUsername")
-            return currentRoute
-        }
-
-        private fun setMyCurrentRoute (route : String) {
-            currentRoute = route
-        }
-    }
-
-    data object AddTrackDetails : SmartlagoonRoute(
-        "addtrackdetails/{userUsername}",
-        "AddTrack",
-        "",
-        listOf(
-            navArgument("userUsername") { type = NavType.StringType }
-        )
-    ) {
-        fun buildRoute(userUsername: String): String{
-            setMyCurrentRoute("addtrackdetails/$userUsername")
-            return currentRoute
-        }
-
-        private fun setMyCurrentRoute (route : String) {
-            currentRoute = route
-        }
-    }*/
-
     companion object {
         val routes = setOf(Login, Signin, Home, Ranking, Photo, About, Recycle, Profile, /*Settings, AddTrack, Tracking, AddTrackDetails*/)
     }
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(DelicateCoroutinesApi::class)
 @Composable
 fun SmartlagoonNavGraph(
     navController: NavHostController,
     modifier: Modifier = Modifier,
+    startDestination: SmartlagoonRoute? = null
 ) {
 
     val usersVm = koinViewModel<UsersViewModel>()
     val usersState by usersVm.state.collectAsStateWithLifecycle()
     var userDefault by remember{ mutableStateOf("null") }
-    //val tracksDbVm = koinViewModel<TracksDbViewModel>()
     val photosDbVm = koinViewModel<PhotosDbViewModel>()
-    /*val favouritesDbVm= koinViewModel<FavouritesDbViewModel>()
-    val tracksDbState by tracksDbVm.state.collectAsStateWithLifecycle()*/
     val photosDbState by photosDbVm.state.collectAsStateWithLifecycle()
-    /*val groupedTracksState by tracksDbVm.groupedTracksState.collectAsStateWithLifecycle()
-    val addTrackVm = koinViewModel<AddTrackViewModel>()
-    val addTrackState by addTrackVm.state.collectAsStateWithLifecycle()*/
+    val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
+    val challengeDbState = challengeDbVm.state.collectAsStateWithLifecycle()
+    val userUncompleteChallenge by challengeDbVm.userUncompleteChallenges.observeAsState(
+        emptyList()
+    )
+    val userChallengeVm = koinViewModel<UserChallengeViewModel>()
+    if (challengeDbState.value.challenges.isEmpty()) {
+        challengeDbVm.createChallangeTest()
+        //userChallengeVm.insertTest()
+        Log.d("Challenge", "challange di test caricato ")
+    }
 
     val context = LocalContext.current
 
     val sharedPreferences = context.getSharedPreferences("isUserLogged", Context.MODE_PRIVATE)
-    var startDestination = ""
-    startDestination = if (sharedPreferences.getBoolean("isUserLogged", false)) {
+    var start = ""
+    Log.d("Navigation", startDestination.toString())
+    start = if (sharedPreferences.getBoolean("isUserLogged", false)) {
+        Log.d("Navigation", "1")
         val username = sharedPreferences.getString("username", "")
+        Log.d("Navigation", "2")
         if(username != null && username != "") {
-            SmartlagoonRoute.Home.buildRoute(username)
+            Log.d("Navigation", "3")
+            if(startDestination != null) {
+                Log.d("Navigation", "4")
+                SmartlagoonRoute.Challenge.route
+            } else {
+                SmartlagoonRoute.Home.buildRoute(username)
+            }
         } else {
             SmartlagoonRoute.Login.route
         }
@@ -255,7 +154,7 @@ fun SmartlagoonNavGraph(
     }
     NavHost(
         navController = navController,
-        startDestination = startDestination,
+        startDestination = start,
         modifier = modifier
     )
     {
@@ -292,7 +191,7 @@ fun SmartlagoonNavGraph(
             composable(route, arguments) {backStackEntry ->
                 Log.d("LOG", "sono qui")
                 val homeScreenVm = koinViewModel<HomeScreenViewModel>()
-                val state by homeScreenVm.state.collectAsStateWithLifecycle()
+                //val state by homeScreenVm.state.collectAsStateWithLifecycle()
                 var userName =  backStackEntry.arguments?.getString("userUsername") ?: userDefault
                 userName = if (userName == "null") userDefault else userName
                 userDefault = userName
@@ -319,12 +218,7 @@ fun SmartlagoonNavGraph(
                         Log.d("tag", "user.username " + user.username)
                         HomeScreen(
                             navController,
-                            /*state,
-                            homeScreenVm.actions,*/
                             user,
-                            /*tracksDbVm,
-                            tracksDbState,
-                            groupedTracksState,*/
                             sharedPreferences
                         )
                     }
@@ -338,13 +232,9 @@ fun SmartlagoonNavGraph(
                     val userPoints by usersVm.userPoints.observeAsState(0)
                     Log.d("TAGGG", usersState.users.toString())
                     sharedPreferences.getString("username", null)?.let { Log.d("TAGGG", it) }
-                    /*val user = requireNotNull(usersState.users.find {
-                        it.username == backStackEntry.arguments?.getString("userUsername")
-                    })*/
                     val user = requireNotNull(usersState.users.find {
                         it.username == sharedPreferences.getString("username", null)
                     })
-                    //tracksDbVm.getUserTracksNumber(user.id)
                     usersVm.getUserPoints(user.username)
                     ProfileScreen(
                         navController = navController,
@@ -377,23 +267,18 @@ fun SmartlagoonNavGraph(
             ) { backStackEntry ->
                 /*val tracksVm = koinViewModel<TracksViewModel>()
                 val state by tracksVm.state.collectAsStateWithLifecycle()*/
-                val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
+                /*val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
                 val challengeDbState = challengeDbVm.state.collectAsStateWithLifecycle()
                 val userUncompleteChallenge by challengeDbVm.userUncompleteChallenges.observeAsState(
                     emptyList()
                 )
                 val userChallengeVm = koinViewModel<UserChallengeViewModel>()
-                val handler = Handler(Looper.getMainLooper())
-                val runnable = Runnable {
-                    if (challengeDbState.value.challenges.isEmpty()) {
-                        challengeDbVm.createChallangeTest()
-                        userChallengeVm.insertTest()
-                        Log.d("Challenge", "challange di test caricato ")
-                    }
-                }
-                handler.postDelayed(runnable, 5000L)
+                if (challengeDbState.value.challenges.isEmpty()) {
+                    challengeDbVm.createChallangeTest()
+                    userChallengeVm.insertTest()
+                    Log.d("Challenge", "challange di test caricato ")
+                }*/
                 if(usersState.users.isNotEmpty()) {
-                    handler.removeCallbacks(runnable)
                     val user = requireNotNull(usersState.users.find {
                         it.username == sharedPreferences.getString("username", null)
                     })
@@ -406,9 +291,6 @@ fun SmartlagoonNavGraph(
                         user = user,
                         challengeList = userUncompleteChallenge,
                         challengesDbVm = challengeDbVm,
-                        /*state = state,
-                        actions = tracksVm.actions,
-                        tracksDbState = tracksDbState,*/
                     )
                 }
             }
@@ -428,7 +310,8 @@ fun SmartlagoonNavGraph(
                         user = user,
                         photosDbVm = photosDbVm,
                         photosDbState = photosDbState,
-                        navController = navController
+                        navController = navController,
+                        comeFromTakePhoto = false
                     )
                 }
             }
@@ -440,122 +323,6 @@ fun SmartlagoonNavGraph(
                     )
             }
         }
-        /*with(SmartlagoonRoute.Tracks) {
-            composable(route, arguments) {backStackEntry ->
-                val tracksVm = koinViewModel<TracksViewModel>()
-                val state by tracksVm.state.collectAsStateWithLifecycle()
-                if(usersState.users.isNotEmpty()) {
-                    val user = requireNotNull(usersState.users.find {
-                        it.username == backStackEntry.arguments?.getString("userUsername")
-                    })
-                    Log.d("no", backStackEntry.arguments?.getBoolean("specificTrack").toString())
-                    val isSpecificTrack = backStackEntry.arguments?.getBoolean("specificTrack") ?: false
-                    Log.d("non devo passa", isSpecificTrack.toString())
-                    TracksScreen(
-                        navController = navController,
-                        user = user,
-                        state = state,
-                        actions = tracksVm.actions,
-                        tracksDbVm = tracksDbVm,
-                        tracksDbState = tracksDbState,
-                        //showFilter = !isSpecificTrack,
-                        favouritesDbVm = favouritesDbVm,
-                        isSpecificTrack = isSpecificTrack
-                        )
-                }
-            }
-        }
-
-        with(SmartlagoonRoute.Settings) {
-            composable(route) {backStackEntry ->
-                if(usersState.users.isNotEmpty()) {
-                    val user = requireNotNull(usersState.users.find {
-                        it.username == backStackEntry.arguments?.getString("userUsername")
-                    })
-                    val settingsVm = koinViewModel<SettingsViewModel>()
-                    SettingsScreen(
-                        settingsVm = settingsVm,
-                        navController = navController,
-                        user = user,
-                        tracksDbState = tracksDbState,
-                    )
-                }
-            }
-        }
-
-        with(SmartlagoonRoute.AddTrack) {
-            composable(route) {backStackEntry ->
-                if(usersState.users.isNotEmpty()) {
-                    val user = requireNotNull(usersState.users.find {
-                        it.username == backStackEntry.arguments?.getString("userUsername")
-                    })
-                    AddTrackScreen(
-                        navController = navController,
-                        user = user,
-                        tracksDbState = tracksDbState
-                    )
-                }
-            }
-        }
-
-        with(SmartlagoonRoute.Tracking) {
-            composable(route) {backStackEntry ->
-                if(usersState.users.isNotEmpty()) {
-                    val user = requireNotNull(usersState.users.find {
-                        it.username == backStackEntry.arguments?.getString("userUsername")
-                    })
-                    val trackingVm = koinViewModel<TrackingViewModel>()
-                    val trackingState by trackingVm.state.collectAsStateWithLifecycle()
-                    TrackingScreen(
-                        navController = navController,
-                        trackingState = trackingState,
-                        user = user,
-                        trackingActions = trackingVm.actions,
-                        tracksDbVm = tracksDbVm,
-                        addTrackActions = addTrackVm.actions
-                    )
-                }
-            }
-        }
-        with(SmartlagoonRoute.AddTrackDetails) {
-            composable(route) {backStackEntry ->
-                if(usersState.users.isNotEmpty()) {
-                    val user = requireNotNull(usersState.users.find {
-                        it.username == backStackEntry.arguments?.getString("userUsername")
-                    })
-                    val addTrackDetailsVm = koinViewModel<AddTrackDetailsViewModel>()
-                    val addTrackDetailsState by addTrackDetailsVm.state.collectAsStateWithLifecycle()
-                    Log.d("viewModel", addTrackState.trackPositions.toString())
-                    AddTrackDetailsScreen(
-                        navController = navController,
-                        addTrackDetailsState = addTrackDetailsState,
-                        addTrackDetailsActions = addTrackDetailsVm.actions,
-                        addTrackState = addTrackState,
-                        tracksDbVm = tracksDbVm,
-                        user = user,
-                    )
-                }
-            }
-        }
-
-        with(SmartlagoonRoute.TrackDetails) {
-            composable(route, arguments) { backStackEntry ->
-                if(usersState.users.isNotEmpty()) {
-                    val user = requireNotNull(usersState.users.find {
-                        it.username == backStackEntry.arguments?.getString("userUsername")
-                    })
-                    val track = requireNotNull(tracksDbState.tracks.find {
-                        it.id == backStackEntry.arguments?.getInt("trackId")
-                    })
-                    TrackDetails(
-                        navController = navController,
-                        user = user,
-                        track = track,
-                        tracksDbState = tracksDbState
-                    )
-                }
-            }
-        }*/
     }
 }
 

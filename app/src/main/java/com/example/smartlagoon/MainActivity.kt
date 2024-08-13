@@ -1,8 +1,6 @@
 package com.example.smartlagoon
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -22,7 +20,6 @@ import com.example.smartlagoon.ui.SmartlagoonNavGraph
 import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
 import com.example.smartlagoon.utils.PermissionsManager
-import com.example.smartlagoon.utils.sendNotifications
 
 class MainActivity : ComponentActivity() {
 
@@ -38,8 +35,20 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+    private var startRoute = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val intent: Intent? = intent
+        if (intent != null) {
+            // Recupera l'intero passato tramite l'Intent
+            startRoute = intent.getStringExtra("route").toString()  // 0 è il valore predefinito se l'extra non è trovato
+            Log.d("route ricevuta", startRoute)
+        } else {
+            Log.d("route ricevuta", "Intent NULLO")
+            // Gestisci il caso in cui l'Intent è nullo
+        }
 
         permissionHelper = PermissionsManager(this, requestPermissionLauncher)
 
@@ -67,40 +76,56 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     val backStackEntry by navController.currentBackStackEntryAsState()
-                    SmartlagoonRoute.routes.find {
+
+                    /*// Se route è null o vuota, naviga verso la schermata di login
+                    LaunchedEffect(route) {
+                        val startRoute = route.ifEmpty {
+                            SmartlagoonRoute.Login.route
+                        }
+
+                        navController.navigate(startRoute) {
+                            // Pulisci il back stack e naviga alla schermata specificata
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }*/
+
+                    /*SmartlagoonRoute.routes.find {
                         it.route == backStackEntry?.destination?.route
-                    } ?: SmartlagoonRoute.Login
-                    Scaffold{ contentPadding ->
-                        SmartlagoonNavGraph(
-                            navController,
-                            modifier = Modifier.padding(contentPadding),
-                        )
+                    } ?: SmartlagoonRoute.Login*/
+                    /*var startRoute = ""
+                    if(route != "") {
+                        startRoute = SmartlagoonRoute.Challenge
+                    } else {
+                        startRoute = SmartlagoonRoute.Login
+                    }*/
+                    Log.d("start route", startRoute)
+                    /*SmartlagoonRoute.routes.find {
+                        it.route == startRoute//backStackEntry?.destination?.route
+                    } ?: SmartlagoonRoute.Login*/
+                    if(startRoute == SmartlagoonRoute.Challenge.route) {
+                        Scaffold { contentPadding ->
+                            SmartlagoonNavGraph(
+                                navController,
+                                modifier = Modifier.padding(contentPadding),
+                                startDestination = SmartlagoonRoute.Challenge
+                            )
+                        }
+                    } else {
+                        Scaffold { contentPadding ->
+                            SmartlagoonNavGraph(
+                                navController,
+                                modifier = Modifier.padding(contentPadding),
+                            )
+                        }
                     }
                 }
             }
         }
     }
-
-    private fun sendNotification(context: Context) {
-        createNotificationChannel()
-        // Codice per inviare la notifica (vedi sotto)
-        sendNotifications(context)
-        Log.d("notifiche", "notifica inviata")
-    }
-
-
-    private fun createNotificationChannel() {
-        val name = "Channel Name"
-        val descriptionText = "Channel Description"
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel("channel_id", name, importance).apply {
-            description = descriptionText
-        }
-        val notificationManager: NotificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-    }
-
 
     override fun onPause() {
         super.onPause()

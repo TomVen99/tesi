@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-data class HomeScreenState(
+/*data class HomeScreenState(
     val destination: String = "",
     val date: String = "",
     val description: String = "",
@@ -20,7 +20,7 @@ data class HomeScreenState(
     val showLocationPermissionPermanentlyDeniedSnackbar: Boolean = false,
     val showNoInternetConnectivitySnackbar: Boolean = false
 ) {
-    val canSubmit get() = destination.isNotBlank() && date.isNotBlank() && description.isNotBlank()
+    //val canSubmit get() = destination.isNotBlank() && date.isNotBlank() && description.isNotBlank()
 
 }
 
@@ -37,10 +37,10 @@ interface HomeScreenActions {
     fun setShowNoInternetConnectivitySnackbar(show: Boolean)
     fun setShowSearchBar(show: Boolean)
 
-}
+}*/
 
 class HomeScreenViewModel() : ViewModel() {
-    private val _state = MutableStateFlow(HomeScreenState())
+    /*private val _state = MutableStateFlow(HomeScreenState())
     val state = _state.asStateFlow()
 
     val actions = object : HomeScreenActions {
@@ -74,5 +74,5 @@ class HomeScreenViewModel() : ViewModel() {
         override fun setShowSearchBar(show: Boolean) =
             _state.update { it.copy(showSearchBar = show) }
 
-    }
+    }*/
 }

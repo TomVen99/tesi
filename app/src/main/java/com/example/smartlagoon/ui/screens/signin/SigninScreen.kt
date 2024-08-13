@@ -79,14 +79,6 @@ fun SigninScreen(
                 val mailFocusRequester = remember { FocusRequester() }
                 val buttonFocusRequester = remember { FocusRequester() }
 
-
-                /*Image(
-                    painter = painterResource(id = R.drawable.smartlagoon_logo),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp)
-                )*/
                 Image(
                     painter = painterResource(id = R.drawable.smartlagoon_logo_nosfondo),
                     contentDescription = "Logo",
@@ -182,24 +174,14 @@ fun SigninScreen(
                                 mail = state.mail
                             ))
                     },
-                    //contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     ),
-                    /*modifier = Modifier//.align(Alignment.End)
-                        .padding(end = 15.dp, bottom = 15.dp)
-                        .focusRequester(buttonFocusRequester)*/
                     modifier = Modifier
                             .fillMaxWidth()
                             .padding(15.dp)
                 ) {
-                    /*Icon(
-                        Icons.Outlined.DoneOutline,
-                        contentDescription = "done icon",
-                        modifier = Modifier.size(ButtonDefaults.IconSize)
-                    )
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))*/
                     Text("Registrati")
                 }
                 if (signinResult == false) {

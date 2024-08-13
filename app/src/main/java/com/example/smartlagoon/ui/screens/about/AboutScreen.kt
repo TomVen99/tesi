@@ -26,83 +26,10 @@ import androidx.navigation.NavHostController
 import com.example.smartlagoon.R
 import com.example.smartlagoon.ui.composables.TopAppBar
 
-
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AboutScreen(
     navController: NavHostController,
-    /*user: User,
-    state: AboutState,
-    actions: AboutActions,
-    tracksDbVm: TracksDbViewModel,
-    tracksDbState: TracksDbState,
-    favouritesDbVm: FavouritesDbViewModel,
-    isSpecificTrack: Boolean*/
 ) {
-    /*Scaffold(
-        topBar = {
-            TopAppBar(
-                navController = navController,
-                currentRoute = "About",
-            )
-        },
-    ) { contentPadding ->
-        Column (
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .padding(contentPadding),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = "Il progetto SMARTLAGOON",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Il progetto europeo SMARTLAGOON è un'iniziativa ambiziosa che si concentra sullo studio e la gestione sostenibile delle lagune costiere altamente antropizzate, come il Mar Menor in Spagna.",
-                fontSize = 16.sp
-            )
-            Text(
-                text = "Il progetto SMARTLAGOON",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Il progetto europeo SMARTLAGOON è un'iniziativa ambiziosa che si concentra sullo studio e la gestione sostenibile delle lagune costiere altamente antropizzate, come il Mar Menor in Spagna.",
-                fontSize = 16.sp
-            )
-            Text(
-                text = "Il progetto SMARTLAGOON",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Il progetto europeo SMARTLAGOON è un'iniziativa ambiziosa che si concentra sullo studio e la gestione sostenibile delle lagune costiere altamente antropizzate, come il Mar Menor in Spagna.",
-                fontSize = 16.sp
-            )
-            Text(
-                text = "Il progetto SMARTLAGOON",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Il progetto europeo SMARTLAGOON è un'iniziativa ambiziosa che si concentra sullo studio e la gestione sostenibile delle lagune costiere altamente antropizzate, come il Mar Menor in Spagna.",
-                fontSize = 16.sp
-            )
-            Image(
-                painter = painterResource(id = R.drawable.smartlagoon_logo),
-                contentDescription = "Logo",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-            )
-        }
-    }*/
     Scaffold(
         topBar = {
             TopAppBar(
@@ -128,7 +55,7 @@ fun AboutScreen(
                     contentDescription = "Logo",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(60.dp) // Set desired height)
+                        .height(60.dp)
                 )
             }
         }
@@ -155,7 +82,6 @@ fun AboutScreen(
                     )
                 }
             }
-            // Add more items as needed
         }
     }
 }
