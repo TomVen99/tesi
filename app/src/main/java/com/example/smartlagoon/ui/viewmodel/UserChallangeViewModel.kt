@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.smartlagoon.data.database.Challenge
+import com.example.smartlagoon.data.database.UserChallenge
 import com.example.smartlagoon.data.repositories.ChallengeRepository
 import com.example.smartlagoon.data.repositories.UserChallengeRepository
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,6 +26,10 @@ class UserChallengeViewModel(
 
     private val _userChallengesNumber = MutableLiveData<Int>()
     val userChallengesNumber: LiveData<Int> = _userChallengesNumber
+
+    fun insertChallengeDone(userChallenge: UserChallenge) = viewModelScope.launch{
+        repository.insertChallengeDone(userChallenge)
+    }
 
     fun insertTest() = viewModelScope.launch{
         repository.insertChallengeTest()

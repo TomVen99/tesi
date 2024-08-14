@@ -40,12 +40,16 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
+import com.example.smartlagoon.data.database.UserChallenge
+import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
+import com.example.smartlagoon.ui.viewmodel.UserChallengeViewModel
 
 class TakePhotoActivity : ComponentActivity() {
 
     private lateinit var permissionHelper: PermissionsManager
     private var imageUri: Uri? = null
     private var challengePoints = 0
+    private var challengeId = 0
     private val snackbarHostState = SnackbarHostState()
 
     private val requestPermissionLauncher =
@@ -212,6 +216,7 @@ class TakePhotoActivity : ComponentActivity() {
                     val usersState by usersVm.state.collectAsStateWithLifecycle()
                     val photosDbVm = koinViewModel<PhotosDbViewModel>()
                     val photosDbState by photosDbVm.state.collectAsStateWithLifecycle()
+                    val usersChallengeVm = koinViewModel<UserChallengeViewModel>()
                     val context = LocalContext.current
                     val sharedPreferences = context.getSharedPreferences("isUserLogged", Context.MODE_PRIVATE)
                     sharedPreferences.getString("username", "")?.let { Log.d("share", it) }
@@ -244,6 +249,17 @@ class TakePhotoActivity : ComponentActivity() {
                             val currentTime = System.currentTimeMillis()
                             val cutoff = currentTime - 24 * 60 * 60 * 1000 // 24 ore in millisecondi
                             photosDbVm.deleteOldPhoto(cutoff)
+                            if (challengeId != 0) {
+                                usersChallengeVm.insertChallengeDone(
+                                    UserChallenge(
+                                        username = user.username,
+                                        challengeId = challengeId
+                                    )
+                                )
+                            } else {
+                                Log.e("challengeId", "challengeId = " + challengeId)
+                            }
+
                         }
 
                         val navController = rememberNavController()
@@ -272,7 +288,8 @@ class TakePhotoActivity : ComponentActivity() {
         val intent: Intent? = intent
         if (intent != null) {
             // Recupera l'intero passato tramite l'Intent
-            challengePoints = intent.getIntExtra("challengePoints", 0)  // 0 è il valore predefinito se l'extra non è trovato
+            challengePoints = intent.getIntExtra("challengePoints", 0) // 0 è il valore predefinito se l'extra non è trovato
+            challengeId = intent.getIntExtra("challengeId", 0)
             Log.d("Punti ricevuti intent", challengePoints.toString())
         } else {
             Log.d("Punti ricevuti intent", "Intent NULLO")

@@ -1,9 +1,11 @@
 package com.example.smartlagoon
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,7 +21,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.smartlagoon.ui.SmartlagoonNavGraph
 import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
+import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.utils.PermissionsManager
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -36,6 +40,7 @@ class MainActivity : ComponentActivity() {
         }
 
     private var startRoute = ""
+    private var generateTest = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +64,8 @@ class MainActivity : ComponentActivity() {
                     //sendNotification(this)
                                       },
                 onPermissionDenied = {
-
+                    Toast.makeText(this, "Permesso non concesso", Toast.LENGTH_SHORT)
+                        .show()
                 }
             )
         } else {
@@ -68,6 +74,8 @@ class MainActivity : ComponentActivity() {
             //sendNotification(this)
         }
 
+        val sharedPreferences = getPreferences(Context.MODE_PRIVATE)
+        generateTest = sharedPreferences.getBoolean("generateTest", true)
         setContent {
             SmartlagoonTheme(/*darkTheme = theme == "Dark"*/) {
                 Surface(
@@ -102,6 +110,13 @@ class MainActivity : ComponentActivity() {
                     } else {
                         startRoute = SmartlagoonRoute.Login
                     }*/
+                    if(generateTest) {
+                        val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
+                        challengeDbVm.createChallangeTest()
+                        Log.e("generateTest", "generateTest Main")
+                        generateTest = false
+                        sharedPreferences.edit().putBoolean("generateTest", false).apply()
+                    }
                     Log.d("start route", startRoute)
                     /*SmartlagoonRoute.routes.find {
                         it.route == startRoute//backStackEntry?.destination?.route

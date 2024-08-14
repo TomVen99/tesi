@@ -88,6 +88,7 @@ fun AnimatedButton(challenge: Challenge) {
                         showDialog = false // Chiude il popup
                         val intent = Intent(context, TakePhotoActivity::class.java).apply {
                             putExtra("challengePoints", challenge.points)
+                            putExtra("challengeId", challenge.id)
                         }
                         context.startActivity(intent)
                     },
