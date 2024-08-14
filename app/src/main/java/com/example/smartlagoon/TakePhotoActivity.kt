@@ -113,6 +113,7 @@ class TakePhotoActivity : ComponentActivity() {
                 }
             } else {
                 Log.e("TakePhotoActivity", "Cattura dell'immagine fallita o annullata")
+                finish()
             }
         }
 
