@@ -2,6 +2,8 @@ package com.example.smartlagoon.ui.screens.home
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
+import android.provider.Settings
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -33,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.smartlagoon.R
@@ -46,7 +49,7 @@ fun HomeScreen(
     user : User,
     sharedPreferences: SharedPreferences? = null
 ) {
-
+    val context = LocalContext.current
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -65,25 +68,51 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(16.dp))
             MenuGrid(navController, user)
             Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = {
-                    if(sharedPreferences != null) {
-                        val edit = sharedPreferences.edit()
-                        edit.putBoolean("isUserLogged", true)
-                        edit.putString("username", "")
-                        edit.apply()
-                    }
-                    Log.d("Logout",SmartlagoonRoute.Login.route)
-                    navController.navigate(SmartlagoonRoute.Login.route)
-                          },
+
+            Row(
                 modifier = Modifier
-                    .align(Alignment.End),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            ) {
-                Text("Logout")
+                    .fillMaxWidth()
+                    .padding(10.dp), // Aggiungi padding se necessario
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            )
+            {
+                Button(
+                    onClick = {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        }
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier
+                        .align(Alignment.Top),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                ) {
+                    Text("Impostazioni")
+                }
+                Button(
+                    onClick = {
+                        if (sharedPreferences != null) {
+                            val edit = sharedPreferences.edit()
+                            edit.putBoolean("isUserLogged", true)
+                            edit.putString("username", "")
+                            edit.apply()
+                        }
+                        Log.d("Logout", SmartlagoonRoute.Login.route)
+                        navController.navigate(SmartlagoonRoute.Login.route)
+                    },
+                    modifier = Modifier
+                        .align(Alignment.Bottom),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                ) {
+                    Text("Logout")
+                }
             }
         }
     }

@@ -186,7 +186,7 @@ fun ProfileScreen(
             setProfileImage()
             Spacer(modifier = Modifier.size(15.dp))
 
-            Button(
+            Button( 
                 colors = myButtonColors(),
                 onClick = {
                     requestCameraPermission.launch(Manifest.permission.CAMERA)

@@ -83,6 +83,10 @@ dependencies {
     //fine google vision cloud
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
     implementation("com.google.android.gms:play-services-maps:19.0.0")
+    /*implementation("androidx.compose.material3:material3-android:1.2.1")
+    implementation("com.example.some-library") {
+        exclude(group = "androidx.compose.material3", module = "material3")
+    }*/
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
@@ -93,7 +97,7 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
-    implementation("com.google.code.gson:gson:2.10")
+    implementation("com.google.code.gson:gson:2.11.0")
     implementation("io.coil-kt:coil-compose:2.3.0")
     //Fine miei import
     testImplementation("junit:junit:4.13.2")
