@@ -1,7 +1,6 @@
 package com.example.smartlagoon.ui.composables
 
 import android.content.Intent
-import android.view.MotionEvent
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -14,39 +13,33 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.smartlagoon.R
 import com.example.smartlagoon.TakePhotoActivity
 import com.example.smartlagoon.data.database.Challenge
-import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.theme.myButtonColors
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AnimatedButton(challenge: Challenge) {
-    var isPressed by remember { mutableStateOf(false) }
+    //var isPressed by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current  // Ottieni il Context corrente
 
     // Animazione di scaling
-    val scale by animateFloatAsState(
+    /*val scale by animateFloatAsState(
         targetValue = if (isPressed) 0.9f else 1f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMedium
         ), label = ""
-    )
+    )*/
 
     Button(
         onClick = {
@@ -55,8 +48,8 @@ fun AnimatedButton(challenge: Challenge) {
         },
         modifier = Modifier
             .padding(16.dp)
-            .scale(scale)
-            /*.pointerInteropFilter {
+            /*.scale(scale)
+            .pointerInteropFilter {
                 when (it.action) {
                     MotionEvent.ACTION_DOWN -> {
                         isPressed = true
@@ -72,7 +65,6 @@ fun AnimatedButton(challenge: Challenge) {
     ) {
         Text(challenge.title)
     }
-
     // Popup Dialog
     if (showDialog) {
         AlertDialog(
