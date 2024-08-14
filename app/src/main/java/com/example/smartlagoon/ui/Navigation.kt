@@ -117,7 +117,7 @@ fun SmartlagoonNavGraph(
     var userDefault by remember{ mutableStateOf("null") }
     val photosDbVm = koinViewModel<PhotosDbViewModel>()
     val photosDbState by photosDbVm.state.collectAsStateWithLifecycle()
-    val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
+    /*val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
     val challengeDbState = challengeDbVm.state.collectAsStateWithLifecycle()
     val userUncompleteChallenge by challengeDbVm.userUncompleteChallenges.observeAsState(
         emptyList()
@@ -127,7 +127,7 @@ fun SmartlagoonNavGraph(
         challengeDbVm.createChallangeTest()
         //userChallengeVm.insertTest()
         Log.d("Challenge", "challange di test caricato ")
-    }
+    }*/
 
     val context = LocalContext.current
 
@@ -283,6 +283,10 @@ fun SmartlagoonNavGraph(
                         it.username == sharedPreferences.getString("username", null)
                     })
                     Log.d("no", backStackEntry.arguments?.getBoolean("specificTrack").toString())
+                    val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
+                    val userUncompleteChallenge by challengeDbVm.userUncompleteChallenges.observeAsState(
+                        emptyList()
+                    )
                     challengeDbVm.getUncompletedChallengesForUser(user.username)
                     Log.d("Challenge",userUncompleteChallenge.toString())
                     Log.d("Challenge2",challengeDbVm.userUncompleteChallenges.value.toString())

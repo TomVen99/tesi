@@ -318,7 +318,7 @@ fun PhotoItem(photo: Photo, user: User) {
                         painter = rememberAsyncImagePainter(user.urlProfilePicture),
                         contentDescription = "User Badge",
                         modifier = Modifier.size(28.dp) // Larger badge
-                            .border(2.dp, Color.Black, CircleShape)
+                            .border(2.dp, MyColors().borders, CircleShape)
                             .background(Color.White, CircleShape)
                             .clip(CircleShape)
                     )
