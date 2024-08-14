@@ -307,11 +307,12 @@ fun SmartlagoonNavGraph(
                         it.username == sharedPreferences.getString("username", null)
                     })
                     PhotoScreen(
-                        user = user,
+                        //user = user,
                         photosDbVm = photosDbVm,
                         photosDbState = photosDbState,
                         navController = navController,
-                        comeFromTakePhoto = false
+                        comeFromTakePhoto = false,
+                        usersViewModel = usersVm
                     )
                 }
             }

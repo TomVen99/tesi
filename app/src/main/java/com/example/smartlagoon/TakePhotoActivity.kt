@@ -248,7 +248,8 @@ class TakePhotoActivity : ComponentActivity() {
 
                         val navController = rememberNavController()
                         PhotoScreen(
-                            user = user,
+                            //user = user,
+                            usersViewModel = usersVm,
                             photosDbVm = photosDbVm,
                             photosDbState = photosDbState,
                             navController = navController,

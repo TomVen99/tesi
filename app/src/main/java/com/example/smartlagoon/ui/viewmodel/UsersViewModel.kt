@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.smartlagoon.data.database.User
 import com.example.smartlagoon.data.repositories.UsersRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -52,6 +54,10 @@ class UsersViewModel(
             repository.getUserPoints(username)
         }
         _userPoints.value = userPoints
+    }
+
+    suspend fun getUser(username: String): User? {
+        return repository.getUser(username).firstOrNull()
     }
 
     fun addPoints(username: String, points: Int) {

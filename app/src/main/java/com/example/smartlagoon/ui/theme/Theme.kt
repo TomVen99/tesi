@@ -15,17 +15,18 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+
 private val DarkColorScheme = darkColorScheme(
     primary = Color.White,
     onPrimary = Color.White,
-    primaryContainer = DarkBLue,
+    primaryContainer = MyColors().darkBLue,
     onPrimaryContainer = Color.White,
     secondaryContainer = Color.Yellow,
     onSecondaryContainer = Color.Black,
-    tertiaryContainer = UltraLightBlue,
+    tertiaryContainer = MyColors().ultraLightBlue,
     onTertiaryContainer = Color.Black,
-    secondary = DarkBLue,
-    tertiary = DarkBLue,
+    secondary = MyColors().darkBLue,
+    tertiary = MyColors().darkBLue,
     background = Color.DarkGray,
     onBackground = Color.White
 )
@@ -33,12 +34,12 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = Color.Black,
     onPrimary = Color.Black,
-    primaryContainer = MyBlu,
+    primaryContainer = MyColors().myBlu,
     onPrimaryContainer = Color.White,
-    secondaryContainer = MyGreen,
+    secondaryContainer = MyColors().myGreen,
     onSecondaryContainer = Color.White,
-    tertiaryContainer = BackgroundLightBlue,
-    onTertiaryContainer = Borders,
+    tertiaryContainer = MyColors().backgroundLightBlue,
+    onTertiaryContainer = MyColors().borders,
     secondary = Color.Black,
     tertiary = Color.Black,
     background = Color.White,
