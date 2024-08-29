@@ -23,11 +23,15 @@ import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
 import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.utils.PermissionsManager
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var permissionHelper: PermissionsManager
+    private lateinit var db: FirebaseFirestore
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -44,6 +48,15 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Inizializza Firestore
+        db = Firebase.firestore
+
+        // Aggiungi un punteggio alla classifica
+        addChallenge("ch1", "Titolo", "Descr")
+        addChallenge("ch2", "Titolo1", "Descr1")
+        // Leggi la classifica ordinata
+        readLeaderboard()
+
 
         val intent: Intent? = intent
         if (intent != null) {
@@ -85,31 +98,6 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val backStackEntry by navController.currentBackStackEntryAsState()
 
-                    /*// Se route è null o vuota, naviga verso la schermata di login
-                    LaunchedEffect(route) {
-                        val startRoute = route.ifEmpty {
-                            SmartlagoonRoute.Login.route
-                        }
-
-                        navController.navigate(startRoute) {
-                            // Pulisci il back stack e naviga alla schermata specificata
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }*/
-
-                    /*SmartlagoonRoute.routes.find {
-                        it.route == backStackEntry?.destination?.route
-                    } ?: SmartlagoonRoute.Login*/
-                    /*var startRoute = ""
-                    if(route != "") {
-                        startRoute = SmartlagoonRoute.Challenge
-                    } else {
-                        startRoute = SmartlagoonRoute.Login
-                    }*/
                     if(generateTest) {
                         val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
                         challengeDbVm.createChallangeTest()
@@ -140,6 +128,40 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    // Funzione per aggiungere un punteggio alla collezione "leaderboard"
+    private fun addChallenge(chId: String, title: String, desc: String) {
+        val userScore = hashMapOf(
+            "title" to title,
+            "description" to desc,
+        )
+
+        // Aggiungi o aggiorna il documento dell'utente nella collezione "leaderboard"
+        db.collection("challenges").document(chId).set(userScore)
+            .addOnSuccessListener {
+                println("Challenge aggiunta con successo $title!")
+            }
+            .addOnFailureListener { e ->
+                println("Errore nell'aggiunta della challenge per $title: $e")
+            }
+    }
+
+    // Funzione per leggere e visualizzare la classifica ordinata per punteggio
+    private fun readLeaderboard() {
+        db.collection("leaderboard")
+            .orderBy("score", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    val name = document.getString("name")
+                    val score = document.getLong("score")
+                    println("Nome: $name, Punteggio: $score")
+                }
+            }
+            .addOnFailureListener { e ->
+                println("Errore nel recupero della classifica: $e")
+            }
     }
 
     override fun onPause() {

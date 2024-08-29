@@ -38,21 +38,21 @@ interface UsersDAO {
 
 @Dao
 interface ChallengesDAO {
-    @Query(
+    /*@Query(
         """
-        SELECT * FROM Challenge 
+        SELECT * FROM Challenge_old 
         WHERE id NOT IN (
             SELECT challengeId FROM UserChallenge WHERE username = :username
         )
     """
     )
-    suspend fun getUncompletedChallengesForUser(username: String): List<Challenge>
+    suspend fun getUncompletedChallengesForUser(username: String): List<Challenge_old>
 
-    @Query("SELECT * FROM Challenge")
-    fun getAllChallenges(): Flow<List<Challenge>>
+    @Query("SELECT * FROM Challenge_old")
+    fun getAllChallenges(): Flow<List<Challenge_old>>
 
     @Insert
-    suspend fun insertChallenge(challenge: Challenge)
+    suspend fun insertChallenge(challenge: Challenge_old)*/
 }
 
 @Dao

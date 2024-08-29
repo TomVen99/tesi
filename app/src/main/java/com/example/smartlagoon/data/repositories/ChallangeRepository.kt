@@ -1,14 +1,14 @@
 package com.example.smartlagoon.data.repositories
 
 import android.content.ContentResolver
-import com.example.smartlagoon.data.database.Challenge
+import com.example.smartlagoon.data.database.Challenge_old
 import com.example.smartlagoon.data.database.ChallengesDAO
 import com.example.smartlagoon.data.database.User
 import kotlinx.coroutines.flow.Flow
 
 class ChallengeRepository(
     private val challengesDAO: ChallengesDAO,
-) {
+) {/*
     var challenges: Flow<List<Challenge>> = challengesDAO.getAllChallenges()
 
     suspend fun getUncompletedChallengesForUser(username: String) = challengesDAO.getUncompletedChallengesForUser(username)
@@ -47,6 +47,6 @@ class ChallengeRepository(
             description = "Descrizione sfida 4",
             points = 40
         ))
-    }
+    }*/
 
 }

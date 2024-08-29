@@ -12,7 +12,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.smartlagoon.MainActivity
 import com.example.smartlagoon.R
-import com.example.smartlagoon.TakePhotoActivity
 import com.example.smartlagoon.ui.SmartlagoonRoute
 
 class NotificationWorker(appContext: Context, workerParams: WorkerParameters)

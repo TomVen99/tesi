@@ -39,7 +39,6 @@ import com.example.smartlagoon.ui.viewmodel.UsersState
 @Composable
 fun RankingScreen(
     navController: NavHostController,
-    user: User,
     state: UsersState,
 ) {
     Scaffold(

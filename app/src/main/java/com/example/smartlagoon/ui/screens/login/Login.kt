@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -39,13 +40,14 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.smartlagoon.ui.composables.PasswordTextField
 import com.example.smartlagoon.R
 import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.viewmodel.UsersViewModel
-
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
@@ -60,6 +62,10 @@ fun Login(
     Log.d("LoginScreen", "dentro login screen")
     val signinResult by viewModel.loginResult.observeAsState()
     val signinLog by viewModel.loginLog.observeAsState()
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var isEnabled by remember { mutableStateOf(false) }
+    val auth = FirebaseAuth.getInstance()
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -74,7 +80,7 @@ fun Login(
                 .border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.smartlagoon_logo_nosfondo),
+                painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),//smartlagoon_logo_nosfondo),
                 contentDescription = "Logo",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -90,9 +96,22 @@ fun Login(
             val focusManager = LocalFocusManager.current
             val usernameFocusRequester = remember { FocusRequester() }
             val passwordFocusRequester = remember { FocusRequester() }
-            OutlinedTextField(
+            /*OutlinedTextField(
                 value = state.username,
                 onValueChange = actions::setUsername,
+                label = { Text("Username") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .focusRequester(usernameFocusRequester),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(
+                    onNext = { passwordFocusRequester.requestFocus() }
+                )
+            )*/
+            OutlinedTextField(
+                value = username,
+                onValueChange = { username = it },
                 label = { Text("Username") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -106,7 +125,7 @@ fun Login(
 
             var pwd by remember { mutableStateOf(state.password) }
 
-            PasswordTextField(
+            /*PasswordTextField(
                 password = pwd,
                 onPasswordChange = { newPassword -> pwd = newPassword },
                 modifier = Modifier
@@ -116,6 +135,17 @@ fun Login(
                 label = "Password",
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                 loginActions = actions
+            )*/
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .focusRequester(passwordFocusRequester),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                visualTransformation = PasswordVisualTransformation()
             )
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -129,7 +159,7 @@ fun Login(
                     Spacer(Modifier.size(15.dp))
                 }
             }
-            Button(
+            /*Button(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(15.dp),
@@ -151,7 +181,37 @@ fun Login(
             ) {
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                 Text("Accedi")
+            }*/
+
+            if(username.isNotEmpty() && password.isNotEmpty()) {
+                isEnabled = true
             }
+            Button(
+                enabled = isEnabled,
+                onClick = {
+                auth.signInWithEmailAndPassword(username, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("Login", "Login successful")
+                            val edit = sharedPreferences.edit()
+                            edit.putBoolean("isUserLogged", true)
+                            edit.putString("username", username)
+                            edit.putString("password", password)
+                            edit.apply()
+                            navController.navigate(SmartlagoonRoute.Home.buildRoute(username))
+                        } else {
+                            Log.e("Login", "Login failed", task.exception)
+
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer)
+                ) {
+                Text("Login")
+            }
+
             Text(text = "Oppure")
             TextButton(
                 onClick = {

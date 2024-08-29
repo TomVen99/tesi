@@ -57,7 +57,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.smartlagoon.R
 import com.example.smartlagoon.data.database.User
-import com.example.smartlagoon.ui.composables.AnimatedButton
 import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 import com.example.smartlagoon.ui.composables.TopAppBar
 import com.example.smartlagoon.ui.theme.myButtonColors

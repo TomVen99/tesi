@@ -46,7 +46,6 @@ import com.example.smartlagoon.ui.SmartlagoonRoute
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    user : User,
     sharedPreferences: SharedPreferences? = null
 ) {
     val context = LocalContext.current
@@ -59,14 +58,14 @@ fun HomeScreen(
             modifier = Modifier.padding(16.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.smartlagoon_logo),
+                painter = painterResource(id = R.drawable.lagoonguard_logo),//smartlagoon_logo),
                 contentDescription = "Smart Lagoon Logo",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            MenuGrid(navController, user)
+            MenuGrid(navController)//, user)
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
@@ -119,7 +118,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun MenuGrid(navController: NavController, user: User) {
+fun MenuGrid(navController: NavController){//, user: User) {
     Column {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -134,21 +133,21 @@ fun MenuGrid(navController: NavController, user: User) {
             modifier = Modifier.fillMaxWidth()
         ) {
             MenuItem("Profilo", R.drawable.ic_profilo, SmartlagoonRoute.Profile, navController)
-            MenuItem("Photo", R.drawable.ic_badge, SmartlagoonRoute.Photo, navController)
+            MenuItem("Foto", R.drawable.ic_badge, SmartlagoonRoute.Photo, navController)
         }
         Spacer(modifier = Modifier.height(16.dp))
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
-            MenuItem("Scatta", R.drawable.ic_ricicla, SmartlagoonRoute.Recycle, navController, user)
+            MenuItem("Scatta", R.drawable.ic_ricicla, SmartlagoonRoute.Recycle, navController)//, user)
             MenuItem("About", R.drawable.ic_info, SmartlagoonRoute.About, navController)
         }
     }
 }
 
 @Composable
-fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: NavController, user: User? = null) {
+fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: NavController){//, user: User? = null) {
     val context = LocalContext.current
     Card(
         shape = RoundedCornerShape(8.dp),
@@ -160,8 +159,8 @@ fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: 
                 if(route.route == "recycle")
                 {
                     val intent = Intent(context, TakePhotoActivity::class.java).apply{
-                        putExtra("username", user?.username)
-                        putExtra("userId", user?.id)
+                        /*putExtra("username", user?.username)
+                        putExtra("userId", user?.id)*/
                     }
                     context.startActivity(intent)
                 }else {

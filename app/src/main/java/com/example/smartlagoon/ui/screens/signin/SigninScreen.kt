@@ -1,5 +1,7 @@
 package com.example.smartlagoon.ui.screens.signin
 
+import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,16 +39,23 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextField
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.example.smartlagoon.ui.composables.PasswordTextField
 import com.example.smartlagoon.R
+import com.example.smartlagoon.TakePhotoActivity
 import com.example.smartlagoon.data.database.User
 import com.example.smartlagoon.ui.SmartlagoonRoute
+import com.example.smartlagoon.ui.theme.myButtonColors
 import com.example.smartlagoon.ui.viewmodel.UsersViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun SigninScreen(
@@ -56,140 +65,293 @@ fun SigninScreen(
     navController: NavHostController,
     viewModel: UsersViewModel
     ) {
-        val signinResult by viewModel.signinResult.observeAsState()
-        val signinLog by viewModel.signinLog.observeAsState()
 
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .wrapContentHeight(Alignment.CenterVertically))
-        {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
+    /*val signinLog by viewModel.signinLog.observeAsState()
+    val signinResult by viewModel.signinResult.observeAsState()*/
+
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var password1 by remember { mutableStateOf("") }
+    var message by remember { mutableStateOf("") }
+    var isEnabled by remember { mutableStateOf(false) }
+    var showMessage by remember { mutableStateOf(false) }
+    var showAlertDialog by remember { mutableStateOf(false) }
+    val auth = FirebaseAuth.getInstance()
+    val firestore = FirebaseFirestore.getInstance()
+
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .wrapContentHeight(Alignment.CenterVertically))
+    {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(10.dp)
+                .border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
+        ) {
+
+            val usernameFocusRequester = remember { FocusRequester() }
+            val passwordFocusRequester = remember { FocusRequester() }
+            val passwordFocusRequester1 = remember { FocusRequester() }
+            val nameFocusRequester = remember { FocusRequester() }
+            val surnameFocusRequester = remember { FocusRequester() }
+            val mailFocusRequester = remember { FocusRequester() }
+
+            Image(
+                painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),//smartlagoon_logo_nosfondo),
+                contentDescription = "Logo",
                 modifier = Modifier
-                    .padding(10.dp)
-                    .border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .padding(2.dp)
+            )
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)  // Altezza del tuo spacer
+                    .background(MaterialTheme.colorScheme.onTertiaryContainer)  // Colore del tuo spacer
+            )
+            OutlinedTextField(
+                /*value = state.name,
+                onValueChange = actions::setFirstName,*/
+                value = firstName,
+                onValueChange = {
+                    firstName = it
+                    actions.setFirstName(it)
+                                },
+                label = { Text("Nome") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                    .focusRequester(nameFocusRequester),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { surnameFocusRequester.requestFocus() }
+                )
+            )
+
+            OutlinedTextField(
+                /*value = state.surname,
+                onValueChange = actions::setSurname,*/
+                value = lastName,
+                onValueChange = {
+                    lastName = it
+                    actions.setSurname(it)
+                                },
+                label = { Text("Cognome") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                    .focusRequester(surnameFocusRequester),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { mailFocusRequester.requestFocus() }
+                )
+            )
+            OutlinedTextField(
+                /*value = state.mail,
+                onValueChange = actions::setMail,*/
+                value = email,
+                onValueChange = {
+                    email = it
+                    actions.setMail(it)
+                                },
+                label = { Text("Mail") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                    .focusRequester(mailFocusRequester),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(
+                    onNext = { usernameFocusRequester.requestFocus() }
+                )
+            )
+            OutlinedTextField(
+                /*value = state.username,
+                onValueChange = actions::setUsername,*/
+                value = username,
+                onValueChange = {
+                    username = it
+                    actions.setUsername(it)
+                                },
+                label = { Text("Username") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                    .focusRequester(usernameFocusRequester),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(
+                    onNext = { passwordFocusRequester.requestFocus() }
+                )
+            )
+            var pwd by remember { mutableStateOf(state.password) }
+            /*PasswordTextField*/
+            OutlinedTextField(
+                value = password,
+                onValueChange = {
+                    password = it
+                    actions.setPassword(it)
+                                },
+                /*password = pwd,
+                onPasswordChange = { newPassword -> pwd = newPassword},*/
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                    .focusRequester(passwordFocusRequester),
+                label = { Text("Password") },
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(
+                    onNext = { passwordFocusRequester1.requestFocus() }
+                ),
+                visualTransformation = PasswordVisualTransformation()
+            )
+            Spacer(Modifier.size(10.dp))
+            OutlinedTextField(
+                value = password1,
+                onValueChange = { password1 = it },
+                /*password = pwd,
+                onPasswordChange = { newPassword -> pwd = newPassword},*/
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                    .focusRequester(passwordFocusRequester1),
+                label = { Text("Ripeti password") },
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                visualTransformation = PasswordVisualTransformation()
+            )
+            Spacer(Modifier.size(10.dp))
+            /*Button(
+                onClick = {
+                    if (!state.canSubmit) return@Button
+                    val salt = viewModel.generateSalt()
+                    val password = viewModel.hashPassword(state.password, salt)
+                    onSubmit(
+                        User(
+                        username = state.username,
+                        password = password,
+                            salt = salt,
+                            urlProfilePicture = "",
+                            name = state.name,
+                            surname = state.surname,
+                            mail = state.mail
+                        ))
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp)
             ) {
+                Text("Registrati")
+            }*/
 
-                val focusManager = LocalFocusManager.current
-                val usernameFocusRequester = remember { FocusRequester() }
-                val passwordFocusRequester = remember { FocusRequester() }
-                val nameFocusRequester = remember { FocusRequester() }
-                val surnameFocusRequester = remember { FocusRequester() }
-                val mailFocusRequester = remember { FocusRequester() }
-                val buttonFocusRequester = remember { FocusRequester() }
-
-                Image(
-                    painter = painterResource(id = R.drawable.smartlagoon_logo_nosfondo),
-                    contentDescription = "Logo",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .padding(2.dp)
-                )
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)  // Altezza del tuo spacer
-                        .background(MaterialTheme.colorScheme.onTertiaryContainer)  // Colore del tuo spacer
-                )
-                OutlinedTextField(
-                    value = state.name,
-                    onValueChange = actions::setFirstName,
-                    label = { Text("Nome") },
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
-                        .focusRequester(nameFocusRequester),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        capitalization = KeyboardCapitalization.Sentences,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { surnameFocusRequester.requestFocus() }
-                    )
-                )
-                OutlinedTextField(
-                    value = state.surname,
-                    onValueChange = actions::setSurname,
-                    label = { Text("Cognome") },
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
-                        .focusRequester(surnameFocusRequester),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        capitalization = KeyboardCapitalization.Sentences,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { mailFocusRequester.requestFocus() }
-                    )
-                )
-                OutlinedTextField(
-                    value = state.mail,
-                    onValueChange = actions::setMail,
-                    label = { Text("Mail") },
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
-                        .focusRequester(mailFocusRequester),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
-                    keyboardActions = KeyboardActions(
-                        onNext = { usernameFocusRequester.requestFocus() }
-                    )
-                )
-                OutlinedTextField(
-                    value = state.username,
-                    onValueChange = actions::setUsername,
-                    label = { Text("Username") },
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
-                        .focusRequester(usernameFocusRequester),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                    keyboardActions = KeyboardActions(
-                        onNext = { passwordFocusRequester.requestFocus() }
-                    )
-                )
-                var pwd by remember { mutableStateOf(state.password) }
-                PasswordTextField(
-                    password = pwd,
-                    onPasswordChange = { newPassword -> pwd = newPassword},
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
-                        .focusRequester(passwordFocusRequester),
-                    label = "Password",
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                    signinActions = actions)
-                Spacer(Modifier.size(10.dp))
-                Button(
-                    onClick = {
-                        if (!state.canSubmit) return@Button
-                        val salt = viewModel.generateSalt()
-                        val password = viewModel.hashPassword(state.password, salt)
-                        onSubmit(
-                            User(
-                            username = state.username,
-                            password = password,
-                                salt = salt,
-                                urlProfilePicture = "",
-                                name = state.name,
-                                surname = state.surname,
-                                mail = state.mail
-                            ))
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                    ),
-                    modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(15.dp)
+            if(password == password1) {
+                showMessage = false
+                if (password.isNotEmpty() &&
+                    firstName.isNotEmpty() &&
+                    lastName.isNotEmpty() &&
+                    email.isNotEmpty() &&
+                    username.isNotEmpty()
                 ) {
-                    Text("Registrati")
+                    isEnabled = true
                 }
-                if (signinResult == false) {
-                    Text(signinLog.toString(), color = Color.Red)
-                } else if (signinResult == true) {
-                    navController.navigate(SmartlagoonRoute.Login.route)
-                }
+            } else {
+                showMessage = true
+                message = "Password non coincidono"
             }
+
+            if(showMessage) {
+                Text(text = message,
+                    color = Color.Red,
+                    modifier = Modifier.padding(8.dp)
+                )
+                Log.d("pippo", "Message: $message")
+            }
+
+            Button(
+                enabled = isEnabled,
+                onClick = {
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val user = auth.currentUser
+                            user?.let {
+                                val userData = mapOf(
+                                    "name" to firstName,
+                                    "surname" to lastName,
+                                    "username" to username,
+                                    "password" to password,
+                                    "email" to email,
+                                )
+                                firestore.collection("users").document(it.uid).set(userData)
+                                    .addOnSuccessListener {
+                                        Log.d("Registration", "User data saved successfully.")
+                                        showAlertDialog = true
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Log.e("Registration", "Error saving user data", e)
+                                        showMessage = true
+                                    }
+                            }
+                        } else {
+                            Log.e("Registration", "Registration failed", task.exception)
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp)) {
+                Text("Register")
+            }
+
+            if(showAlertDialog) {
+                AlertDialog(
+                    onDismissRequest = { showAlertDialog = false },
+                    title = {
+                        Text(text = "Utente creato correttamente!")
+                    },
+                    text = {
+                        Text(text = "Complimenti! Hai creato il tuo utente!")
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                showAlertDialog = false // Chiude il popup
+                                navController.navigate(SmartlagoonRoute.Login.route)
+                            },
+                            colors = myButtonColors(),
+                        ) {
+                            Text("Vai al login")
+                        }
+                    }
+                )
+            }
+
+
+            /*if (signinResult == false) {
+                Text(signinLog.toString(), color = Color.Red)
+            } else if (signinResult == true) {
+                navController.navigate(SmartlagoonRoute.Login.route)
+            }*/
+
+
         }
+    }
 }
 

@@ -51,7 +51,7 @@ fun AboutScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.smartlagoon_logo),
+                    painter = painterResource(id = R.drawable.lagoonguard_logo),//smartlagoon_logo),
                     contentDescription = "Logo",
                     modifier = Modifier
                         .fillMaxWidth()

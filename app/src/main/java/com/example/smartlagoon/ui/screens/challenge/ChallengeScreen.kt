@@ -21,9 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.smartlagoon.data.database.Challenge
-import com.example.smartlagoon.data.database.User
-import com.example.smartlagoon.ui.composables.AnimatedButton
 import com.example.smartlagoon.ui.composables.TopAppBar
 import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import androidx.compose.foundation.layout.Spacer
@@ -49,15 +46,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.smartlagoon.R
 import com.example.smartlagoon.TakePhotoActivity
+import com.example.smartlagoon.data.database.Challenge_old
 import com.example.smartlagoon.ui.theme.MyColors
 import com.example.smartlagoon.ui.theme.myButtonColors
+import com.example.smartlagoon.ui.viewmodel.Challenge
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ChallengeScreen(
     navController: NavHostController,
-    user: User,
     challengesDbVm: ChallengesDbViewModel,
     challengeList: List<Challenge>
 ) {
@@ -163,22 +161,26 @@ fun AchievementCard(
                     .padding(16.dp)
             ) {
                 // Header Row with Title
-                Text(
-                    text = challenge.title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = MyColors().myBluButtonTitle
-                )
+                challenge.title?.let {
+                    Text(
+                        text = it,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        color = MyColors().myBluButtonTitle
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Description Text
-                Text(
-                    text = challenge.description,
-                    fontSize = 16.sp,
-                    color = MyColors().myBluButtonText,
-                    fontWeight = FontWeight.Bold
+                challenge.description?.let {
+                    Text(
+                        text = it,
+                        fontSize = 16.sp,
+                        color = MyColors().myBluButtonText,
+                        fontWeight = FontWeight.Bold
                     )
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -200,7 +202,7 @@ fun AchievementCard(
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 title = {
-                    Text(text = challenge.title)
+                    challenge.title?.let { Text(text = it) }
                 },
                 text = {
                     Column {
@@ -209,7 +211,7 @@ fun AchievementCard(
                             contentDescription = null,
                             modifier = Modifier.size(40.dp)  // Imposta la dimensione dell'icona
                         )
-                        Text(text = challenge.description)
+                        challenge.description?.let { Text(text = it) }
                     }
                 },
                 confirmButton = {
@@ -218,7 +220,7 @@ fun AchievementCard(
                             showDialog = false // Chiude il popup
                             val intent = Intent(context, TakePhotoActivity::class.java).apply {
                                 putExtra("challengePoints", challenge.points)
-                                putExtra("challengeId", challenge.id)
+                                //putExtra("challengeId", challenge.id)
                             }
                             context.startActivity(intent)
                         },
