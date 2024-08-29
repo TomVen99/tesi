@@ -21,6 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.smartlagoon.ui.SmartlagoonNavGraph
 import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
+import com.example.smartlagoon.ui.viewmodel.Challenge
 import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.utils.PermissionsManager
 import com.google.firebase.Firebase
@@ -52,8 +53,8 @@ class MainActivity : ComponentActivity() {
         db = Firebase.firestore
 
         // Aggiungi un punteggio alla classifica
-        addChallenge("ch1", "Titolo", "Descr")
-        addChallenge("ch2", "Titolo1", "Descr1")
+        addChallenge("ch", Challenge("Titolo", "Descr",10, emptyList() ))
+        addChallenge( "ch1", Challenge("Titolo1", "Descr1",20, listOf("QaGgBwPB0rS0KTHWzPby7ZbRWrl1")))
         // Leggi la classifica ordinata
         readLeaderboard()
 
@@ -131,10 +132,13 @@ class MainActivity : ComponentActivity() {
     }
 
     // Funzione per aggiungere un punteggio alla collezione "leaderboard"
-    private fun addChallenge(chId: String, title: String, desc: String) {
+    private fun addChallenge(chId: String, challenge: Challenge) {
+
         val userScore = hashMapOf(
-            "title" to title,
-            "description" to desc,
+            "title" to challenge.title,
+            "description" to challenge.description,
+            "points" to challenge.points,
+            "completedBy" to challenge.completedBy,
         )
 
         // Aggiungi o aggiorna il documento dell'utente nella collezione "leaderboard"

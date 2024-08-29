@@ -46,7 +46,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.smartlagoon.R
 import com.example.smartlagoon.TakePhotoActivity
-import com.example.smartlagoon.data.database.Challenge_old
 import com.example.smartlagoon.ui.theme.MyColors
 import com.example.smartlagoon.ui.theme.myButtonColors
 import com.example.smartlagoon.ui.viewmodel.Challenge
@@ -115,39 +114,6 @@ fun AchievementCard(
             containerColor = MyColors().myBluButtonBackground
         )
     ) {
-        /*Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            // Header Row with Icon and Title
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = R.drawable.immagine_sfida), // Load your image
-                    contentDescription = "Challenge image", // Provide a description for accessibility
-                    modifier = Modifier.size(width = 40.dp, height = 40.dp) // Optional: Set image size
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = challenge.title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Description Text
-            Text(text = challenge.description, fontSize = 16.sp)
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Progress Bar and Progress Count
-            /*LinearProgressIndicator(
-                progress = progress,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp),
-                color = Color(0xFF4285F4)
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(text = "pippo", fontSize = 14.sp, color = Color.White)*/
-        }*/
         Row {
             Image(
                 painter = painterResource(id = R.drawable.immagine_sfida),
@@ -184,17 +150,6 @@ fun AchievementCard(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Progress Bar and Progress Count
-                /*LinearProgressIndicator(
-                    progress = progress,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp),
-                    color = Color(0xFF4285F4)
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(text = "pippo", fontSize = 14.sp, color = Color.White)*/
             }
         }
 

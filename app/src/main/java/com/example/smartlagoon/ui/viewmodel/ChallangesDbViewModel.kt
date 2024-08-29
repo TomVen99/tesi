@@ -36,6 +36,7 @@ class ChallengesDbViewModel(
     private val currentUser = auth.currentUser
     private val userId = currentUser?.uid
     fun getUnconpletedChallengeByUser() {
+        Log.d("chDBVM", userId.toString())
         firestore.collection("challenges")
             /*.whereNotEqualTo(
                 "completedBy",

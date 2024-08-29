@@ -96,7 +96,7 @@ fun HomeScreen(
                     onClick = {
                         if (sharedPreferences != null) {
                             val edit = sharedPreferences.edit()
-                            edit.putBoolean("isUserLogged", true)
+                            edit.putBoolean("isUserLogged", false)
                             edit.putString("username", "")
                             edit.apply()
                         }

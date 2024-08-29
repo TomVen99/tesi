@@ -194,7 +194,7 @@ fun SmartlagoonNavGraph(
             composable(route, arguments) {_ ->
                 Log.d("LOG", "sono qui")
                 //controllo per non bloccarsi
-                val handler = Handler(Looper.getMainLooper())
+                /*val handler = Handler(Looper.getMainLooper())
                 val runnable = Runnable {
                     if(usersState.users.isEmpty()) {
                         val edit = sharedPreferences.edit()
@@ -204,7 +204,7 @@ fun SmartlagoonNavGraph(
                         navController.navigate(SmartlagoonRoute.Login.route)
                     }
                 }
-                handler.postDelayed(runnable, 5000L)
+                handler.postDelayed(runnable, 5000L)*/
                 if(sharedPreferences.getString("username", "") == "") {
                     navController.navigate(SmartlagoonRoute.Login.route)
                 } else {
@@ -254,11 +254,12 @@ fun SmartlagoonNavGraph(
                 val userUncompleteChallenge by challengeDbVm.userUncompleteChallenges.observeAsState(
                     emptyList()
                 )
+                Log.d("sharePreferences", sharedPreferences.getBoolean("isUserLogged", false).toString())
                 /*sharedPreferences.getString("username", null)
                     ?.let { challengeDbVm.getUncompletedChallengesForUser(it) }*/
                 challengeDbVm.getUnconpletedChallengeByUser()
-                Log.d("Challenge",userUncompleteChallenge.toString())
-                Log.d("Challenge2",challengeDbVm.userUncompleteChallenges.value.toString())
+                /*Log.d("Challenge",userUncompleteChallenge.toString())
+                Log.d("Challenge2",challengeDbVm.userUncompleteChallenges.value.toString())*/
                 ChallengeScreen(
                     navController = navController,
                     challengeList = userUncompleteChallenge,
