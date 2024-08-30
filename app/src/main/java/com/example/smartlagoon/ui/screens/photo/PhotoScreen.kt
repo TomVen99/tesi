@@ -1,6 +1,7 @@
 package com.example.smartlagoon.ui.screens.photo
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -87,21 +88,20 @@ fun PhotoScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(photos) { photo ->  // Usa l'elenco delle foto dal ViewModel
-                    val user by usersDbVm.userLiveData.observeAsState()
+                    // Ottieni l'utente associato alla foto
+                    var user by remember { mutableStateOf<User?>(null) }
 
+                    // Chiamata per ottenere l'utente
                     LaunchedEffect(photo.userId) {
-                        usersDbVm.getUser(photo.userId)
+                        usersDbVm.getUser(photo.userId) { fetchedUser ->
+                            user = fetchedUser
+                        }
                     }
-
-                    user?.let {
-                        // Visualizza i dati dell'utente
-                        Text(text = "User Name: ${it.name}")
-                    } ?: run {
-                        // Visualizza uno stato di caricamento o errore
-                        Text(text = "Loading or User not found")
+                    if (user != null) {
+                        PhotoItem(photo = photo, user = user!!)
+                    } else {
+                        Text(text = "utente non trovato")
                     }
-
-                    user?.let { PhotoItem(photo = photo, user = it) }
                 }
             }
             if(showDialog) {
@@ -139,6 +139,11 @@ fun PhotoScreen(
 
 @Composable
 fun PhotoItem(photo: Photo, user: User) {
+    /*val user by usersDbVm.userLiveData.observeAsState()
+    LaunchedEffect(photo.userId) {
+        usersDbVm.getUser(photo.userId)
+    }*/
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -186,7 +191,7 @@ fun PhotoItem(photo: Photo, user: User) {
                     Spacer(modifier = Modifier.width(8.dp))
                     user.username?.let {
                         Text(
-                            text = it,
+                            text = user.username,
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,

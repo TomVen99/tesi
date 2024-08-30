@@ -56,7 +56,7 @@ fun Login(
     Log.d("LoginScreen", "dentro login screen")
     val loginResult by viewModel.loginResult.observeAsState()
     val loginLog by viewModel.loginLog.observeAsState()
-    var username by remember { mutableStateOf("") }
+    var mail by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isEnabled by remember { mutableStateOf(false) }
 
@@ -86,17 +86,17 @@ fun Login(
                     .height(1.dp)  // Altezza del tuo spacer
                     .background(MaterialTheme.colorScheme.onTertiaryContainer)  // Colore del tuo spacer
             )
-            val usernameFocusRequester = remember { FocusRequester() }
+            val mailFocusRequester = remember { FocusRequester() }
             val passwordFocusRequester = remember { FocusRequester() }
 
             OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
-                label = { Text("Username") },
+                value = mail,
+                onValueChange = { mail = it },
+                label = { Text("Mail") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp)
-                    .focusRequester(usernameFocusRequester),
+                    .focusRequester(mailFocusRequester),
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(
                     onNext = { passwordFocusRequester.requestFocus() }
@@ -127,13 +127,13 @@ fun Login(
                 }
             }
 
-            if(username.isNotEmpty() && password.isNotEmpty()) {
+            if(mail.isNotEmpty() && password.isNotEmpty()) {
                 isEnabled = true
             }
             Button(
                 enabled = isEnabled,
                 onClick = {
-                    viewModel.login(username, password, sharedPreferences)
+                    viewModel.login(mail, password, sharedPreferences)
                     navController.navigate(SmartlagoonRoute.Home.route)
                     Log.d("login", "vado in home")
                 },
@@ -152,7 +152,7 @@ fun Login(
             } else if (loginResult == null) {
                 Spacer(Modifier.size(15.dp))
             }*/
-
+            Spacer(Modifier.size(10.dp))
             Text(text = "Oppure")
             Spacer(Modifier.size(10.dp))
 

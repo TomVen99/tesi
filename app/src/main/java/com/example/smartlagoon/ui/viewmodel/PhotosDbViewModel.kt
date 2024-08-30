@@ -11,6 +11,7 @@ import com.example.smartlagoon.data.repositories.PhotosRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -111,6 +112,7 @@ class PhotosDbViewModel() : ViewModel() {
 
     fun fetchAllPhotos() {
         firestore.collection("photos")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
                 val photos = result.documents.mapNotNull { it.toObject(Photo::class.java) }
@@ -121,45 +123,4 @@ class PhotosDbViewModel() : ViewModel() {
             }
     }
 
-    /*private fun savePhotoUrlToFirestore(userId: String?, photoUrl: String) {
-        val firestore = FirebaseFirestore.getInstance()
-        val photoData = hashMapOf(
-            "userId" to userId,
-            "photoUrl" to photoUrl,
-            "timestamp" to FieldValue.serverTimestamp()
-        )
-
-        firestore.collection("photos")
-            .add(photoData)
-            .addOnSuccessListener {
-                Log.d("Firestore", "URL della foto salvato con successo su Firestore")
-            }
-            .addOnFailureListener { exception ->
-                Log.e(
-                    "Firestore",
-                    "Errore durante il salvataggio dell'URL su Firestore: ",
-                    exception
-                )
-            }
-      }*/
-
-
-    /*fun uploadPhotoToFirebaseStorage(imageUri: Uri) {
-    val photoRef = storageReference.child("users/$userId/photos/${UUID.randomUUID()}.jpg")
-
-    // Carica il file su Firebase Storage
-    photoRef.putFile(imageUri)
-        .addOnSuccessListener { taskSnapshot ->
-            // Ottieni l'URL di download una volta completato il caricamento
-            photoRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                val photoUrl = downloadUri.toString()
-
-                // Salva l'URL della foto su Firestore
-                savePhotoUrlToFirestore(userId, photoUrl)
-            }
-        }
-        .addOnFailureListener { exception ->
-            Log.e("FirebaseStorage", "Errore durante il caricamento della foto: ", exception)
-        }
-*/
 }

@@ -45,11 +45,8 @@ class TakePhotoActivity : ComponentActivity() {
                 Log.d("PhotoPermissionTag", "Autorizzazione concessa")
                 handlePhotoCapture()
             } else {
-                Toast.makeText(this, "Permesso non concesso", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(this, "Permesso non concesso", Toast.LENGTH_SHORT).show()
                 Log.e("PhotoPermissionTag", "Autorizzazione NON concessa")
-                //ShowPermissionDeniedSnackbar()
-                //startActivity(Intent(this, MainActivity::class.java))
                 finish()
             }
         }
@@ -58,34 +55,11 @@ class TakePhotoActivity : ComponentActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK ) {
                 setContent {
-                    val usersVm = koinViewModel<UsersViewModel>()
                     val usersDbVm = koinViewModel<UsersDbViewModel>()
-                    //val usersState by usersVm.state.collectAsStateWithLifecycle()
                     val photosDbVm = koinViewModel<PhotosDbViewModel>()
-                    /*val photosDbState by photosDbVm.state.collectAsStateWithLifecycle()*/
-                    val usersChallengeVm = koinViewModel<UserChallengeViewModel>()
-                    val context = LocalContext.current
-                    val sharedPreferences = context.getSharedPreferences("isUserLogged", Context.MODE_PRIVATE)
-                    sharedPreferences.getString("username", "")?.let { Log.d("share", it) }
-                    //Log.d("userState", usersState.userOlds.toString())
 
                     imageUri?.let { photosDbVm.uploadPhoto(it) }
                     usersDbVm.addPoints(challengePoints)
-                        /*LaunchedEffect(Unit) {
-                            val job = launch {
-                                photosDbVm.addPhoto(
-                                    Photo_old(
-                                        imageUri = imageUri.toString(),
-                                        username = user.username,
-                                        timestamp = System.currentTimeMillis()
-                                    )
-                                )
-                                usersVm.addPoints(user.username, challengePoints)
-                            }
-                            Log.d("JOB", "JOB")
-                            //job.cancel() // Cancel the coroutine job when the effect is no longer needed
-                        }*/
-
                     scheduleNotification()
 
                     LaunchedEffect(Unit) {
@@ -107,10 +81,8 @@ class TakePhotoActivity : ComponentActivity() {
 
                     val navController = rememberNavController()
                     PhotoScreen(
-                        //user = user,
                         usersDbVm = usersDbVm,
                         photosDbVm = photosDbVm,
-                        //photosDbState = photosDbState,
                         navController = navController,
                         comeFromTakePhoto = true,
                         challengePoints = challengePoints,
@@ -156,18 +128,14 @@ class TakePhotoActivity : ComponentActivity() {
 
     private fun handlePhotoCapture() {
         val uri = createImageUri()
-        if (uri != null) {
-            imageUri = uri
-            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-                putExtra(MediaStore.EXTRA_OUTPUT, uri)
-            }
-            cameraLauncher.launch(cameraIntent)
-        } else {
-            Log.e("TakePhotoActivity", "Impossibile creare l'URI per l'immagine")
+        imageUri = uri
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+            putExtra(MediaStore.EXTRA_OUTPUT, uri)
         }
+        cameraLauncher.launch(cameraIntent)
     }
 
-    private fun createImageUri(): Uri? {
+    /*private fun createImageUri(): Uri? {
         val resolver = contentResolver
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val fileName = "Smartlagoon_Photo_$timeStamp.jpg"
@@ -176,6 +144,15 @@ class TakePhotoActivity : ComponentActivity() {
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
         }
         return resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+    }*/
+
+    private fun createImageUri(): Uri {
+        val resolver = contentResolver
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+        }
+        return resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
     }
 
     private fun scheduleNotification() {

@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
@@ -34,20 +35,36 @@ class UsersDbViewModel : ViewModel() {
     private val _userLiveData = MutableLiveData<User?>()
     val userLiveData: LiveData<User?> = _userLiveData
 
-    fun getUser(userId: String) {
+    private val _rankingLiveData = MutableLiveData<List<User?>>()
+    val rankingLiveData: LiveData<List<User?>> = _rankingLiveData
+
+    fun getRanking() {
+        firestore.collection("users")
+            .orderBy("points", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { result ->
+                val ranking = result.documents.mapNotNull { it.toObject(User::class.java) }
+                _rankingLiveData.value = ranking
+            }
+            .addOnFailureListener { exception ->
+                Log.e("PhotoDbViewModel", "Errore durante il recupero delle foto: ", exception)
+            }
+    }
+
+    fun getUser(userId: String, callback: (User?) -> Unit) {
         val userDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
 
         userDocRef.get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val user = document.toObject(User::class.java)
-                    _userLiveData.value = user
+                    callback(user)
                 } else {
-                    _userLiveData.value = null
+                    callback(null)
                 }
             }
             .addOnFailureListener {
-                _userLiveData.value = null
+                callback(null)
             }
     }
 
@@ -141,36 +158,6 @@ class UsersDbViewModel : ViewModel() {
         }
     }
 
-    /*fun uploadProfileImage(userId: String, imageUri: Uri) {
-        val storageRef: StorageReference = FirebaseStorage.getInstance().reference
-        val userProfileImageRef = storageRef.child("profile_images/${userId}.jpg")
-
-        userProfileImageRef.putFile(imageUri)
-            .addOnSuccessListener {
-                userProfileImageRef.downloadUrl.addOnSuccessListener { uri ->
-                    updateProfileImageUrl(userId, uri.toString())
-                }.addOnFailureListener { e ->
-                    Log.e("Firebase", "Error getting image URL", e)
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e("Firebase", "Error uploading image", e)
-            }
-    }
-
-    private fun updateProfileImageUrl(userId: String, imageUrl: String) {
-        //val firestore = FirebaseFirestore.getInstance()
-        val userDocRef = firestore.collection("users").document(userId)
-
-        userDocRef.update("profileImageUrl", imageUrl)
-            .addOnSuccessListener {
-                Log.d("Firebase", "Profile image URL updated successfully.")
-                fetchUserProfile()
-            }
-            .addOnFailureListener { e ->
-                Log.e("Firebase", "Error updating profile image URL", e)
-            }
-    }*/
     fun uploadProfileImage(userId: String, imageUri: Uri, onComplete: () -> Unit) {
         val storageRef: StorageReference = FirebaseStorage.getInstance().reference
         val userProfileImageRef = storageRef.child("profile_images/${userId}.jpg")
@@ -205,6 +192,32 @@ class UsersDbViewModel : ViewModel() {
             }
     }
 
+    fun updateUserProfile(name: String, surname: String, username: String) {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            val userDocRef = firestore.collection("users").document(userId)
+
+            val updatedData = mutableMapOf<String, Any>()
+
+            // Aggiungi solo i valori non vuoti
+            if (name.isNotBlank()) updatedData["name"] = name
+            if (surname.isNotBlank()) updatedData["surname"] = surname
+            if (username.isNotBlank()) updatedData["username"] = username
+
+            // Solo se ci sono dati da aggiornare
+            if (updatedData.isNotEmpty()) {
+                userDocRef.update(updatedData)
+                    .addOnSuccessListener {
+                        Log.d("Firebase", "User profile updated successfully.")
+                        fetchUserProfile()
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Firebase", "Error updating user profile", e)
+                    }
+            }
+        }
+    }
 
     // Funzione per recuperare i dati del profilo utente
     fun fetchUserProfile() {

@@ -116,7 +116,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun MenuGrid(navController: NavController){//, user: User) {
+fun MenuGrid(navController: NavController){
     Column {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -138,7 +138,7 @@ fun MenuGrid(navController: NavController){//, user: User) {
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
-            MenuItem("Scatta", R.drawable.ic_ricicla, SmartlagoonRoute.Recycle, navController)//, user)
+            MenuItem("Quiz", R.drawable.ic_ricicla, SmartlagoonRoute.Quiz, navController)//, user)
             MenuItem("About", R.drawable.ic_info, SmartlagoonRoute.About, navController)
         }
     }
@@ -154,7 +154,8 @@ fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: 
             .size(170.dp)
             .clip(RoundedCornerShape(8.dp))
             .clickable {
-                if(route.route == "recycle")
+                navController.navigate(route.route)
+                /*if(route.route == "recycle")
                 {
                     val intent = Intent(context, TakePhotoActivity::class.java).apply{
                         /*putExtra("username", user?.username)
@@ -162,8 +163,8 @@ fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: 
                     }
                     context.startActivity(intent)
                 }else {
-                    navController.navigate(route.route)
-                }
+                  navController.navigate(route.route)
+                }*/
             }
     ) {
         Column(
