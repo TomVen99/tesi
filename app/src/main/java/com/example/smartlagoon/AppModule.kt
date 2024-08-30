@@ -14,6 +14,7 @@ import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 import com.example.smartlagoon.ui.screens.home.HomeScreenViewModel
 import com.example.smartlagoon.ui.screens.login.LoginViewModel
 import com.example.smartlagoon.ui.screens.profile.ProfileViewModel
+import com.example.smartlagoon.ui.screens.quiz.QuizViewModel
 import com.example.smartlagoon.ui.screens.signin.SigninViewModel
 import com.example.smartlagoon.ui.theme.ThemeViewModel
 import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
@@ -78,6 +79,8 @@ val appModule = module {
     viewModel { UsersDbViewModel() }
 
     viewModel { PhotosDbViewModel() }
+
+    viewModel { QuizViewModel() }
 
     viewModel { ChallengesDbViewModel(get()) }
 

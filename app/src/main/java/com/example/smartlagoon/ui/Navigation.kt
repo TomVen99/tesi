@@ -20,6 +20,7 @@ import com.example.smartlagoon.ui.screens.photo.PhotoScreen
 import com.example.smartlagoon.ui.screens.profile.ProfileScreen
 import com.example.smartlagoon.ui.screens.challenge.ChallengeScreen
 import com.example.smartlagoon.ui.screens.quiz.QuizScreen
+import com.example.smartlagoon.ui.screens.quiz.QuizViewModel
 import com.example.smartlagoon.ui.screens.ranking.RankingScreen
 import com.example.smartlagoon.ui.screens.signin.SigninScreen
 import com.example.smartlagoon.ui.screens.signin.SigninViewModel
@@ -188,7 +189,11 @@ fun SmartlagoonNavGraph(
         }
         with(SmartlagoonRoute.Quiz) {
             composable(route) {
+                val quizVm = koinViewModel<QuizViewModel>()
+                quizVm.loadQuestions()
                 QuizScreen(
+                    quizVm = quizVm,
+                    usersDbVm = usersDbVm,
                     navController = navController,
                 )
             }
