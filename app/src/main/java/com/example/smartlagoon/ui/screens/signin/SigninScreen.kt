@@ -1,6 +1,5 @@
 package com.example.smartlagoon.ui.screens.signin
 
-import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,12 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.DoneOutline
 import androidx.compose.runtime.getValue
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -40,20 +36,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.TextField
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import com.example.smartlagoon.ui.composables.PasswordTextField
 import com.example.smartlagoon.R
-import com.example.smartlagoon.TakePhotoActivity
-import com.example.smartlagoon.data.database.User
+import com.example.smartlagoon.data.database.User_old
 import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.theme.myButtonColors
-import com.example.smartlagoon.ui.viewmodel.UsersViewModel
+import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -61,13 +53,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 fun SigninScreen(
     state: SigninState,
     actions: SigninActions,
-    onSubmit: (User) -> Unit,
     navController: NavHostController,
-    viewModel: UsersViewModel
+    viewModel: UsersDbViewModel
     ) {
 
-    /*val signinLog by viewModel.signinLog.observeAsState()
-    val signinResult by viewModel.signinResult.observeAsState()*/
+    val signinLog by viewModel.signinLog.observeAsState()
+    val signinResult by viewModel.signinResult.observeAsState()
 
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
@@ -230,32 +221,6 @@ fun SigninScreen(
                 visualTransformation = PasswordVisualTransformation()
             )
             Spacer(Modifier.size(10.dp))
-            /*Button(
-                onClick = {
-                    if (!state.canSubmit) return@Button
-                    val salt = viewModel.generateSalt()
-                    val password = viewModel.hashPassword(state.password, salt)
-                    onSubmit(
-                        User(
-                        username = state.username,
-                        password = password,
-                            salt = salt,
-                            urlProfilePicture = "",
-                            name = state.name,
-                            surname = state.surname,
-                            mail = state.mail
-                        ))
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(15.dp)
-            ) {
-                Text("Registrati")
-            }*/
 
             if(password == password1) {
                 showMessage = false
@@ -283,7 +248,8 @@ fun SigninScreen(
             Button(
                 enabled = isEnabled,
                 onClick = {
-                auth.createUserWithEmailAndPassword(email, password)
+                    viewModel.register(email, password, firstName, lastName, username)
+                /*auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             val user = auth.currentUser
@@ -308,7 +274,7 @@ fun SigninScreen(
                         } else {
                             Log.e("Registration", "Registration failed", task.exception)
                         }
-                    }
+                    }*/
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -318,6 +284,13 @@ fun SigninScreen(
                     .fillMaxWidth()
                     .padding(15.dp)) {
                 Text("Register")
+            }
+
+            // Controlla il risultato del signup
+            if (signinResult == false) {
+                Text(signinLog.toString(), color = Color.Red)
+            } else if (signinResult == true) {
+                navController.navigate(SmartlagoonRoute.Login.route)
             }
 
             if(showAlertDialog) {

@@ -1,10 +1,6 @@
 package com.example.smartlagoon.data.repositories
 
-import android.content.ContentResolver
-import com.example.smartlagoon.data.database.Challenge_old
 import com.example.smartlagoon.data.database.ChallengesDAO
-import com.example.smartlagoon.data.database.User
-import kotlinx.coroutines.flow.Flow
 
 class ChallengeRepository(
     private val challengesDAO: ChallengesDAO,

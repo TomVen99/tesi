@@ -1,50 +1,165 @@
 package com.example.smartlagoon.ui.viewmodel
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.smartlagoon.data.database.Photo
+import com.example.smartlagoon.data.database.Photo_old
 import com.example.smartlagoon.data.repositories.PhotosRepository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.UUID
 
-data class PhotosDbState(val photos: List<Photo>)
+data class PhotosDbState(val photoOlds: List<Photo_old>)
 
-class PhotosDbViewModel(
-    private val repository: PhotosRepository
-) : ViewModel() {
-    val state = repository.photos.map { PhotosDbState(photos = it) }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = PhotosDbState(emptyList())
-    )
+data class Photo(
+    val photoId: String = "",
+    val userId: String = "",
+    val photoUrl: String = "",
+    val timestamp: Long = System.currentTimeMillis()
+)
+
+class PhotosDbViewModel() : ViewModel() {
 
     private val _userPhotosNumber = MutableLiveData<Int>()
     val userPhotosNumber: LiveData<Int> = _userPhotosNumber
 
-    fun addPhoto(photo: Photo) = viewModelScope.launch {
-        repository.upsertPhoto(photo)
+    fun addPhoto(photoOld: Photo_old) = viewModelScope.launch {
+        //repository.upsertPhoto(photoOld)
     }
 
     fun deleteOldPhoto(cutoff: Long) = viewModelScope.launch(Dispatchers.IO) {
-        repository.deleteOldPhoto(cutoff)
+        //repository.deleteOldPhoto(cutoff)
     }
 
     fun getAllPhotos() = viewModelScope.launch {
-        repository.getAllPhotos()
+        //repository.getAllPhotos()
     }
 
     fun getUserPhotos(user: String) = viewModelScope.launch {
-        repository.getUserPhotos(user)
+        //repository.getUserPhotos(user)
     }
 
     fun getUserPhotoNumber(username: String) = viewModelScope.launch {
-        val userPhotosNum = repository.getUserPhotoNumber(username)
-        _userPhotosNumber.value = userPhotosNum
+        /*val userPhotosNum = repository.getUserPhotoNumber(username)
+        _userPhotosNumber.value = userPhotosNum*/
     }
 
+    private val firestore = FirebaseFirestore.getInstance()
+    private val storage = FirebaseStorage.getInstance()
+    private val auth = FirebaseAuth.getInstance()
+    val currentUser = auth.currentUser
+
+    private val _photosLiveData = MutableLiveData<List<Photo>>()
+    val photosLiveData: LiveData<List<Photo>> get() = _photosLiveData
+
+    // Metodo per caricare una foto e salvarla nel database
+    fun uploadPhoto(uri: Uri) {
+        val userId = currentUser?.uid ?: return
+        val photoId = UUID.randomUUID().toString()
+        val storageRef = storage.reference.child("photos/$userId/$photoId.jpg")
+
+        // Carica la foto su Firebase Storage
+        storageRef.putFile(uri)
+            .addOnSuccessListener {
+                // Recupera l'URL della foto dal Firebase Storage
+                storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    savePhotoToFirestore(userId, photoId, downloadUri.toString())
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("PhotoDbViewModel", "Errore durante il caricamento della foto: ", exception)
+            }
+    }
+
+    // Salva i dettagli della foto nel database Firestore
+    private fun savePhotoToFirestore(userId: String, photoId: String, photoUrl: String) {
+        val photo = Photo(photoId, userId, photoUrl)
+        firestore.collection("photos").document(photoId)
+            .set(photo)
+            .addOnSuccessListener {
+                Log.d("PhotoDbViewModel", "Foto salvata con successo nel database")
+                fetchPhotosByUser(userId) // Aggiorna l'elenco delle foto dell'utente
+            }
+            .addOnFailureListener { exception ->
+                Log.e("PhotoDbViewModel", "Errore durante il salvataggio della foto: ", exception)
+            }
+    }
+
+    // Metodo per recuperare tutte le foto di un utente specifico
+    fun fetchPhotosByUser(userId: String) {
+        firestore.collection("photos")
+            .whereEqualTo("userId", userId)
+            .get()
+            .addOnSuccessListener { result ->
+                val photos = result.documents.mapNotNull { it.toObject(Photo::class.java) }
+                _photosLiveData.value = photos
+            }
+            .addOnFailureListener { exception ->
+                Log.e("PhotoDbViewModel", "Errore durante il recupero delle foto: ", exception)
+            }
+    }
+
+    fun fetchAllPhotos() {
+        firestore.collection("photos")
+            .get()
+            .addOnSuccessListener { result ->
+                val photos = result.documents.mapNotNull { it.toObject(Photo::class.java) }
+                _photosLiveData.value = photos
+            }
+            .addOnFailureListener { exception ->
+                Log.e("PhotoDbViewModel", "Errore durante il recupero delle foto: ", exception)
+            }
+    }
+
+    /*private fun savePhotoUrlToFirestore(userId: String?, photoUrl: String) {
+        val firestore = FirebaseFirestore.getInstance()
+        val photoData = hashMapOf(
+            "userId" to userId,
+            "photoUrl" to photoUrl,
+            "timestamp" to FieldValue.serverTimestamp()
+        )
+
+        firestore.collection("photos")
+            .add(photoData)
+            .addOnSuccessListener {
+                Log.d("Firestore", "URL della foto salvato con successo su Firestore")
+            }
+            .addOnFailureListener { exception ->
+                Log.e(
+                    "Firestore",
+                    "Errore durante il salvataggio dell'URL su Firestore: ",
+                    exception
+                )
+            }
+      }*/
+
+
+    /*fun uploadPhotoToFirebaseStorage(imageUri: Uri) {
+    val photoRef = storageReference.child("users/$userId/photos/${UUID.randomUUID()}.jpg")
+
+    // Carica il file su Firebase Storage
+    photoRef.putFile(imageUri)
+        .addOnSuccessListener { taskSnapshot ->
+            // Ottieni l'URL di download una volta completato il caricamento
+            photoRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                val photoUrl = downloadUri.toString()
+
+                // Salva l'URL della foto su Firestore
+                savePhotoUrlToFirestore(userId, photoUrl)
+            }
+        }
+        .addOnFailureListener { exception ->
+            Log.e("FirebaseStorage", "Errore durante il caricamento della foto: ", exception)
+        }
+*/
 }

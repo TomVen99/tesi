@@ -24,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -37,35 +36,29 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.smartlagoon.ui.composables.PasswordTextField
 import com.example.smartlagoon.R
 import com.example.smartlagoon.ui.SmartlagoonRoute
-import com.example.smartlagoon.ui.viewmodel.UsersViewModel
-import com.google.firebase.auth.FirebaseAuth
+import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 
 
 @Composable
 fun Login(
-    state: LoginState,
-    actions: LoginActions,
-    onSubmit: () -> Unit,
     navController: NavHostController,
-    viewModel: UsersViewModel,
+    //viewModel: UsersViewModel,
+    viewModel: UsersDbViewModel,
     sharedPreferences: SharedPreferences,
 ) {
     Log.d("LoginScreen", "dentro login screen")
-    val signinResult by viewModel.loginResult.observeAsState()
-    val signinLog by viewModel.loginLog.observeAsState()
+    val loginResult by viewModel.loginResult.observeAsState()
+    val loginLog by viewModel.loginLog.observeAsState()
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isEnabled by remember { mutableStateOf(false) }
-    val auth = FirebaseAuth.getInstance()
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -93,22 +86,9 @@ fun Login(
                     .height(1.dp)  // Altezza del tuo spacer
                     .background(MaterialTheme.colorScheme.onTertiaryContainer)  // Colore del tuo spacer
             )
-            val focusManager = LocalFocusManager.current
             val usernameFocusRequester = remember { FocusRequester() }
             val passwordFocusRequester = remember { FocusRequester() }
-            /*OutlinedTextField(
-                value = state.username,
-                onValueChange = actions::setUsername,
-                label = { Text("Username") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-                    .focusRequester(usernameFocusRequester),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
-                keyboardActions = KeyboardActions(
-                    onNext = { passwordFocusRequester.requestFocus() }
-                )
-            )*/
+
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
@@ -123,19 +103,6 @@ fun Login(
                 )
             )
 
-            var pwd by remember { mutableStateOf(state.password) }
-
-            /*PasswordTextField(
-                password = pwd,
-                onPasswordChange = { newPassword -> pwd = newPassword },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-                    .focusRequester(passwordFocusRequester),
-                label = "Password",
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                loginActions = actions
-            )*/
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
@@ -151,37 +118,14 @@ fun Login(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
-                if (signinResult == false) {
-                    Text(signinLog.toString(), color = Color.Red)
-                } else if (signinResult == true) {
-                    navController.navigate(SmartlagoonRoute.Home.buildRoute(state.username))
-                } else if (signinResult == null) {
+                if (loginResult == false) {
+                    Text(loginLog.toString(), color = Color.Red)
+                } else if (loginResult == true) {
+                    navController.navigate(SmartlagoonRoute.Home.route)//.buildRoute(state.username))
+                } else if (loginResult == null) {
                     Spacer(Modifier.size(15.dp))
                 }
             }
-            /*Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(15.dp),
-                onClick = {
-                    if (!state.canSubmit) return@Button
-                    onSubmit()
-                    val edit = sharedPreferences.edit()
-                    edit.putBoolean("isUserLogged", true)
-                    edit.putString("username",state.username)
-                    edit.putString("password",state.password)
-                    edit.apply()
-                    //sharedPreferences.getString("username", "")?.let { Log.d("TAG", "dentro Login " + it) }
-                },
-                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            ) {
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text("Accedi")
-            }*/
 
             if(username.isNotEmpty() && password.isNotEmpty()) {
                 isEnabled = true
@@ -189,21 +133,9 @@ fun Login(
             Button(
                 enabled = isEnabled,
                 onClick = {
-                auth.signInWithEmailAndPassword(username, password)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.d("Login", "Login successful")
-                            val edit = sharedPreferences.edit()
-                            edit.putBoolean("isUserLogged", true)
-                            edit.putString("username", username)
-                            edit.putString("password", password)
-                            edit.apply()
-                            navController.navigate(SmartlagoonRoute.Home.buildRoute(username))
-                        } else {
-                            Log.e("Login", "Login failed", task.exception)
-
-                        }
-                    }
+                    viewModel.login(username, password, sharedPreferences)
+                    navController.navigate(SmartlagoonRoute.Home.route)
+                    Log.d("login", "vado in home")
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -212,7 +144,18 @@ fun Login(
                 Text("Login")
             }
 
+            /*// Controlla il risultato del login
+            if (loginResult == false) {
+                Text(loginLog.toString(), color = Color.Red)
+            } else if (loginResult == true) {
+                navController.navigate(SmartlagoonRoute.Home.route)//buildRoute(state.username))
+            } else if (loginResult == null) {
+                Spacer(Modifier.size(15.dp))
+            }*/
+
             Text(text = "Oppure")
+            Spacer(Modifier.size(10.dp))
+
             TextButton(
                 onClick = {
                     navController.navigate(SmartlagoonRoute.Signin.route)

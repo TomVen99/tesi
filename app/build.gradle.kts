@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.Packaging
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -21,6 +23,12 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
+        }
+
+        packaging {
+            resources {
+                excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+            }
         }
     }
 
@@ -81,6 +89,7 @@ dependencies {
     //fine immagini
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
     implementation("com.google.android.gms:play-services-maps:19.0.0")
+    implementation("com.android.identity:identity-jvm:202408.1")
     /*implementation("androidx.compose.material3:material3-android:1.2.1")
     implementation("com.example.some-library") {
         exclude(group = "androidx.compose.material3", module = "material3")
@@ -104,6 +113,7 @@ dependencies {
     // Firestore con estensioni Kotlin
     implementation ("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation ("com.google.firebase:firebase-storage-ktx")
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
     implementation ("com.google.android.gms:play-services-identity:18.1.0")
     //Fine miei import

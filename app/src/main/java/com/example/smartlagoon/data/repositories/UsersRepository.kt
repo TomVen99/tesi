@@ -1,16 +1,16 @@
 package com.example.smartlagoon.data.repositories
 
-import com.example.smartlagoon.data.database.User
+import com.example.smartlagoon.data.database.User_old
 import com.example.smartlagoon.data.database.UsersDAO
 import kotlinx.coroutines.flow.Flow
 
 class UsersRepository(private val usersDAO: UsersDAO) {
-    val users: Flow<List<User>> = usersDAO.getAllUser()
-    val usersRanking: Flow<List<User>> = usersDAO.getAllUserRanking()
+    /*val users: Flow<List<User_old>> = usersDAO.getAllUser()
+    val usersRanking: Flow<List<User_old>> = usersDAO.getAllUserRanking()
 
-    suspend fun upsert(user: User) = usersDAO.upsertUser(user)
+    suspend fun upsert(userOld: User_old) = usersDAO.upsertUser(userOld)
 
-    suspend fun delete(user: User) = usersDAO.deleteUser(user)
+    suspend fun delete(userOld: User_old) = usersDAO.deleteUser(userOld)
 
     fun getUser(user: String) = usersDAO.getUser(user)
 
@@ -20,7 +20,7 @@ class UsersRepository(private val usersDAO: UsersDAO) {
 
     suspend fun updateProfileImg(username: String, profileImg: String) {
         usersDAO.updateProfileImg(username, profileImg)
-    }
+    }*/
 }
 
 

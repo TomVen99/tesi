@@ -35,12 +35,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.smartlagoon.R
 import com.example.smartlagoon.TakePhotoActivity
-import com.example.smartlagoon.data.database.User
 import com.example.smartlagoon.ui.SmartlagoonRoute
 
 @Composable

@@ -2,8 +2,6 @@ package com.example.smartlagoon.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,19 +21,17 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.smartlagoon.ui.screens.about.AboutScreen
 import com.example.smartlagoon.ui.screens.home.HomeScreen
-import com.example.smartlagoon.ui.screens.home.HomeScreenViewModel
 import com.example.smartlagoon.ui.screens.login.Login
 import com.example.smartlagoon.ui.screens.login.LoginViewModel
 import com.example.smartlagoon.ui.screens.photo.PhotoScreen
 import com.example.smartlagoon.ui.screens.profile.ProfileScreen
 import com.example.smartlagoon.ui.screens.challenge.ChallengeScreen
 import com.example.smartlagoon.ui.screens.ranking.RankingScreen
-import com.example.smartlagoon.ui.screens.signin.RegistrationScreen
 import com.example.smartlagoon.ui.screens.signin.SigninScreen
 import com.example.smartlagoon.ui.screens.signin.SigninViewModel
 import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
-import com.example.smartlagoon.ui.viewmodel.UserChallengeViewModel
+import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -59,8 +55,10 @@ sealed class SmartlagoonRoute(
 
     data object About : SmartlagoonRoute("about", "About", "")
 
-    data object Home : SmartlagoonRoute(
-        "home/{userUsername}",
+    data object Home : SmartlagoonRoute("home", "Home", "")
+
+    /*data object Home : SmartlagoonRoute(
+        "home",
         "homePage",
         "",
         listOf(
@@ -72,15 +70,10 @@ sealed class SmartlagoonRoute(
             return currentRoute
         }
 
-        fun buildWithoutPosition (userUsername: String) : String {
-            setMyCurrentRoute("home/$userUsername/0/0")
-            return currentRoute
-        }
-
         private fun setMyCurrentRoute (route : String) {
             currentRoute = route
         }
-    }
+    }*/
 
     data object Profile : SmartlagoonRoute(
         "profile/{userUsername}",
@@ -114,10 +107,11 @@ fun SmartlagoonNavGraph(
 ) {
 
     val usersVm = koinViewModel<UsersViewModel>()
-    val usersState by usersVm.state.collectAsStateWithLifecycle()
+    var usersDbVm = koinViewModel<UsersDbViewModel>()
+    //val usersState by usersVm.state.collectAsStateWithLifecycle()
     var userDefault by remember{ mutableStateOf("null") }
     val photosDbVm = koinViewModel<PhotosDbViewModel>()
-    val photosDbState by photosDbVm.state.collectAsStateWithLifecycle()
+    //val photosDbState by photosDbVm.state.collectAsStateWithLifecycle()
     /*val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
     val challengeDbState = challengeDbVm.state.collectAsStateWithLifecycle()
     val userUncompleteChallenge by challengeDbVm.userUncompleteChallenges.observeAsState(
@@ -145,7 +139,7 @@ fun SmartlagoonNavGraph(
                 Log.d("Navigation", "4")
                 SmartlagoonRoute.Challenge.route
             } else {
-                SmartlagoonRoute.Home.buildRoute(username)
+                SmartlagoonRoute.Home.route//buildRoute(username)
             }
         } else {
             SmartlagoonRoute.Login.route
@@ -162,88 +156,62 @@ fun SmartlagoonNavGraph(
         with(SmartlagoonRoute.Login) {
             Log.d("LoginRoute", "navgraph Login")
             composable(route) {
-                usersVm.resetValues()
+                //usersVm.resetValues()
+                usersDbVm = koinViewModel<UsersDbViewModel>()
                 val loginVm = koinViewModel<LoginViewModel>()
                 val state by loginVm.state.collectAsStateWithLifecycle()
                 //LoginScreen()
                 Login(
-                    state,
-                    actions = loginVm.actions,
-                    onSubmit = {usersVm.login(state.username, state.password)},
                     navController,
-                    usersVm,
+                    usersDbVm,
                     sharedPreferences
                 )
             }
         }
         with(SmartlagoonRoute.Signin) {
             composable(route) {
-                usersVm.resetValues()
+                //usersVm.resetValues()
                 val signinVm = koinViewModel<SigninViewModel>()
                 val signinState by signinVm.state.collectAsStateWithLifecycle()
                 SigninScreen(
                     state = signinState,
                     actions = signinVm.actions,
-                    onSubmit = { usersVm.addUser(it) },
+                    //onSubmit = { usersVm.addUser(it) },
                     navController = navController,
-                    usersVm
+                    usersDbVm
                 )
             }
         }
         with(SmartlagoonRoute.Home) {
             composable(route, arguments) {_ ->
-                Log.d("LOG", "sono qui")
-                //controllo per non bloccarsi
-                /*val handler = Handler(Looper.getMainLooper())
-                val runnable = Runnable {
-                    if(usersState.users.isEmpty()) {
-                        val edit = sharedPreferences.edit()
-                        edit.putBoolean("isUserLogged", false)
-                        edit.putString("username", "")
-                        edit.apply()
-                        navController.navigate(SmartlagoonRoute.Login.route)
-                    }
-                }
-                handler.postDelayed(runnable, 5000L)*/
-                if(sharedPreferences.getString("username", "") == "") {
-                    navController.navigate(SmartlagoonRoute.Login.route)
-                } else {
-                    HomeScreen(
-                        navController,
-                        sharedPreferences
-                    )
-                }
+                Log.d("LOG", "home route")
+                HomeScreen(
+                    navController,
+                    sharedPreferences
+                )
             }
         }
         with(SmartlagoonRoute.Profile) {
             composable(route, arguments) {
-                if(usersState.users.isNotEmpty()) {
-                    //val userTrackNumber by tracksDbVm.userTracksNumber.observeAsState(0)
-                    val userPoints by usersVm.userPoints.observeAsState(0)
-                    Log.d("TAGGG", usersState.users.toString())
-                    sharedPreferences.getString("username", null)?.let { Log.d("TAGGG", it) }
-                    val user = requireNotNull(usersState.users.find {
-                        it.username == sharedPreferences.getString("username", null)
-                    })
-                    usersVm.getUserPoints(user.username)
-                    ProfileScreen(
-                        navController = navController,
-                        user = user,
-                        usersViewModel = usersVm,
-                        userPoints = userPoints
-                    )
+                LaunchedEffect(Unit) {
+                    usersDbVm.fetchUserProfile()
                 }
+                ProfileScreen(
+                    navController = navController,
+                    usersDbVm = usersDbVm,
+                    //userOld = user,
+                    //usersViewModel = usersVm,
+                    //userPoints = userPoints
+                )
             }
         }
         with(SmartlagoonRoute.Ranking) {
             composable(route, arguments) {
                 val usersViewModel = koinViewModel<UsersViewModel>()
-                val usersRankingState by usersViewModel.rankingState.collectAsStateWithLifecycle()
-                sharedPreferences.getString("username", null)
-                    ?.let { it1 -> usersViewModel.getUserPoints(it1) }
+                //val usersRankingState by usersViewModel.rankingState.collectAsStateWithLifecycle()
                 RankingScreen(
                     navController = navController,
-                    state = usersRankingState,
+                    //state = usersRankingState,
                 )
             }
         }
@@ -274,12 +242,18 @@ fun SmartlagoonNavGraph(
                     val cutoff = currentTime - 24 * 60 * 60 * 1000 // 24 ore in millisecondi
                     photosDbVm.deleteOldPhoto(cutoff)
                 }
+                LaunchedEffect(Unit) {
+                    val userId = photosDbVm.currentUser?.uid
+                    if (userId != null) {
+                        photosDbVm.fetchPhotosByUser(userId)
+                    }
+                }
                 PhotoScreen(
                     photosDbVm = photosDbVm,
-                    photosDbState = photosDbState,
+                    //photosDbState = photosDbState,
                     navController = navController,
                     comeFromTakePhoto = false,
-                    usersViewModel = usersVm
+                    usersDbVm = usersDbVm
                 )
             }
         }

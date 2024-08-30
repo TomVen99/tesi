@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.smartlagoon.data.database.User
+import com.example.smartlagoon.data.database.User_old
 import com.example.smartlagoon.ui.composables.TopAppBar
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
 
@@ -34,7 +34,7 @@ import com.example.smartlagoon.ui.theme.SmartlagoonTheme
 fun SettingsScreen(
     settingsVm : SettingsViewModel,
     navController: NavHostController,
-    user: User,
+    userOld: User_old,
 ) {
     val scope = rememberCoroutineScope()
     val myScaffold: @Composable () -> Unit = {

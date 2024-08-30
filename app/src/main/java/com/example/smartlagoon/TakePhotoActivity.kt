@@ -1,6 +1,5 @@
 package com.example.smartlagoon
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -19,30 +18,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.smartlagoon.data.database.Photo
 import com.example.smartlagoon.ui.screens.photo.PhotoScreen
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 import com.example.smartlagoon.utils.NotificationWorker
 import com.example.smartlagoon.utils.PermissionsManager
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-import android.provider.Settings
-import android.view.LayoutInflater
-import android.widget.TextView
 import android.widget.Toast
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
-import androidx.compose.runtime.Composable
-import com.example.smartlagoon.data.database.UserChallenge
-import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.UserChallengeViewModel
+import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 
 class TakePhotoActivity : ComponentActivity() {
 
@@ -50,7 +38,6 @@ class TakePhotoActivity : ComponentActivity() {
     private var imageUri: Uri? = null
     private var challengePoints = 0
     private var challengeId = 0
-    private val snackbarHostState = SnackbarHostState()
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -72,25 +59,22 @@ class TakePhotoActivity : ComponentActivity() {
             if (result.resultCode == RESULT_OK ) {
                 setContent {
                     val usersVm = koinViewModel<UsersViewModel>()
-                    val usersState by usersVm.state.collectAsStateWithLifecycle()
+                    val usersDbVm = koinViewModel<UsersDbViewModel>()
+                    //val usersState by usersVm.state.collectAsStateWithLifecycle()
                     val photosDbVm = koinViewModel<PhotosDbViewModel>()
-                    val photosDbState by photosDbVm.state.collectAsStateWithLifecycle()
+                    /*val photosDbState by photosDbVm.state.collectAsStateWithLifecycle()*/
                     val usersChallengeVm = koinViewModel<UserChallengeViewModel>()
                     val context = LocalContext.current
                     val sharedPreferences = context.getSharedPreferences("isUserLogged", Context.MODE_PRIVATE)
                     sharedPreferences.getString("username", "")?.let { Log.d("share", it) }
-                    Log.d("userState", usersState.users.toString())
+                    //Log.d("userState", usersState.userOlds.toString())
 
-                    if (usersState.users.isNotEmpty()) {
-                        Log.d("isProcessing", "isProcessing = true")
-                        val user = requireNotNull(usersState.users.find {
-                            it.username == sharedPreferences.getString("username", "")
-                        })
-
-                        LaunchedEffect(Unit) {
+                    imageUri?.let { photosDbVm.uploadPhoto(it) }
+                    usersDbVm.addPoints(challengePoints)
+                        /*LaunchedEffect(Unit) {
                             val job = launch {
                                 photosDbVm.addPhoto(
-                                    Photo(
+                                    Photo_old(
                                         imageUri = imageUri.toString(),
                                         username = user.username,
                                         timestamp = System.currentTimeMillis()
@@ -100,40 +84,37 @@ class TakePhotoActivity : ComponentActivity() {
                             }
                             Log.d("JOB", "JOB")
                             //job.cancel() // Cancel the coroutine job when the effect is no longer needed
-                        }
+                        }*/
 
-                        scheduleNotification()
+                    scheduleNotification()
 
-                        LaunchedEffect(Unit) {
-                            val currentTime = System.currentTimeMillis()
-                            val cutoff = currentTime - 24 * 60 * 60 * 1000 // 24 ore in millisecondi
-                            photosDbVm.deleteOldPhoto(cutoff)
-                            if (challengeId != 0) {
-                                usersChallengeVm.insertChallengeDone(
-                                    UserChallenge(
-                                        username = user.username,
-                                        challengeId = challengeId
-                                    )
+                    LaunchedEffect(Unit) {
+                        val currentTime = System.currentTimeMillis()
+                        val cutoff = currentTime - 24 * 60 * 60 * 1000 // 24 ore in millisecondi
+                        /*photosDbVm.deleteOldPhoto(cutoff)
+                        if (challengeId != 0) {
+                            usersChallengeVm.insertChallengeDone(
+                                UserChallenge(
+                                    username = user.username,
+                                    challengeId = challengeId
                                 )
-                            } else {
-                                Log.e("challengeId", "challengeId = " + challengeId)
-                            }
+                            )
+                        } else {
+                            Log.e("challengeId", "challengeId = " + challengeId)
+                        }*/
 
-                        }
-
-                        val navController = rememberNavController()
-                        PhotoScreen(
-                            //user = user,
-                            usersViewModel = usersVm,
-                            photosDbVm = photosDbVm,
-                            photosDbState = photosDbState,
-                            navController = navController,
-                            comeFromTakePhoto = true,
-                            challengePoints = challengePoints,
-                        )
-                    } else {
-                        Log.d("if", "son qui")
                     }
+
+                    val navController = rememberNavController()
+                    PhotoScreen(
+                        //user = user,
+                        usersDbVm = usersDbVm,
+                        photosDbVm = photosDbVm,
+                        //photosDbState = photosDbState,
+                        navController = navController,
+                        comeFromTakePhoto = true,
+                        challengePoints = challengePoints,
+                    )
                 }
             } else {
                 Log.e("TakePhotoActivity", "Cattura dell'immagine fallita o annullata")

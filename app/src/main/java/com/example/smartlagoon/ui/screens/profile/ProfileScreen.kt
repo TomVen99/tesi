@@ -33,85 +33,79 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.smartlagoon.R
-import com.example.smartlagoon.data.database.User
-import com.example.smartlagoon.ui.viewmodel.UsersViewModel
 import com.example.smartlagoon.ui.composables.TopAppBar
 import com.example.smartlagoon.ui.theme.myButtonColors
+import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
-    user: User,
-    usersViewModel : UsersViewModel,
-    userPoints: Int
+    usersDbVm: UsersDbViewModel,
 ) {
-    Log.d("points", user.points.toString())
-    val scope = rememberCoroutineScope()
     val ctx = LocalContext.current
-
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-    var userImage = user.urlProfilePicture
+    val user by usersDbVm.userLiveData.observeAsState()
 
-    Log.d("userImage", userImage.toString())
-
+    // Funzione per creare URI temporaneo per l'immagine
     fun createImageUri(): Uri {
         val resolver = ctx.contentResolver
         val contentValues = ContentValues().apply {
-            //put(MediaStore.MediaColumns.DISPLAY_NAME, "profile_picture.jpg")
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
         }
         return resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
     }
 
+    // Funzione per lanciare la selezione dell'immagine
     val imagePickerLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.data?.let { uri ->
-                imageUri = uri
-                usersViewModel.updateProfileImg(user.username, uri.toString())
-            } ?: run {
-                imageUri?.let { uri ->
-                    usersViewModel.updateProfileImg(user.username, uri.toString())
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri = result.data?.data ?: imageUri
+                uri?.let {
+                    imageUri = it
+                    usersDbVm.auth.currentUser?.let { fbUser ->
+                        usersDbVm.uploadProfileImage(fbUser.uid, imageUri!!) {
+                            // Questo verrà eseguito solo dopo che l'upload e l'update sono completati
+                            usersDbVm.fetchUserProfile() // Assicurati che questo aggiorni i dati correttamente
+                            user?.let { it1 -> Log.d("uploadProf", it1.profileImageUrl) }
+                        }
+                    }
                 }
             }
-        }
     }
 
-    val requestCameraPermission =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+    // Funzione per richiedere permesso della fotocamera e scegliere un'immagine
+    val requestCameraPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
             val uri = createImageUri()
             imageUri = uri
+
             val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
                 putExtra(MediaStore.EXTRA_OUTPUT, uri)
             }
             val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
 
-            val chooserIntent = Intent.createChooser(galleryIntent, "Select Image")
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent))
+            val chooserIntent = Intent.createChooser(galleryIntent, "Select Image").apply {
+                putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent))
+            }
 
             imagePickerLauncher.launch(chooserIntent)
         } else {
@@ -119,45 +113,44 @@ fun ProfileScreen(
         }
     }
 
+    // Funzione per gestire l'immagine del profilo
     @Composable
     fun setProfileImage() {
         val imageModifier = Modifier
             .size(200.dp)
-            .border(
-                BorderStroke(2.dp, Color.Black),
-                CircleShape
-            )
+            .border(BorderStroke(2.dp, Color.Black), CircleShape)
             .clip(CircleShape)
+
         when {
-            (imageUri != null && userImage != user.urlProfilePicture) -> {
+            user?.profileImageUrl?.isNotEmpty() == true -> {
+                Log.d("non empty", "aaa")
+                AsyncImage(
+                    model = ImageRequest.Builder(ctx)
+                        .data(user?.profileImageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Profile Image",
+                    modifier = imageModifier,
+                    contentScale = ContentScale.Crop
+                )
+            }
+            imageUri != null -> {
+                Log.d("non empty", "111")
                 AsyncImage(
                     model = ImageRequest.Builder(ctx)
                         .data(imageUri)
                         .crossfade(true)
                         .build(),
-                    contentDescription = "image taken",
-                    modifier = imageModifier,
-                    contentScale = ContentScale.Crop
-                )
-                userImage = user.urlProfilePicture
-            }
-            user.urlProfilePicture?.isNotEmpty() == true -> {
-                Log.d("IMG", "Immagine profilo")
-                AsyncImage(
-                    model = ImageRequest.Builder(ctx)
-                        .data(user.urlProfilePicture!!.toUri())
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "profile img",
+                    contentDescription = "Selected Image",
                     modifier = imageModifier,
                     contentScale = ContentScale.Crop
                 )
             }
             else -> {
-                Log.d("IMG", "Placeholder")
+                Log.d("non empty", "333")
                 Image(
                     painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "image placeholder",
+                    contentDescription = "Placeholder Image",
                     modifier = imageModifier.background(MaterialTheme.colorScheme.background),
                     contentScale = ContentScale.Crop,
                     colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onBackground)
@@ -165,13 +158,12 @@ fun ProfileScreen(
             }
         }
     }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 navController = navController,
-                currentRoute = "Profilo",
-                /*scope = scope,
-                sharedPreferences = sharedPreferences*/
+                currentRoute = "Profilo"
             )
         },
     ) { contentPadding ->
@@ -185,19 +177,17 @@ fun ProfileScreen(
             setProfileImage()
             Spacer(modifier = Modifier.size(15.dp))
 
-            Button( 
+            Button(
                 colors = myButtonColors(),
                 onClick = {
-                    requestCameraPermission.launch(Manifest.permission.CAMERA)
-                    usersViewModel.addPoints(user.username, 50)
-                    Log.d("punti aggiornati", user.points.toString())
+                    requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
                 },
                 elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 8.dp, // Elevazione normale
-                    pressedElevation = 12.dp, // Elevazione quando il bottone è premuto
-                    hoveredElevation = 4.dp, // Elevazione quando il bottone è "hovered"
-                    focusedElevation = 6.dp, // Elevazione quando il bottone è a fuoco
-                    disabledElevation = 0.dp  // Elevazione quando il bottone è disabilitato
+                    defaultElevation = 8.dp,
+                    pressedElevation = 12.dp,
+                    hoveredElevation = 4.dp,
+                    focusedElevation = 6.dp,
+                    disabledElevation = 0.dp
                 ),
             ) {
                 Icon(
@@ -212,72 +202,71 @@ fun ProfileScreen(
 
             Text(
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape )
+                    .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape)
                     .padding(8.dp),
-                text = user.name + " " + user.surname,
+                text = "${user?.name ?: ""} ${user?.surname ?: ""}",
                 fontSize = 25.sp,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium,
             )
             Spacer(modifier = Modifier.size(15.dp))
+
             Row(
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape )
+                    .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape)
                     .padding(8.dp),
                 verticalAlignment = Alignment.Bottom
             ) {
                 Icon(
                     Icons.Filled.AccountCircle,
-                    contentDescription = "account image"
+                    contentDescription = "Account Image"
                 )
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text(
-                    text = user.username,
-                    fontSize = 20.sp,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+                user?.username?.let {
+                    Text(
+                        text = it,
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
             }
-
             Spacer(modifier = Modifier.size(15.dp))
 
             Row(
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape )
+                    .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape)
                     .padding(8.dp),
                 verticalAlignment = Alignment.Bottom
             ) {
                 Icon(
                     Icons.Filled.Mail,
-                    contentDescription = "email"
+                    contentDescription = "Email"
                 )
                 Spacer(Modifier.size(ButtonDefaults.IconSpacing))
 
-                Text(
-                    text = user.mail,
-                    fontSize = 20.sp,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                user?.email?.let {
+                    Text(
+                        text = it,
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
             Spacer(modifier = Modifier.size(15.dp))
 
             Row(
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape )
+                    .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape)
                     .padding(8.dp),
                 verticalAlignment = Alignment.Bottom
             ) {
-                /*Icon(
-                    Icons.Filled.Numbers,
-                    contentDescription = "Punti"
-                )
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))*/
                 Text(
-                    text = "Punti: $userPoints",
+                    text = "Punti: ${user?.points ?: 0}",
                     fontSize = 20.sp,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     textAlign = TextAlign.Center,
@@ -287,4 +276,5 @@ fun ProfileScreen(
         }
     }
 }
+
 

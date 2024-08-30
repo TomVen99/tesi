@@ -5,12 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.smartlagoon.data.database.User
+import com.example.smartlagoon.data.database.User_old
 import com.example.smartlagoon.data.repositories.UsersRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -19,7 +17,7 @@ import kotlinx.coroutines.withContext
 import java.security.MessageDigest
 import java.security.SecureRandom
 
-data class UsersState(val users: List<User>)
+data class UsersState(val userOlds: List<User_old>)
 
 class UsersViewModel(
     private val repository: UsersRepository
@@ -37,13 +35,13 @@ class UsersViewModel(
     private val _userPoints = MutableLiveData<Int>()
     val userPoints: LiveData<Int> = _userPoints
 
-    val state = repository.users.map { UsersState(users = it) }.stateIn(
+    /*val state = repository.users.map { UsersState(userOlds = it) }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = UsersState(emptyList())
     )
 
-    val rankingState = repository.usersRanking.map { UsersState(users = it) }.stateIn(
+    val rankingState = repository.usersRanking.map { UsersState(userOlds = it) }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = UsersState(emptyList())
@@ -56,9 +54,11 @@ class UsersViewModel(
         _userPoints.value = userPoints
     }
 
-    suspend fun getUser(username: String): User? {
+    suspend fun getUser(username: String): User_old? {
         return repository.getUser(username).firstOrNull()
     }
+
+
 
     fun addPoints(username: String, points: Int) {
         Log.d("points", "son qui")
@@ -74,12 +74,12 @@ class UsersViewModel(
         }
     }
 
-    fun addUser(user: User) {
+    fun addUser(userOld: User_old) {
         Log.d("TAG", "addUser")
         viewModelScope.launch {
-            val userMatch = repository.getUser(user.username).firstOrNull()
+            val userMatch = repository.getUser(userOld.username).firstOrNull()
             if (userMatch == null) {
-                repository.upsert(user)
+                repository.upsert(userOld)
                 _signinResult.value = true
             } else {
                 _signinResult.value = false
@@ -89,9 +89,9 @@ class UsersViewModel(
         }
     }
 
-    fun addUserWithoutControl(user: User) {
+    fun addUserWithoutControl(userOld: User_old) {
         viewModelScope.launch {
-            repository.upsert(user)
+            repository.upsert(userOld)
         }
     }
 
@@ -113,8 +113,8 @@ class UsersViewModel(
         _loginResult.value = null
     }
 
-    fun deleteUser(user: User) = viewModelScope.launch {
-        repository.delete(user)
+    fun deleteUser(userOld: User_old) = viewModelScope.launch {
+        repository.delete(userOld)
     }
 
     fun hashPassword(password: String, salt: ByteArray): String {
@@ -132,5 +132,6 @@ class UsersViewModel(
     fun updateProfileImg(username: String, profileImg: String) = viewModelScope.launch {
         repository.updateProfileImg(username, profileImg)
     }
-
+*/
 }
+

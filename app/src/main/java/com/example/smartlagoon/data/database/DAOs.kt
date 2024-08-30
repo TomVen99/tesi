@@ -10,17 +10,17 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UsersDAO {
-    @Query("SELECT * FROM user ORDER BY username ASC")
-    fun getAllUser(): Flow<List<User>>
+    /*@Query("SELECT * FROM user ORDER BY username ASC")
+    fun getAllUser(): Flow<List<User_old>>
 
     @Query("SELECT * FROM user WHERE username = :user")
-    fun getUser(user: String): Flow<User?>
+    fun getUser(user: String): Flow<User_old?>
 
     @Query("SELECT points FROM user WHERE username = :username")
     fun getUserPoints(username: String): Int
 
     @Query("SELECT * FROM user ORDER BY points DESC")
-    fun getAllUserRanking() : Flow<List<User>>
+    fun getAllUserRanking() : Flow<List<User_old>>
 
     @Query("UPDATE user SET points = points + :points WHERE username = :username")
     suspend fun addPoints(username: String, points: Int)
@@ -29,10 +29,10 @@ interface UsersDAO {
     suspend fun updateProfileImg(username: String, profileImg: String)
 
     @Upsert
-    suspend fun upsertUser(user: User)
+    suspend fun upsertUser(userOld: User_old)
 
     @Delete
-    suspend fun deleteUser(item: User)
+    suspend fun deleteUser(item: User_old)*/
 
 }
 
@@ -64,18 +64,18 @@ interface UserChallengeDAO{
 @Dao
 interface PhotoDAO {
     @Upsert
-    suspend fun upsertPhoto(photo: Photo)
+    suspend fun upsertPhoto(photoOld: Photo_old)
 
-    @Query("SELECT * FROM Photo order by timestamp desc")
-    fun getAllPhotos(): Flow<List<Photo>>
+    @Query("SELECT * FROM Photo_old order by timestamp desc")
+    fun getAllPhotos(): Flow<List<Photo_old>>
 
-    @Query("SELECT * FROM Photo WHERE username = :user ")
-    suspend fun getUserPhotos(user: String): List<Photo>
+    @Query("SELECT * FROM Photo_old WHERE username = :user ")
+    suspend fun getUserPhotos(user: String): List<Photo_old>
 
-    @Query("DELETE FROM Photo WHERE timestamp < :cutoff")
+    @Query("DELETE FROM Photo_old WHERE timestamp < :cutoff")
     fun deleteOldPhotos(cutoff: Long)
 
-    @Query("SELECT count(*) AS numeroFoto FROM Photo p WHERE p.username =:username ")
+    @Query("SELECT count(*) AS numeroFoto FROM Photo_old p WHERE p.username =:username ")
     suspend fun getUserPhotoNumber(username: String): Int
 }
 
