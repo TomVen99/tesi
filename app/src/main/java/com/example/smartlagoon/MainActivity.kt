@@ -97,19 +97,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    val backStackEntry by navController.currentBackStackEntryAsState()
-
-                    if(generateTest) {
-                        val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
-                        challengeDbVm.createChallangeTest()
-                        Log.e("generateTest", "generateTest Main")
-                        generateTest = false
-                        sharedPreferences.edit().putBoolean("generateTest", false).apply()
-                    }
-                    Log.d("start route", startRoute)
-                    /*SmartlagoonRoute.routes.find {
-                        it.route == startRoute//backStackEntry?.destination?.route
-                    } ?: SmartlagoonRoute.Login*/
                     if(startRoute == SmartlagoonRoute.Challenge.route) {
                         Scaffold { contentPadding ->
                             SmartlagoonNavGraph(

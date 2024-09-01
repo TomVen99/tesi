@@ -29,6 +29,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import android.widget.Toast
+import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.UserChallengeViewModel
 import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 
@@ -37,7 +38,7 @@ class TakePhotoActivity : ComponentActivity() {
     private lateinit var permissionHelper: PermissionsManager
     private var imageUri: Uri? = null
     private var challengePoints = 0
-    private var challengeId = 0
+    private var challengeId = ""
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -57,9 +58,11 @@ class TakePhotoActivity : ComponentActivity() {
                 setContent {
                     val usersDbVm = koinViewModel<UsersDbViewModel>()
                     val photosDbVm = koinViewModel<PhotosDbViewModel>()
+                    val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
 
                     imageUri?.let { photosDbVm.uploadPhoto(it) }
                     usersDbVm.addPoints(challengePoints)
+                    challengeDbVm.challengeDone(challengeId)
                     scheduleNotification()
 
                     LaunchedEffect(Unit) {
@@ -100,9 +103,10 @@ class TakePhotoActivity : ComponentActivity() {
         val intent: Intent? = intent
         if (intent != null) {
             // Recupera l'intero passato tramite l'Intent
-            challengePoints = intent.getIntExtra("challengePoints", 0) // 0 è il valore predefinito se l'extra non è trovato
-            challengeId = intent.getIntExtra("challengeId", 0)
+            challengePoints = intent.getIntExtra("challengePoints", 0)
+            challengeId = intent.getStringExtra("challengeId").toString()
             Log.d("Punti ricevuti intent", challengePoints.toString())
+            Log.d("ChallengeId ricevuta", challengeId)
         } else {
             Log.d("Punti ricevuti intent", "Intent NULLO")
             // Gestisci il caso in cui l'Intent è nullo

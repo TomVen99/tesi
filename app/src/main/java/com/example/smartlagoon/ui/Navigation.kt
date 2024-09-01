@@ -10,12 +10,9 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.example.smartlagoon.ui.screens.about.AboutScreen
 import com.example.smartlagoon.ui.screens.home.HomeScreen
 import com.example.smartlagoon.ui.screens.login.Login
@@ -165,17 +162,20 @@ fun SmartlagoonNavGraph(
         with(SmartlagoonRoute.Challenge) {
             composable(route) { _ ->
                 val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
-                val userUncompleteChallenge by challengeDbVm.userUncompleteChallenges.observeAsState(
+                /*val userUncompleteChallenge by challengeDbVm.allChallenges.observeAsState(
                     emptyList()
-                )
+                )*/
 
-                challengeDbVm.getUnconpletedChallengeByUser()
                 challengeDbVm.loadChallengesFromJson(ctx)
-                ChallengeScreen(
-                    navController = navController,
-                    challengeList = userUncompleteChallenge,
-                    challengesDbVm = challengeDbVm,
-                )
+                challengeDbVm.getAllChallenges()
+                usersDbVm.auth.currentUser?.uid?.let {
+                    ChallengeScreen(
+                        navController = navController,
+                        //challengeList = userUncompleteChallenge,
+                        challengesDbVm = challengeDbVm,
+                        userId = it
+                    )
+                }
             }
         }
         with(SmartlagoonRoute.Photo) {

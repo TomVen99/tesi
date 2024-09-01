@@ -88,6 +88,7 @@ class QuizViewModel : ViewModel() {
                 quizQuestionsList.forEach { quizQuestion ->
                     addQuizQuestion(quizQuestion)
                 }
+                Log.d("quizList", quizQuestionsList.get(0).toString())
             }
         }
     }
@@ -115,16 +116,11 @@ class QuizViewModel : ViewModel() {
             }
     }
 
-    fun questionDone() {
-
+    fun quizQuestionDone() {
         val currentQuestion = _currentQuestionIndex.value?.let { _questions.value?.get(it) }
-        Log.d("questionDone","done2a")
         val questionId = currentQuestion?.id ?: return
-        Log.d("questionDone","done2b")
         val userUUID = userId ?: return
-        Log.d("questionDone","done2c")
 
-        // Ottieni il riferimento al documento della domanda
         val questionRef = firestore.collection("questions").document(questionId)
 
         firestore.runTransaction { transaction ->

@@ -1,6 +1,7 @@
 package com.example.smartlagoon.ui.screens.challenge
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,8 +35,10 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -56,8 +59,13 @@ import com.example.smartlagoon.ui.viewmodel.Challenge
 fun ChallengeScreen(
     navController: NavHostController,
     challengesDbVm: ChallengesDbViewModel,
-    challengeList: List<Challenge>
+    userId: String
+    //challengeList: List<Challenge>
 ) {
+    challengesDbVm.getAllChallenges()
+    val challengeList by challengesDbVm.allChallenges.observeAsState(
+        emptyList()
+    )
     Scaffold(
         topBar = {
             TopAppBar(
@@ -74,18 +82,7 @@ fun ChallengeScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             itemsIndexed(challengeList){ _, challenge ->
-                //AnimatedButton(challenge)
-                AchievementCard(challenge)
-                //DuolingoButton(challenge)
-                /*ListItem(
-                    headlineContent = { Text(text = challenge.title) },
-                    supportingContent = {
-                        Text(text = challenge.description)
-                    },
-                    modifier = Modifier
-                        .padding(2.dp)
-                        .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(16.dp)),
-                )*/
+                AchievementCard(challenge, userId)
             }
         }
     }
@@ -94,15 +91,15 @@ fun ChallengeScreen(
 @Composable
 fun AchievementCard(
     challenge: Challenge,
-    /*title: String,
-    description: String,
-    progress: Float,
-    icon: @Composable () -> Unit,
-    requiredProgress: Int,
-    achievedProgress: Int*/
+    userId: String,
 ) {
     var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current  // Ottieni il Context corrente
+    val containerColor = if(challenge.completedBy?.contains(userId) == true) {
+        MaterialTheme.colorScheme.surfaceContainer
+    } else {
+        MyColors().myBluButtonBackground
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -111,7 +108,7 @@ fun AchievementCard(
                 showDialog = true
             },
         colors = CardDefaults.cardColors(
-            containerColor = MyColors().myBluButtonBackground
+            containerColor = containerColor//MyColors().myBluButtonBackground
         )
     ) {
         Row {
@@ -173,9 +170,10 @@ fun AchievementCard(
                     Button(
                         onClick = {
                             showDialog = false // Chiude il popup
+                            Log.d("invio challenge intent", challenge.toString())
                             val intent = Intent(context, TakePhotoActivity::class.java).apply {
                                 putExtra("challengePoints", challenge.points)
-                                //putExtra("challengeId", challenge.id)
+                                putExtra("challengeId", challenge.id)
                             }
                             context.startActivity(intent)
                         },

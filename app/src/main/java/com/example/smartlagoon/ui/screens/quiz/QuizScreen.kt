@@ -3,7 +3,6 @@ package com.example.smartlagoon.ui.screens.quiz
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -179,7 +178,7 @@ fun QuizScreen(
                                     ).show()
                                 }
                                 Log.d("questionDone", "done1")
-                                quizVm.questionDone()
+                                quizVm.quizQuestionDone()
                                 Log.d("questionDone", "done3")
                             },
                             modifier = Modifier
