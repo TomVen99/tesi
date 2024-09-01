@@ -2,7 +2,7 @@ package com.example.smartlagoon.data.repositories
 
 import android.content.ContentResolver
 import android.net.Uri
-import com.example.camera.utils.saveImageToStorage
+import com.example.smartlagoon.utils.saveImageToStorage
 import com.example.smartlagoon.data.database.Photo_old
 import com.example.smartlagoon.data.database.PhotoDAO
 import kotlinx.coroutines.flow.Flow

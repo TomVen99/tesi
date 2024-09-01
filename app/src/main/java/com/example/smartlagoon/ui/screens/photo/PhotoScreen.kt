@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.smartlagoon.R
+import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.composables.TopAppBar
 import com.example.smartlagoon.ui.theme.MyColors
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
@@ -98,7 +100,7 @@ fun PhotoScreen(
                         }
                     }
                     if (user != null) {
-                        PhotoItem(photo = photo, user = user!!)
+                        PhotoItem(photo = photo, user = user!!, navController, usersDbVm)
                     } else {
                         Text(text = "utente non trovato")
                     }
@@ -117,7 +119,7 @@ fun PhotoScreen(
                                 contentDescription = null,
                                 modifier = Modifier.size(40.dp)  // Imposta la dimensione dell'icona
                             )
-                            Text(text = "Hai guadagnato "+ challengePoints.toString() +" punti!")
+                            Text(text = "Hai guadagnato  $challengePoints punti!")
                         }
                     },
                     confirmButton = {
@@ -138,12 +140,7 @@ fun PhotoScreen(
 
 
 @Composable
-fun PhotoItem(photo: Photo, user: User) {
-    /*val user by usersDbVm.userLiveData.observeAsState()
-    LaunchedEffect(photo.userId) {
-        usersDbVm.getUser(photo.userId)
-    }*/
-
+fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersDbVm: UsersDbViewModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -195,9 +192,11 @@ fun PhotoItem(photo: Photo, user: User) {
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
-                            /*modifier = Modifier.clickable {
-                                                navController.navigate
-                                            }*/
+                            modifier = Modifier.clickable {
+                                usersDbVm.fetchUserProfileByUsername(user.username)
+                                val route = SmartlagoonRoute.Profile.createRoute(user.username)
+                                navController.navigate(route)
+                            }
                         )
                     }
                 }

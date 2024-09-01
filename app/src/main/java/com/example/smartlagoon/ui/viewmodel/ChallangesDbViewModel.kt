@@ -1,32 +1,27 @@
 package com.example.smartlagoon.ui.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.smartlagoon.data.repositories.ChallengeRepository
+import com.google.common.reflect.TypeToken
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.PropertyName
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.io.InputStreamReader
+import java.util.UUID
 
 data class ChallengesDbState(val challenges: List<Challenge>)
 
-class ChallengesDbViewModel(
-    private val repository: ChallengeRepository
-) : ViewModel() {
-    /*val state = repository.challenges.map { ChallengesDbState(challenges = it) }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = ChallengesDbState(emptyList())
-    )*/
-
-    private val _userChallengesNumber = MutableLiveData<Int>()
-    val userChallengesNumber: LiveData<Int> = _userChallengesNumber
+class ChallengesDbViewModel() : ViewModel() {
 
     private val _userUncompletedChallenges = MutableLiveData<List<Challenge>>()
     var userUncompleteChallenges: LiveData<List<Challenge>> = _userUncompletedChallenges
@@ -69,10 +64,46 @@ class ChallengesDbViewModel(
         _userUncompletedChallenges.value = userUncompletedChallenges
     }*/
 
-    fun createChallangeTest() = viewModelScope.launch{
-      //  repository.generateChallengeTest()
+    fun createChallangeTest() = viewModelScope.launch {
+        //  repository.generateChallengeTest()
     }
 
+    // Funzione per aggiungere un punteggio alla collezione "leaderboard"
+    private fun addChallenge(challenge: Challenge) {
+
+        val userScore = hashMapOf(
+            "title" to challenge.title,
+            "description" to challenge.description,
+            "points" to challenge.points,
+            "completedBy" to challenge.completedBy,
+        )
+
+        // Aggiungi o aggiorna il documento dell'utente nella collezione "leaderboard"
+        firestore.collection("challenges").document(UUID.randomUUID().toString()).set(userScore)
+            .addOnSuccessListener {
+                println("Challenge aggiunta con successo " +  challenge.title +"!")
+            }
+            .addOnFailureListener { e ->
+                println("Errore nell'aggiunta della challenge per  " +  challenge.title + ": $e")
+            }
+    }
+
+    fun loadChallengesFromJson(context: Context) {
+        // Verifica se il database ha già le sfide caricate per evitare duplicati
+        firestore.collection("challenges").get().addOnSuccessListener { documents ->
+            if (documents.isEmpty) {
+                // Solo se non ci sono sfide esistenti nel database, carica da JSON
+                val inputStream = context.assets.open("challenges.json")
+                val json = inputStream.bufferedReader().use { it.readText() }
+                val challengesList: List<Challenge> = Gson().fromJson(json, object : TypeToken<List<Challenge>>() {}.type)
+
+                // Aggiungi tutte le sfide al database
+                challengesList.forEach { challenge ->
+                    addChallenge(challenge)
+                }
+            }
+        }
+    }
 }
 
 data class Challenge(

@@ -82,7 +82,7 @@ val appModule = module {
 
     viewModel { QuizViewModel() }
 
-    viewModel { ChallengesDbViewModel(get()) }
+    viewModel { ChallengesDbViewModel() }
 
     viewModel { LoginViewModel() }
 

@@ -220,6 +220,28 @@ class UsersDbViewModel : ViewModel() {
     }
 
     // Funzione per recuperare i dati del profilo utente
+    fun fetchUserProfileByUsername(username: String) {
+        firestore.collection("users")
+            .whereEqualTo("username", username)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (querySnapshot.isEmpty) {
+                    _userLiveData.value = null
+                    Log.d("fetch", "Nessun utente trovato con l'username: $username")
+                } else {
+                    // Supponiamo che ci sia solo un utente con un determinato username
+                    val document = querySnapshot.documents.firstOrNull()
+                    val usr = document?.toObject(User::class.java)
+                    _userLiveData.postValue(usr)
+                    Log.d("fetch", "Profilo utente aggiornato per l'username: $username")
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firebase", "Error fetching profile: ${e.message}")
+            }
+    }
+
+    // Funzione per recuperare i dati del profilo utente
     fun fetchUserProfile() {
         auth.currentUser?.let { user ->
             firestore.collection("users").document(user.uid)

@@ -1,4 +1,4 @@
-package com.example.camera.utils
+package com.example.smartlagoon.utils
 
 import android.content.ContentResolver
 import android.content.ContentValues

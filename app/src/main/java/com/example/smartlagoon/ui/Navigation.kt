@@ -10,9 +10,12 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.smartlagoon.ui.screens.about.AboutScreen
 import com.example.smartlagoon.ui.screens.home.HomeScreen
 import com.example.smartlagoon.ui.screens.login.Login
@@ -49,7 +52,11 @@ sealed class SmartlagoonRoute(
 
     data object Home : SmartlagoonRoute("home", "Home")
 
-    data object Profile : SmartlagoonRoute("profile", "Profile")
+    data object Profile : SmartlagoonRoute("profile/{username}","Profile"){
+        fun createRoute(username: String): String {
+            return "profile/$username"
+        }
+    }
 
     companion object {
         val routes = setOf(Login, Signin, Home, Ranking, Photo, About, Quiz, Profile,)
@@ -67,8 +74,8 @@ fun SmartlagoonNavGraph(
     var usersDbVm = koinViewModel<UsersDbViewModel>()
     val photosDbVm = koinViewModel<PhotosDbViewModel>()
 
-    val context = LocalContext.current
-    val sharedPreferences = context.getSharedPreferences("isUserLogged", Context.MODE_PRIVATE)
+    val ctx = LocalContext.current
+    val sharedPreferences = ctx.getSharedPreferences("isUserLogged", Context.MODE_PRIVATE)
     var start = ""
     Log.d("Navigation", startDestination.toString())
     start = if (sharedPreferences.getBoolean("isUserLogged", false)) {
@@ -127,13 +134,24 @@ fun SmartlagoonNavGraph(
             }
         }
         with(SmartlagoonRoute.Profile) {
-            composable(route) {
-                LaunchedEffect(Unit) {
-                    usersDbVm.fetchUserProfile()
+            composable(route) { backStackEntry ->
+                val username = backStackEntry.arguments?.getString("username")
+                // Usa `LaunchedEffect` per caricare il profilo
+                var showModifyButton = false
+                if (username != "{username}") {
+                    LaunchedEffect(username) {
+                        usersDbVm.fetchUserProfileByUsername(username!!)
+                    }
+                }else {
+                    showModifyButton = true
+                    LaunchedEffect(username) {
+                        usersDbVm.fetchUserProfile()
+                    }
                 }
                 ProfileScreen(
                     navController = navController,
                     usersDbVm = usersDbVm,
+                    showModifyButton = showModifyButton
                 )
             }
         }
@@ -151,7 +169,9 @@ fun SmartlagoonNavGraph(
                 val userUncompleteChallenge by challengeDbVm.userUncompleteChallenges.observeAsState(
                     emptyList()
                 )
+
                 challengeDbVm.getUnconpletedChallengeByUser()
+                challengeDbVm.loadChallengesFromJson(ctx)
                 ChallengeScreen(
                     navController = navController,
                     challengeList = userUncompleteChallenge,
@@ -190,7 +210,9 @@ fun SmartlagoonNavGraph(
         with(SmartlagoonRoute.Quiz) {
             composable(route) {
                 val quizVm = koinViewModel<QuizViewModel>()
-                quizVm.loadQuestions()
+                quizVm.loadQuestionsFromJson(ctx)
+                quizVm.getUnconpletedQuestionsByUser()
+                usersDbVm.fetchUserProfile()
                 QuizScreen(
                     quizVm = quizVm,
                     usersDbVm = usersDbVm,

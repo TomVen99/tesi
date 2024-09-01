@@ -32,7 +32,7 @@ import org.koin.androidx.compose.koinViewModel
 class MainActivity : ComponentActivity() {
 
     private lateinit var permissionHelper: PermissionsManager
-    private lateinit var db: FirebaseFirestore
+    //private lateinit var db: FirebaseFirestore
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -50,13 +50,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Inizializza Firestore
-        db = Firebase.firestore
+        //db = Firebase.firestore
 
         // Aggiungi un punteggio alla classifica
-        addChallenge("ch", Challenge("Titolo", "Descr",10, emptyList() ))
-        addChallenge( "ch1", Challenge("Titolo1", "Descr1",20, listOf("QaGgBwPB0rS0KTHWzPby7ZbRWrl1")))
+        /*addChallenge("ch", Challenge("Titolo", "Descr",10, emptyList() ))
+        addChallenge( "ch1", Challenge("Titolo1", "Descr1",20, listOf("QaGgBwPB0rS0KTHWzPby7ZbRWrl1")))*/
         // Leggi la classifica ordinata
-        readLeaderboard()
+        //readLeaderboard()
 
 
         val intent: Intent? = intent
@@ -131,28 +131,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    // Funzione per aggiungere un punteggio alla collezione "leaderboard"
-    private fun addChallenge(chId: String, challenge: Challenge) {
 
-        val userScore = hashMapOf(
-            "title" to challenge.title,
-            "description" to challenge.description,
-            "points" to challenge.points,
-            "completedBy" to challenge.completedBy,
-        )
-
-        // Aggiungi o aggiorna il documento dell'utente nella collezione "leaderboard"
-        db.collection("challenges").document(chId).set(userScore)
-            .addOnSuccessListener {
-                println("Challenge aggiunta con successo $title!")
-            }
-            .addOnFailureListener { e ->
-                println("Errore nell'aggiunta della challenge per $title: $e")
-            }
-    }
 
     // Funzione per leggere e visualizzare la classifica ordinata per punteggio
-    private fun readLeaderboard() {
+    /*private fun readLeaderboard() {
         db.collection("leaderboard")
             .orderBy("score", com.google.firebase.firestore.Query.Direction.DESCENDING)
             .get()
@@ -166,7 +148,7 @@ class MainActivity : ComponentActivity() {
             .addOnFailureListener { e ->
                 println("Errore nel recupero della classifica: $e")
             }
-    }
+    }*/
 
     override fun onPause() {
         super.onPause()

@@ -1,0 +1,122 @@
+[
+  {
+    "title": "Fotografa una medusa",
+    "description": "Scatta una foto a una medusa nel Mar Menor e segnalane la presenza.",
+    "points": 10,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa una spiaggia pulita",
+    "description": "Trova una spiaggia del Mar Menor senza rifiuti visibili e documentala.",
+    "points": 15,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa un accumulo di plastica o rifiuti sulla spiaggia",
+    "description": "Documenta la presenza di rifiuti (come plastica o altri materiali) abbandonati sulla spiaggia.",
+    "points": 20,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa una pianta acquatica",
+    "description": "Cerca e fotografa piante acquatiche visibili nelle acque del Mar Menor.",
+    "points": 15,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa una specie di pesce locale",
+    "description": "Scatta una foto a una delle specie di pesci tipici del Mar Menor.",
+    "points": 25,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa una situazione di eutrofizzazione",
+    "description": "Documenta con una foto una situazione di acqua verde o presenza eccessiva di alghe.",
+    "points": 30,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa un’attività di pulizia sulla spiaggia",
+    "description": "Se vedi un gruppo di volontari o persone che puliscono la spiaggia, scatta una foto e incoraggiali!",
+    "points": 20,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa un cartello o avviso di protezione ambientale",
+    "description": "Documenta la presenza di segnaletica o cartelli informativi riguardanti la protezione del Mar Menor.",
+    "points": 10,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa un bambino che gioca rispettando l’ambiente",
+    "description": "Scatta una foto di un bambino che raccoglie rifiuti o mostra rispetto per la natura.",
+    "points": 20,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa un uccello acquatico",
+    "description": "Cerca un uccello che frequenta il Mar Menor e cattura la sua immagine.",
+    "points": 25,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa una situazione di pesca sostenibile",
+    "description": "Documenta una scena in cui i pescatori usano attrezzi o metodi di pesca sostenibili.",
+    "points": 30,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa un'area con piante ripariali o mangrovie",
+    "description": "Trova un'area costiera con vegetazione naturale e scatta una foto.",
+    "points": 20,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa una tartaruga marina (o segni di essa)",
+    "description": "Cattura una foto di una tartaruga marina o segni della sua presenza (es. tracce sulla sabbia).",
+    "points": 40,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa una situazione di turismo responsabile",
+    "description": "Documenta una situazione di turisti che rispettano l'ambiente (es. raccolgono rifiuti, usano percorsi segnalati).",
+    "points": 15,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa un’alga rossa",
+    "description": "Trova e scatta una foto di un’alga rossa presente nelle acque del Mar Menor.",
+    "points": 25,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa una specie invasiva",
+    "description": "Documenta una specie invasiva (animale o vegetale) che può minacciare l'equilibrio del Mar Menor.",
+    "points": 35,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa un tramonto sul Mar Menor",
+    "description": "Cattura l'immagine di un tramonto per evidenziare la bellezza naturale del luogo.",
+    "points": 10,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa una barriera naturale o artificiale che protegge il Mar Menor",
+    "description": "Documenta barriere, dighe o strutture che aiutano a proteggere il litorale.",
+    "points": 20,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa una situazione di degrado costiero",
+    "description": "Cattura con la tua fotocamera un'area costiera danneggiata dall'erosione o dall'azione umana.",
+    "points": 30,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa una persona che utilizza una bottiglia d'acqua riutilizzabile",
+    "description": "Incoraggia la sostenibilità documentando l'uso di bottiglie d'acqua riutilizzabili sulla spiaggia.",
+    "points": 15,
+    "completedBy": []
+  }
+]

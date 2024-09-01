@@ -80,6 +80,7 @@ import kotlinx.coroutines.launch
 fun ProfileScreen(
     navController: NavHostController,
     usersDbVm: UsersDbViewModel,
+    showModifyButton: Boolean
 ) {
     val ctx = LocalContext.current
     var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -389,17 +390,19 @@ fun ProfileScreen(
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
-                Button(
-                    colors = myButtonColors(),
-                    onClick = {
-                        coroutineScope.launch {
-                            sheetState.show()
-                        }
-                    },
-                    modifier = Modifier
-                        .align(Alignment.End)
-                ) {
-                    Text(text = "Modifica profilo")
+                if(showModifyButton) {
+                    Button(
+                        colors = myButtonColors(),
+                        onClick = {
+                            coroutineScope.launch {
+                                sheetState.show()
+                            }
+                        },
+                        modifier = Modifier
+                            .align(Alignment.End)
+                    ) {
+                        Text(text = "Modifica profilo")
+                    }
                 }
 
             }
