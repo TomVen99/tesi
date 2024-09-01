@@ -136,7 +136,6 @@ fun SmartlagoonNavGraph(
         with(SmartlagoonRoute.Profile) {
             composable(route) { backStackEntry ->
                 val username = backStackEntry.arguments?.getString("username")
-                // Usa `LaunchedEffect` per caricare il profilo
                 var showModifyButton = false
                 if (username != "{username}") {
                     LaunchedEffect(username) {
