@@ -27,6 +27,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -82,57 +83,89 @@ fun PhotoScreen(
                 )
             },
         ) { contentPadding ->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(contentPadding),
-                contentPadding = PaddingValues(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(photos) { photo ->  // Usa l'elenco delle foto dal ViewModel
-                    // Ottieni l'utente associato alla foto
-                    var user by remember { mutableStateOf<User?>(null) }
+            if(photos.isNotEmpty()) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(contentPadding),
+                    contentPadding = PaddingValues(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(photos) { photo ->  // Usa l'elenco delle foto dal ViewModel
+                        // Ottieni l'utente associato alla foto
+                        var user by remember { mutableStateOf<User?>(null) }
 
-                    // Chiamata per ottenere l'utente
-                    LaunchedEffect(photo.userId) {
-                        usersDbVm.getUser(photo.userId) { fetchedUser ->
-                            user = fetchedUser
+                        // Chiamata per ottenere l'utente
+                        LaunchedEffect(photo.userId) {
+                            usersDbVm.getUser(photo.userId) { fetchedUser ->
+                                user = fetchedUser
+                            }
                         }
-                    }
-                    if (user != null) {
-                        PhotoItem(photo = photo, user = user!!, navController, usersDbVm)
-                    } else {
-                        Text(text = "utente non trovato")
+                        if (user != null) {
+                            PhotoItem(photo = photo, user = user!!, navController, usersDbVm)
+                        } else {
+                            Text(text = "utente non trovato")
+                        }
                     }
                 }
-            }
-            if(showDialog) {
-                AlertDialog(
-                    onDismissRequest = { showDialog = false },
-                    title = {
-                        Text(text = "Congratulazioni!!")
-                    },
-                    text = {
-                        Column {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_launcher_foreground),  // Sostituisci `your_image` con il nome dell'immagine nella cartella drawable
-                                contentDescription = null,
-                                modifier = Modifier.size(40.dp)  // Imposta la dimensione dell'icona
-                            )
-                            Text(text = "Hai guadagnato  $challengePoints punti!")
+                if (showDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showDialog = false },
+                        title = {
+                            Text(text = "Congratulazioni!!")
+                        },
+                        text = {
+                            Column {
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_launcher_foreground),  // Sostituisci `your_image` con il nome dell'immagine nella cartella drawable
+                                    contentDescription = null,
+                                    modifier = Modifier.size(40.dp)  // Imposta la dimensione dell'icona
+                                )
+                                Text(text = "Hai guadagnato  $challengePoints punti!")
+                            }
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    showDialog = false // Chiude il popup
+                                },
+                                colors = myButtonColors(),
+                            ) {
+                                Text("Ok")
+                            }
                         }
-                    },
-                    confirmButton = {
+                    )
+                }
+            } else {
+                Log.d("Foto finite", "Nessuna foto presente")
+                Box(
+                    modifier = Modifier
+                        .padding(contentPadding)
+                        .fillMaxSize()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxSize()
+                    ) {
+                        Text(
+                            text = "Ancora non ci sono foto, caricane una tu per primo!",
+                            color = Color.Black,
+                            style = MaterialTheme.typography.titleMedium
+                        )
                         Button(
                             onClick = {
-                                showDialog = false // Chiude il popup
+                                navController.navigate(SmartlagoonRoute.Challenge.route)
                             },
                             colors = myButtonColors(),
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(6.dp)
                         ) {
-                            Text("Ok")
+                            Text("Vai alle sfide!")
                         }
                     }
-                )
+                }
             }
         }
     }
@@ -180,7 +213,8 @@ fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersD
                         //painter = painterResource(id = R.drawable.ic_badge), // Badge image
                         painter = rememberAsyncImagePainter(user.profileImageUrl),
                         contentDescription = "User Badge",
-                        modifier = Modifier.size(28.dp) // Larger badge
+                        modifier = Modifier
+                            .size(28.dp) // Larger badge
                             .border(2.dp, MyColors().borders, CircleShape)
                             .background(Color.White, CircleShape)
                             .clip(CircleShape)

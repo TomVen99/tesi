@@ -148,8 +148,11 @@ class UsersDbViewModel : ViewModel() {
 
                 // Aggiorna il documento con i nuovi punti
                 transaction.update(userDocRef, "points", newPoints)
+                Log.d("addPoints2","punti aggiunti")
             }.addOnSuccessListener {
+                Log.d("addPoints","punti aggiunti")
                 _log.value = "Points added successfully."
+                fetchUserProfile()
             }.addOnFailureListener { e ->
                 _log.value = "Error updating points: ${e.message}"
             }

@@ -10,17 +10,18 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.PropertyName
 import com.google.gson.Gson
-import java.util.UUID
 
 data class QuizQuestion(
+    @get:PropertyName("id") @set:PropertyName("id") var id: String? = null,
     @get:PropertyName("question") @set:PropertyName("question") var question: String? = null,
     @get:PropertyName("options") @set:PropertyName("options") var options: List<String>? = null,
     @get:PropertyName("correctAnswerIndex") @set:PropertyName("correctAnswerIndex")  var correctAnswerIndex: Int,
     @get:PropertyName("points") @set:PropertyName("points") var points: Int,
-    @get:PropertyName("completedBy") @set:PropertyName("completedBy") var completedBy: List<String>? = null
+    @get:PropertyName("completedBy") @set:PropertyName("completedBy") var completedBy: List<String>? = null,
+    @get:PropertyName("category") @set:PropertyName("category") var category: String? = null
 ){
     // Costruttore senza argomenti è necessario per la deserializzazione
-    constructor() : this(null, null, 0 ,0)
+    constructor() : this(null, null, null, 0 ,0)
 }
 
 class QuizViewModel : ViewModel() {
@@ -32,8 +33,8 @@ class QuizViewModel : ViewModel() {
     private val _currentQuestionIndex = MutableLiveData(0)
     val currentQuestionIndex: LiveData<Int> = _currentQuestionIndex
 
-    private val _currentQuestions = MutableLiveData<QuizQuestion>()
-    val currentQuestion: LiveData<QuizQuestion> = _currentQuestions
+    private val _currentQuestion = MutableLiveData<QuizQuestion>()
+    val currentQuestion: LiveData<QuizQuestion> = _currentQuestion
 
     private val _questions = MutableLiveData<List<QuizQuestion>>(emptyList())
     val questions: LiveData<List<QuizQuestion>> = _questions
@@ -46,15 +47,20 @@ class QuizViewModel : ViewModel() {
 
     fun getUnconpletedQuestionsByUser() {
         firestore.collection("questions")
-            /*.whereNotEqualTo(
-                "completedBy",
-                userId
-            )*/ // Recupera quiz che non contengono l'ID dell'utente in `completedBy`
             .get()
             .addOnSuccessListener { result ->
                 val incompleteQuestions = result.documents
-                    .filter { !((it["completedBy"] as? List<*>)?.contains(userId) ?: false) }
-                    .mapNotNull { it.toObject(QuizQuestion::class.java) }
+                    .filter { documentSnapshot ->
+                        val completedByList = documentSnapshot.get("completedBy") as? List<*>
+                        // Verifica che la lista 'completedBy' non contenga l'ID dell'utente
+                        completedByList == null || !completedByList.contains(userId)
+                    }
+                    .mapNotNull {documentSnapshot ->
+                        //it.toObject(QuizQuestion::class.java)
+                        val quizQuestion = documentSnapshot.toObject(QuizQuestion::class.java)
+                        quizQuestion?.id = documentSnapshot.id // Assegna l'ID del documento
+                        quizQuestion
+                    }
 
                 // Aggiorna LiveData con la lista delle sfide non completate
                 _questions.postValue(incompleteQuestions)
@@ -95,16 +101,50 @@ class QuizViewModel : ViewModel() {
             "correctAnswerIndex" to quizQuestion.correctAnswerIndex,
             "points" to quizQuestion.points,
             "completedBy" to quizQuestion.completedBy,
+            "category" to quizQuestion.category,
         )
 
         // Aggiungi o aggiorna il documento dell'utente nella collezione "leaderboard"
-        firestore.collection("questions").document(UUID.randomUUID().toString()).set(quiz)
-            .addOnSuccessListener {
-                println("Quiz aggiunta con successo " +  quizQuestion.question +"!")
+        firestore.collection("questions").add(quiz)
+            .addOnSuccessListener { documentReference ->
+                quizQuestion.id = documentReference.id
+                Log.d("Firestore", "Domanda aggiunta con ID: ${documentReference.id}")
             }
             .addOnFailureListener { e ->
                 println("Errore nell'aggiunta della quiz per  " +  quizQuestion.question + ": $e")
             }
+    }
+
+    fun questionDone() {
+
+        val currentQuestion = _currentQuestionIndex.value?.let { _questions.value?.get(it) }
+        Log.d("questionDone","done2a")
+        val questionId = currentQuestion?.id ?: return
+        Log.d("questionDone","done2b")
+        val userUUID = userId ?: return
+        Log.d("questionDone","done2c")
+
+        // Ottieni il riferimento al documento della domanda
+        val questionRef = firestore.collection("questions").document(questionId)
+
+        firestore.runTransaction { transaction ->
+            val snapshot = transaction.get(questionRef)
+
+            // Ottieni la lista `completedBy` corrente
+            val completedBy = snapshot.get("completedBy") as? MutableList<String> ?: mutableListOf()
+
+            // Aggiungi l'UUID dell'utente alla lista se non è già presente
+            if (!completedBy.contains(userUUID)) {
+                completedBy.add(userUUID)
+                transaction.update(questionRef, "completedBy", completedBy)
+            }
+            Log.d("questionDone","done2")
+        }.addOnSuccessListener {
+            Log.d("questionDone","doneaaaa")
+            Log.d("QuizViewModel", "L'UUID dell'utente è stato aggiunto con successo a $questionId")
+        }.addOnFailureListener { e ->
+            Log.e("QuizViewModel", "Errore durante l'aggiornamento del documento: ", e)
+        }
     }
 
 
@@ -119,7 +159,7 @@ class QuizViewModel : ViewModel() {
 
         if (currentIndex < questionList.size - 1) {
             _currentQuestionIndex.value = currentIndex + 1
-            _currentQuestions.value = questionList[currentIndex + 1]
+            _currentQuestion.value = questionList[currentIndex + 1]
         } else {
             // Logica per gestire la fine del quiz, ad esempio mostrare un messaggio o navigare altrove
             Log.d("QuizViewModel", "Quiz completato")

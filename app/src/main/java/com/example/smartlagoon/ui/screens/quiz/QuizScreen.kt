@@ -1,5 +1,6 @@
 package com.example.smartlagoon.ui.screens.quiz
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,7 +26,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
@@ -45,7 +44,7 @@ fun QuizScreen(
     usersDbVm: UsersDbViewModel,
     navController: NavHostController
 ) {
-    val context = LocalContext.current
+    val ctx = LocalContext.current
     val questionIndex by quizVm.currentQuestionIndex.observeAsState(0)
     val questionList by quizVm.questions.observeAsState(emptyList())
     val selectedOption by quizVm.selectedOption.observeAsState()
@@ -115,64 +114,103 @@ fun QuizScreen(
             }
         }
     ) { contentPadding ->
-        Box(
-            modifier = Modifier
-                .padding(contentPadding)
-                .fillMaxSize()
-        ) {
-            Column(
+        if (questionList.isNotEmpty() && questionIndex < questionList.size) {
+            Box(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(contentPadding)
                     .fillMaxSize()
             ) {
-                currentQuestion?.let {
-                    it.question?.let { it1 ->
-                        Text(
-                            text = it1,
-                            style = MaterialTheme.typography.headlineMedium,
-                            modifier = Modifier.padding(bottom = 16.dp),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxSize()
+                ) {
+                    currentQuestion?.let {
+                        it.question?.let { it1 ->
+                            Text(
+                                text = it1,
+                                style = MaterialTheme.typography.headlineMedium,
+                                modifier = Modifier.padding(bottom = 16.dp),
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                        Log.d("it", it.toString())
 
-                    it.options?.forEachIndexed { index, option ->
-                        OptionButton(
-                            text = option,
-                            isSelected = selectedOption == index,
-                            onClick = { quizVm.selectOption(index) }
-                        )
-                    }
+                        it.category?.let { it1 ->
+                            Text(
+                                text = it1,
+                                style = MaterialTheme.typography.titleSmall,
+                                modifier = Modifier.padding(bottom = 6.dp),
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
 
-                    Button(
-                        onClick = {
-                            if (selectedOption != null) {
-                                val correctAnswerIndex = it.correctAnswerIndex
-                                val isCorrect = selectedOption == correctAnswerIndex
-                                if (isCorrect) {
-                                    showMessageDialog("Risposta corretta!\nHai guadagnato ${it.points} punti!")
-                                    usersDbVm.addPoints(it.points)
-                                    usersDbVm.fetchUserProfile()
+                        it.options?.forEachIndexed { index, option ->
+                            OptionButton(
+                                text = option,
+                                isSelected = selectedOption == index,
+                                onClick = { quizVm.selectOption(index) }
+                            )
+                        }
+
+                        Button(
+                            onClick = {
+                                if (selectedOption != null) {
+                                    val correctAnswerIndex = it.correctAnswerIndex
+                                    val isCorrect = selectedOption == correctAnswerIndex
+                                    if (isCorrect) {
+                                        showMessageDialog("Risposta corretta!\nHai guadagnato ${it.points} punti!")
+                                        usersDbVm.addPoints(it.points)
+                                        //usersDbVm.fetchUserProfile()
+                                    } else {
+                                        showMessageDialog(
+                                            "Risposta errata. La risposta corretta era: ${
+                                                it.options?.get(
+                                                    correctAnswerIndex
+                                                )
+                                            }"
+                                        )
+                                    }
                                 } else {
-                                    showMessageDialog("Risposta errata. La risposta corretta era: ${it.options?.get(correctAnswerIndex)}")
+                                    Toast.makeText(
+                                        ctx,
+                                        "Seleziona una risposta prima di continuare",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "Seleziona una risposta prima di continuare",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        colors = myButtonColors()
-                    ) {
-                        Text("Prossima domanda")
-                    }
+                                Log.d("questionDone", "done1")
+                                quizVm.questionDone()
+                                Log.d("questionDone", "done3")
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            colors = myButtonColors()
+                        ) {
+                            Text("Prossima domanda")
+                        }
 
+                        Text(
+                            text = "I tuoi punti: ${user?.points}"
+                        )
+                    }
+                }
+            }
+        } else {
+            Log.d("DOmande finite", "domande finite")
+            Box(
+                modifier = Modifier
+                    .padding(contentPadding)
+                    .fillMaxSize()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxSize()
+                ) {
                     Text(
-                        text = "I tuoi punti: ${user?.points}"
+                        text = "Domande terminate, presto ne saranno aggiunte delle altre!",
+                        color = Color.Black,
                     )
                 }
             }
