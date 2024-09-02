@@ -26,14 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".TakePhotoActivity"
-            android:parentActivityName=".MainActivity"
-            android:launchMode="singleTask"
-            android:taskAffinity=""
-            android:excludeFromRecents="true"
-            android:theme="@style/Theme.SMARTLAGOON">
-        </activity>
     </application>
 
 </manifest>

@@ -5,19 +5,11 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.smartlagoon.data.database.Photo_old
-import com.example.smartlagoon.data.repositories.PhotosRepository
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import java.util.UUID
 
 data class PhotosDbState(val photoOlds: List<Photo_old>)
@@ -31,30 +23,13 @@ data class Photo(
 
 class PhotosDbViewModel() : ViewModel() {
 
-    private val _userPhotosNumber = MutableLiveData<Int>()
-    val userPhotosNumber: LiveData<Int> = _userPhotosNumber
+    private val _showDialog = MutableLiveData<Boolean>()
+    val showDialog: LiveData<Boolean> = _showDialog
 
-    fun addPhoto(photoOld: Photo_old) = viewModelScope.launch {
-        //repository.upsertPhoto(photoOld)
+    // Funzione per mostrare o nascondere il dialogo
+    fun setShowDialog(show: Boolean) {
+        _showDialog.value = show
     }
-
-    fun deleteOldPhoto(cutoff: Long) = viewModelScope.launch(Dispatchers.IO) {
-        //repository.deleteOldPhoto(cutoff)
-    }
-
-    fun getAllPhotos() = viewModelScope.launch {
-        //repository.getAllPhotos()
-    }
-
-    fun getUserPhotos(user: String) = viewModelScope.launch {
-        //repository.getUserPhotos(user)
-    }
-
-    fun getUserPhotoNumber(username: String) = viewModelScope.launch {
-        /*val userPhotosNum = repository.getUserPhotoNumber(username)
-        _userPhotosNumber.value = userPhotosNum*/
-    }
-
     private val firestore = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
     private val auth = FirebaseAuth.getInstance()

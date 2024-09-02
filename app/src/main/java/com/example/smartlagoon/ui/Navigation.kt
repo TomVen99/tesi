@@ -20,6 +20,7 @@ import com.example.smartlagoon.ui.screens.login.Login
 import com.example.smartlagoon.ui.screens.photo.PhotoScreen
 import com.example.smartlagoon.ui.screens.profile.ProfileScreen
 import com.example.smartlagoon.ui.screens.challenge.ChallengeScreen
+import com.example.smartlagoon.ui.screens.play.PlayScreen
 import com.example.smartlagoon.ui.screens.quiz.QuizScreen
 import com.example.smartlagoon.ui.screens.quiz.QuizViewModel
 import com.example.smartlagoon.ui.screens.ranking.RankingScreen
@@ -52,6 +53,8 @@ sealed class SmartlagoonRoute(
 
     data object Camera : SmartlagoonRoute("camera", "Camera")
 
+    data object Play : SmartlagoonRoute("play", "Play")
+
     data object Profile : SmartlagoonRoute("profile/{username}","Profile"){
         fun createRoute(username: String): String {
             return "profile/$username"
@@ -59,7 +62,7 @@ sealed class SmartlagoonRoute(
     }
 
     companion object {
-        val routes = setOf(Login, Signin, Home, Ranking, Photo, About, Quiz, Profile,Camera)
+        val routes = setOf(Login, Signin, Home, Ranking, Photo, About, Quiz, Profile, Camera, Play)
     }
 }
 
@@ -73,7 +76,7 @@ fun SmartlagoonNavGraph(
 
     var usersDbVm = koinViewModel<UsersDbViewModel>()
     val photosDbVm = koinViewModel<PhotosDbViewModel>()
-    val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
+    val challengesDbVm = koinViewModel<ChallengesDbViewModel>()
 
     val ctx = LocalContext.current
     val sharedPreferences = ctx.getSharedPreferences("isUserLogged", Context.MODE_PRIVATE)
@@ -130,7 +133,6 @@ fun SmartlagoonNavGraph(
             composable(route) {_ ->
                 HomeScreen(
                     navController,
-                    //sharedPreferences
                 )
             }
         }
@@ -169,13 +171,13 @@ fun SmartlagoonNavGraph(
                     emptyList()
                 )*/
 
-                challengeDbVm.loadChallengesFromJson(ctx)
-                challengeDbVm.getAllChallenges()
+                challengesDbVm.loadChallengesFromJson(ctx)
+                challengesDbVm.getAllChallenges()
                 usersDbVm.auth.currentUser?.uid?.let {
                     ChallengeScreen(
                         navController = navController,
                         //challengeList = userUncompleteChallenge,
-                        challengesDbVm = challengeDbVm,
+                        challengesDbVm = challengesDbVm,
                         userId = it
                     )
                 }
@@ -186,7 +188,7 @@ fun SmartlagoonNavGraph(
                 LaunchedEffect(Unit) {
                     val currentTime = System.currentTimeMillis()
                     val cutoff = currentTime - 24 * 60 * 60 * 1000 // 24 ore in millisecondi
-                    photosDbVm.deleteOldPhoto(cutoff)
+                    //photosDbVm.deleteOldPhoto(cutoff)
                 }
                 LaunchedEffect(Unit) {
                     val userId = photosDbVm.currentUser?.uid
@@ -197,7 +199,7 @@ fun SmartlagoonNavGraph(
                 PhotoScreen(
                     photosDbVm = photosDbVm,
                     navController = navController,
-                    comeFromTakePhoto = false,
+                    challengesDbVm = challengesDbVm,
                     usersDbVm = usersDbVm
                 )
             }
@@ -227,8 +229,15 @@ fun SmartlagoonNavGraph(
 
                 CameraScreen(
                     photosDbVm = photosDbVm,
-                    challengeDbVm = challengeDbVm,
+                    challengesDbVm = challengesDbVm,
                     usersDbVm = usersDbVm,
+                    navController = navController,
+                )
+            }
+        }
+        with(SmartlagoonRoute.Play) {
+            composable(route) {
+                PlayScreen(
                     navController = navController,
                 )
             }

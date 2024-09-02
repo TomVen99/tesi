@@ -4,7 +4,7 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 
-@Composable
+/*@Composable/
 fun <T> MutableLiveData<T>.observeAsState(initial: T): State<T> {
     val state = remember { mutableStateOf(initial) }
     DisposableEffect(this) {
@@ -15,4 +15,4 @@ fun <T> MutableLiveData<T>.observeAsState(initial: T): State<T> {
         onDispose { removeObserver(observer) }
     }
     return state
-}
+}*/

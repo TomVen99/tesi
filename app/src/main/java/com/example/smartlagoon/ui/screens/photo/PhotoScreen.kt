@@ -54,6 +54,7 @@ import com.example.smartlagoon.ui.composables.TopAppBar
 import com.example.smartlagoon.ui.theme.MyColors
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
 import com.example.smartlagoon.ui.theme.myButtonColors
+import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.Photo
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 import com.example.smartlagoon.ui.viewmodel.User
@@ -65,21 +66,21 @@ fun PhotoScreen(
     navController: NavHostController,
     photosDbVm: PhotosDbViewModel,
     usersDbVm: UsersDbViewModel,
-    //photosDbState: PhotosDbState,
-    comeFromTakePhoto: Boolean,
-    challengePoints: Int = 0
+    challengesDbVm: ChallengesDbViewModel,
 ) {
-    var showDialog by remember { mutableStateOf(comeFromTakePhoto) }
+    val showDialog = photosDbVm.showDialog.observeAsState().value ?: false
+    Log.d("showDialog", showDialog.toString())
     // Osserva i dati delle foto dal ViewModel
     val photos by photosDbVm.photosLiveData.observeAsState(emptyList()) // Utilizza LiveData per osservare le foto
     photosDbVm.fetchAllPhotos()
+    val currentChallenge by challengesDbVm.currentChallenge.observeAsState()
 
     SmartlagoonTheme {
         Scaffold(
             topBar = {
                 TopAppBar(
                     navController = navController,
-                    currentRoute = "Photo",
+                    currentRoute = "Foto",
                 )
             },
         ) { contentPadding ->
@@ -104,13 +105,23 @@ fun PhotoScreen(
                         if (user != null) {
                             PhotoItem(photo = photo, user = user!!, navController, usersDbVm)
                         } else {
-                            Text(text = "utente non trovato")
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                                    .size(28.dp),
+                                elevation = CardDefaults.cardElevation(16.dp),
+                            ) {
+
+                            }
                         }
                     }
                 }
-                if (showDialog) {
+                if (showDialog && currentChallenge != null) {
                     AlertDialog(
-                        onDismissRequest = { showDialog = false },
+                        onDismissRequest = {
+                            photosDbVm.setShowDialog(false)
+                            challengesDbVm.setCurrentChallenge(null)},
                         title = {
                             Text(text = "Congratulazioni!!")
                         },
@@ -121,13 +132,14 @@ fun PhotoScreen(
                                     contentDescription = null,
                                     modifier = Modifier.size(40.dp)  // Imposta la dimensione dell'icona
                                 )
-                                Text(text = "Hai guadagnato  $challengePoints punti!")
+                                Text(text = "Hai guadagnato  ${currentChallenge!!.points} punti!")
                             }
                         },
                         confirmButton = {
                             Button(
                                 onClick = {
-                                    showDialog = false // Chiude il popup
+                                    photosDbVm.setShowDialog(false)
+                                    challengesDbVm.setCurrentChallenge(null)
                                 },
                                 colors = myButtonColors(),
                             ) {

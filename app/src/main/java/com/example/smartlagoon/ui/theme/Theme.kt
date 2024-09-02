@@ -17,16 +17,16 @@ import androidx.core.view.WindowCompat
 
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Color.White,
-    onPrimary = Color.White,
-    primaryContainer = MyColors().darkBLue,
+    primary = Color.Black,
+    onPrimary = Color.Black,
+    primaryContainer = MyColors().myBlu,
     onPrimaryContainer = Color.White,
-    secondaryContainer = Color.Yellow,
-    onSecondaryContainer = Color.Black,
-    tertiaryContainer = MyColors().ultraLightBlue,
-    onTertiaryContainer = Color.Black,
-    secondary = MyColors().darkBLue,
-    tertiary = MyColors().darkBLue,
+    secondaryContainer = MyColors().myGreen,
+    onSecondaryContainer = Color.White,
+    tertiaryContainer = MyColors().backgroundLightBlue,
+    onTertiaryContainer = MyColors().borders,
+    secondary = Color.Black,
+    tertiary = Color.Black,
     background = Color.DarkGray,
     onBackground = Color.White
 )

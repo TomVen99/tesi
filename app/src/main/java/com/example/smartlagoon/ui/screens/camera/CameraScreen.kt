@@ -25,10 +25,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,32 +44,38 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
+import com.example.smartlagoon.utils.NotificationWorker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
-import java.net.URI
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun CameraScreen(
     navController: NavController,
     photosDbVm: PhotosDbViewModel,
-    challengeDbVm: ChallengesDbViewModel,
+    challengesDbVm: ChallengesDbViewModel,
     usersDbVm: UsersDbViewModel,
 ) {
-    val context = LocalContext.current
+    val ctx = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
-    val previewView = remember { PreviewView(context) }
+    val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(ctx) }
+    val previewView = remember { PreviewView(ctx) }
     val imageCapture = remember { mutableStateOf<ImageCapture?>(null) }
     val cameraSelector = remember { mutableStateOf(CameraSelector.DEFAULT_BACK_CAMERA) }
     val cameraControl = remember { mutableStateOf<CameraControl?>(null) }
     val isFlashEnabled = remember { mutableStateOf(false) }
     var isPressed by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+    val currentChallenge by challengesDbVm.currentChallenge.observeAsState()
 
+    Log.d("currentChallengeCamera", currentChallenge.toString())
     Box(modifier = Modifier.fillMaxSize()) {
         // Anteprima della fotocamera
         AndroidView(
@@ -115,7 +121,7 @@ fun CameraScreen(
                 // Avvia una coroutine per gestire il delay
                 coroutineScope.launch {
                     // Utilizza la funzione takePhoto modificata
-                    takePhoto(context, imageCapture.value) { uri ->
+                    takePhoto(ctx, imageCapture.value) { uri ->
                         if (uri != null) {
                             photosDbVm.uploadPhoto(uri)
                         } else {
@@ -125,20 +131,24 @@ fun CameraScreen(
                             )
                         }
                     }
-                    //photosDbVm.uploadPhoto(takePhoto(context, imageCapture.value)) // Funzione per scattare la foto
                     delay(500L) // Delay di 1 secondo (1000 millisecondi)
-                    navController.navigateUp() // Torna indietro dopo il delay
                     isPressed = false // Ripristina lo stato del bottone
                 }
                 Log.d("caricamentoFoto","aaa")
-                /*usersDbVm.addPoints(challengePoints)
-                challengeDbVm.challengeDone(challengeId)
-                scheduleNotification()*/
+                if(currentChallenge != null) {
+                    currentChallenge?.let { usersDbVm.addPoints(it.points) }
+                    currentChallenge?.id?.let { challengesDbVm.challengeDone(it) }
+                    photosDbVm.setShowDialog(true)
+                    navController.navigate(SmartlagoonRoute.Photo.route)
+                }else {
+                    navController.navigateUp() // Torna indietro dopo il delay
+                }
+                scheduleNotification(ctx)
             },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 10.dp)
-                .size(56.dp) // Dimensione per creare una forma tonda
+                .size(70.dp) // Dimensione per creare una forma tonda
                 .clip(CircleShape), // Clip a forma circolare
             colors = ButtonDefaults.buttonColors(
                 containerColor = if (isPressed) Color.Red else Color.White, // Colore del bottone basato sullo stato
@@ -212,7 +222,7 @@ private fun takePhoto(context: Context, imageCapture: ImageCapture?, onPhotoTake
                 // Verifica se il file esiste prima di procedere
                 if (photoFile.exists()) {
                     val uri = photoFile.toUri()
-                    Toast.makeText(context, "Foto salvata: ${photoFile.absolutePath}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Foto caricata!", Toast.LENGTH_SHORT).show()
                     onPhotoTaken(uri) // Chiamata di callback con URI valido
                 } else {
                     Log.e("CameraX", "Il file della foto non esiste!")
@@ -221,4 +231,13 @@ private fun takePhoto(context: Context, imageCapture: ImageCapture?, onPhotoTake
             }
         }
     )
+}
+
+private fun scheduleNotification(ctx: Context) {
+    val notificationWorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>()
+        .setInitialDelay(1, TimeUnit.MINUTES) // Ritardo di 24 ore
+        .build()
+
+    //Log.d("worker", "notifica impostata")
+    WorkManager.getInstance(ctx).enqueue(notificationWorkRequest)
 }

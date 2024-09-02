@@ -51,7 +51,6 @@ import com.example.smartlagoon.ui.SmartlagoonRoute
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    //sharedPreferences: SharedPreferences? = null
 ) {
     val ctx = LocalContext.current
     val cameraPermissionState = rememberLauncherForActivityResult(
@@ -103,11 +102,9 @@ fun MenuGrid(navController: NavController){
                 modifier = Modifier.fillMaxWidth()
             ) {
                 CameraItem(
-                    /*"Scatta una foto",
-                    R.drawable.ic_badge,*/
                     SmartlagoonRoute.Camera,
                     navController,
-                    320
+                    450
                 )
                 /*
             MenuItem("Classifica", R.drawable.ic_classifica, SmartlagoonRoute.Ranking, navController)*/
@@ -117,18 +114,12 @@ fun MenuGrid(navController: NavController){
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                SingleMenuItem(
-                    "Foto",
-                    R.drawable.ic_badge,
-                    SmartlagoonRoute.Photo,
-                    navController,
-                    80
-                )
-                /*
-            MenuItem("Classifica", R.drawable.ic_classifica, SmartlagoonRoute.Ranking, navController)*/
+                MenuItem("Foto", R.drawable.ic_badge, SmartlagoonRoute.Photo, navController)
+                MenuItem("Gioca", R.drawable.ic_info, SmartlagoonRoute.Play, navController)
             }
+
             Spacer(modifier = Modifier.height(16.dp))
-            Row(
+            /*Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -161,7 +152,7 @@ fun MenuGrid(navController: NavController){
                     80
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))*/
         }
     }
 }

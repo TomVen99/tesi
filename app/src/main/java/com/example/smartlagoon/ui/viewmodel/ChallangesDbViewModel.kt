@@ -21,6 +21,14 @@ class ChallengesDbViewModel() : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
     private val currentUser = auth.currentUser
     private val userId = currentUser?.uid
+
+    private val _currentChallenge = MutableLiveData<Challenge?>()
+    var currentChallenge: LiveData<Challenge?> = _currentChallenge
+    fun setCurrentChallenge(challenge: Challenge?) {
+        _currentChallenge.value = challenge
+        Log.d("currentChallengeChallenge", challenge.toString())
+    }
+
     fun getAllChallenges() {
         Log.d("chDBVM", userId.toString())
         firestore.collection("challenges")

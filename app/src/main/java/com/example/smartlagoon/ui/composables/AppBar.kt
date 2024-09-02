@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -52,10 +53,10 @@ fun TopAppBar(
         },
         actions = {
             IconButton(onClick = {
-                navController?.navigate(SmartlagoonRoute.Home.route)
+                navController?.navigate(SmartlagoonRoute.Camera.route)
             }) {
                 Icon(
-                    imageVector = Icons.Default.Settings, // Modifica l'icona secondo le tue necessità
+                    imageVector = Icons.Default.CameraAlt, // Modifica l'icona secondo le tue necessità
                     contentDescription = "Settings"
                 )
             }

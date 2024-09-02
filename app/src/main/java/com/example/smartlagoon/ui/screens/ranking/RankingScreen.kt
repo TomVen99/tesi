@@ -34,7 +34,6 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.smartlagoon.R
 import com.example.smartlagoon.ui.composables.TopAppBar
 import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
-import com.example.smartlagoon.ui.viewmodel.UsersState
 
 
 @OptIn(ExperimentalFoundationApi::class)
