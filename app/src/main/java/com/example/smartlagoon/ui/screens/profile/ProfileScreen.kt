@@ -3,9 +3,11 @@ package com.example.smartlagoon.ui.screens.profile
 import android.Manifest
 import android.app.Activity
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -14,6 +16,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +38,7 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Mail
+import androidx.compose.material.icons.filled.Mode
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -69,6 +73,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.smartlagoon.R
+import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.composables.TopAppBar
 import com.example.smartlagoon.ui.theme.MyColors
 import com.example.smartlagoon.ui.theme.myButtonColors
@@ -83,6 +88,7 @@ fun ProfileScreen(
     showModifyButton: Boolean
 ) {
     val ctx = LocalContext.current
+    val sharedPreferences = ctx.getSharedPreferences("isUserLogged", Context.MODE_PRIVATE)
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val user by usersDbVm.userLiveData.observeAsState()
     var name by remember { mutableStateOf(user?.name ?: "") }
@@ -286,26 +292,59 @@ fun ProfileScreen(
                 setProfileImage()
                 Spacer(modifier = Modifier.size(15.dp))
 
-                Button(
-                    colors = myButtonColors(),
-                    onClick = {
-                        requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-                    },
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 8.dp,
-                        pressedElevation = 12.dp,
-                        hoveredElevation = 4.dp,
-                        focusedElevation = 6.dp,
-                        disabledElevation = 0.dp
-                    ),
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Icon(
-                        Icons.Filled.PhotoCamera,
-                        contentDescription = "Camera icon",
-                        modifier = Modifier.size(ButtonDefaults.IconSize)
-                    )
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                    Text("Scegli foto")
+                    Button(
+                        colors = myButtonColors(),
+                        onClick = {
+                            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        },
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = 8.dp,
+                            pressedElevation = 12.dp,
+                            hoveredElevation = 4.dp,
+                            focusedElevation = 6.dp,
+                            disabledElevation = 0.dp
+                        ),
+                    ) {
+                        Icon(
+                            Icons.Filled.PhotoCamera,
+                            contentDescription = "Camera icon",
+                            modifier = Modifier.size(ButtonDefaults.IconSize)
+                        )
+                        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                        Text("Scegli foto")
+                    }
+                    if (showModifyButton) {
+                        Spacer(Modifier.size(4.dp))
+                        Button(
+                            colors = myButtonColors(),
+                            onClick = {
+                                coroutineScope.launch {
+                                    sheetState.show()
+                                }
+                            },
+                            elevation = ButtonDefaults.buttonElevation(
+                                defaultElevation = 8.dp,
+                                pressedElevation = 12.dp,
+                                hoveredElevation = 4.dp,
+                                focusedElevation = 6.dp,
+                                disabledElevation = 0.dp
+                            ),
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                        ) {
+                            Icon(
+                                Icons.Filled.Mode,
+                                contentDescription = "Matita icon",
+                                modifier = Modifier.size(ButtonDefaults.IconSize)
+                            )
+                            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                            Text(text = "Modifica profilo")
+                        }
+                    }
                 }
                 Spacer(modifier = Modifier.size(15.dp))
 
@@ -390,18 +429,58 @@ fun ProfileScreen(
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
-                if(showModifyButton) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.weight(1f))
+                /*Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(10.dp)
+                        .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RectangleShape)
+                )*/
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp), // Aggiungi padding se necessario
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                )
+                {
                     Button(
-                        colors = myButtonColors(),
                         onClick = {
-                            coroutineScope.launch {
-                                sheetState.show()
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.fromParts("package", ctx.packageName, null)
                             }
+                            ctx.startActivity(intent)
                         },
                         modifier = Modifier
-                            .align(Alignment.End)
+                            .align(Alignment.Top),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
                     ) {
-                        Text(text = "Modifica profilo")
+                        Text("Impostazioni")
+                    }
+                    Button(
+                        onClick = {
+                            if (sharedPreferences != null) {
+                                val edit = sharedPreferences.edit()
+                                edit.putBoolean("isUserLogged", false)
+                                edit.putString("username", "")
+                                edit.apply()
+                            }
+                            Log.d("Logout", SmartlagoonRoute.Login.route)
+                            navController.navigate(SmartlagoonRoute.Login.route)
+                        },
+                        modifier = Modifier
+                            .align(Alignment.Bottom),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Red,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    ) {
+                        Text("Logout")
                     }
                 }
 

@@ -117,6 +117,18 @@ dependencies {
     implementation ("com.google.firebase:firebase-storage-ktx")
     implementation ("com.google.android.gms:play-services-auth:21.2.0")
     implementation ("com.google.android.gms:play-services-identity:18.1.0")
+    // Dipendenze per TensorFlow Lite
+    implementation ("org.tensorflow:tensorflow-lite:2.10.0")
+    implementation ("org.tensorflow:tensorflow-lite-gpu:2.10.0") // Se vuoi supporto GPU
+    implementation ("org.tensorflow:tensorflow-lite-support:0.3.1") // Per TensorFlow Lite Support Library
+    // CameraX Core
+    implementation ("androidx.camera:camera-core:1.3.4")
+    // CameraX Camera2
+    implementation ("androidx.camera:camera-camera2:1.3.4")
+    // CameraX Lifecycle
+    implementation ("androidx.camera:camera-lifecycle:1.3.4")
+    // CameraX View
+    implementation ("androidx.camera:camera-view:1.3.4")
     //Fine miei import
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

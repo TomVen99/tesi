@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.smartlagoon.ui.screens.about.AboutScreen
+import com.example.smartlagoon.ui.screens.camera.CameraScreen
 import com.example.smartlagoon.ui.screens.home.HomeScreen
 import com.example.smartlagoon.ui.screens.login.Login
 import com.example.smartlagoon.ui.screens.photo.PhotoScreen
@@ -49,6 +50,8 @@ sealed class SmartlagoonRoute(
 
     data object Home : SmartlagoonRoute("home", "Home")
 
+    data object Camera : SmartlagoonRoute("camera", "Camera")
+
     data object Profile : SmartlagoonRoute("profile/{username}","Profile"){
         fun createRoute(username: String): String {
             return "profile/$username"
@@ -56,7 +59,7 @@ sealed class SmartlagoonRoute(
     }
 
     companion object {
-        val routes = setOf(Login, Signin, Home, Ranking, Photo, About, Quiz, Profile,)
+        val routes = setOf(Login, Signin, Home, Ranking, Photo, About, Quiz, Profile,Camera)
     }
 }
 
@@ -70,6 +73,7 @@ fun SmartlagoonNavGraph(
 
     var usersDbVm = koinViewModel<UsersDbViewModel>()
     val photosDbVm = koinViewModel<PhotosDbViewModel>()
+    val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
 
     val ctx = LocalContext.current
     val sharedPreferences = ctx.getSharedPreferences("isUserLogged", Context.MODE_PRIVATE)
@@ -126,7 +130,7 @@ fun SmartlagoonNavGraph(
             composable(route) {_ ->
                 HomeScreen(
                     navController,
-                    sharedPreferences
+                    //sharedPreferences
                 )
             }
         }
@@ -161,7 +165,6 @@ fun SmartlagoonNavGraph(
         }
         with(SmartlagoonRoute.Challenge) {
             composable(route) { _ ->
-                val challengeDbVm = koinViewModel<ChallengesDbViewModel>()
                 /*val userUncompleteChallenge by challengeDbVm.allChallenges.observeAsState(
                     emptyList()
                 )*/
@@ -214,6 +217,17 @@ fun SmartlagoonNavGraph(
                 usersDbVm.fetchUserProfile()
                 QuizScreen(
                     quizVm = quizVm,
+                    usersDbVm = usersDbVm,
+                    navController = navController,
+                )
+            }
+        }
+        with(SmartlagoonRoute.Camera) {
+            composable(route) {
+
+                CameraScreen(
+                    photosDbVm = photosDbVm,
+                    challengeDbVm = challengeDbVm,
                     usersDbVm = usersDbVm,
                     navController = navController,
                 )
