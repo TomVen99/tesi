@@ -239,7 +239,7 @@ fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersD
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
                             modifier = Modifier.clickable {
-                                usersDbVm.fetchUserProfileByUsername(user.username)
+                                //usersDbVm.fetchUserProfileByUsername(user.username)
                                 val route = SmartlagoonRoute.Profile.createRoute(user.username)
                                 navController.navigate(route)
                             }

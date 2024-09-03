@@ -140,11 +140,15 @@ fun SmartlagoonNavGraph(
             composable(route) { backStackEntry ->
                 val username = backStackEntry.arguments?.getString("username")
                 var showModifyButton = false
+                if (username != null) {
+                    Log.d("navigation", username)
+                    usersDbVm.userLiveData.value?.username?.let { Log.d("navigation2", it) }
+                }
                 if (username != "{username}") {
                     LaunchedEffect(username) {
                         usersDbVm.fetchUserProfileByUsername(username!!)
                     }
-                }else {
+                } else {
                     showModifyButton = true
                     LaunchedEffect(username) {
                         usersDbVm.fetchUserProfile()

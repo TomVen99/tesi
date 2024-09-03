@@ -1,9 +1,11 @@
 package com.example.smartlagoon.ui.screens.ranking
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.smartlagoon.R
+import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.composables.AnimatedImage
 import com.example.smartlagoon.ui.composables.TopAppBar
 import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
@@ -88,7 +91,15 @@ fun RankingScreen(
             itemsIndexed(ranking) { _, user ->
                 if (user != null) {
                     ListItem(
-                        headlineContent = { user.username?.let { Text(text = it) } },
+                        headlineContent = { user.username?.let {
+                            Text(
+                                text = it,
+                                modifier = Modifier.clickable {
+                                    //usersDbVm.fetchUserProfileByUsername(user.username)
+                                    val route = SmartlagoonRoute.Profile.createRoute(user.username)
+                                    navController.navigate(route)
+                                })
+                        }},
                         supportingContent = {
                             user.name?.let { Text(text = it) }
                         },
