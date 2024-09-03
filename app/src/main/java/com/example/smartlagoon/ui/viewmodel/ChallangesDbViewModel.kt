@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.smartlagoon.ui.screens.quiz.QuizQuestion
 import com.google.common.reflect.TypeToken
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,28 +35,33 @@ class ChallengesDbViewModel() : ViewModel() {
         firestore.collection("challenges")
             .get()
             .addOnSuccessListener { result ->
-                val incompleteChallenges = result.documents
-                    .filter { !((it["completedBy"] as? List<*>)?.contains(userId) ?: false)}
-                    .mapNotNull { it.toObject(Challenge::class.java) }
+                val allChallenges = result.documents
+                    //.filter { !((it["completedBy"] as? List<*>)?.contains(userId) ?: false)}
+                    .mapNotNull { documentSnapshot ->
+                        //it.toObject(QuizQuestion::class.java)
+                        val challenge = documentSnapshot.toObject(Challenge::class.java)
+                        challenge?.id = documentSnapshot.id // Assegna l'ID del documento
+                        challenge
+                    }
 
                 // Aggiorna LiveData con la lista delle sfide non completate
-                _allChallenges.postValue(incompleteChallenges)
+                _allChallenges.postValue(allChallenges)
 
-                incompleteChallenges.forEach { challenge ->
-                    Log.d("Firestore", "Incomplete challenge: ${challenge.title}")
+                allChallenges.forEach { challenge ->
+                    Log.d("Firestore", "Incomplete challenge: ${challenge.id}")
                 }
             }
             .addOnFailureListener { exception ->
                 Log.e("Firestore", "Error getting incomplete challenges: ", exception)
             }
     }
-
     fun challengeDone(challengeId: String) {
         val userUUID = userId ?: return
 
         Log.d("challengeId", challengeId)
-        val questionRef = firestore.collection("questions").document(challengeId)
+        val questionRef = firestore.collection("challenges").document(challengeId)
 
+        Log.d("challengeDone", challengeId)
         firestore.runTransaction { transaction ->
             val snapshot = transaction.get(questionRef)
 

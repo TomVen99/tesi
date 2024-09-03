@@ -34,6 +34,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -86,8 +87,9 @@ fun AchievementCard(
     challengeDbVm: ChallengesDbViewModel
 ) {
     var showDialog by remember { mutableStateOf(false) }
-    val context = LocalContext.current  // Ottieni il Context corrente
-    val containerColor = if(challenge.completedBy?.contains(userId) == true) {
+    var showChallengeDone by remember { mutableStateOf(false) }
+    val isCompleted = challenge.completedBy?.contains(userId) == true
+    val containerColor = if(isCompleted) {
         MaterialTheme.colorScheme.surfaceContainer
     } else {
         MyColors().myBluButtonBackground
@@ -97,20 +99,34 @@ fun AchievementCard(
             .fillMaxWidth()
             .padding(4.dp)
             .clickable {
-                showDialog = true
+                if(!isCompleted){
+                    showDialog = true
+                } else {
+                    showChallengeDone = true
+                }
             },
         colors = CardDefaults.cardColors(
             containerColor = containerColor
         )
     ) {
         Row {
-            Image(
-                painter = painterResource(id = R.drawable.immagine_sfida),
-                contentDescription = "Challenge image",
-                modifier = Modifier
-                    .size(70.dp, 120.dp)
-                    .padding(5.dp)
-            )
+            if(!isCompleted) {
+                Image(
+                    painter = painterResource(id = R.drawable.immagine_sfida),
+                    contentDescription = "Challenge image",
+                    modifier = Modifier
+                        .size(70.dp, 120.dp)
+                        .padding(5.dp)
+                )
+            }else {
+                Image(
+                    painter = painterResource(id = R.drawable.immagine_sfida_bn),
+                    contentDescription = "Challenge image",
+                    modifier = Modifier
+                        .size(70.dp, 120.dp)
+                        .padding(5.dp)
+                )
+            }
             Column(
                 modifier = Modifier
                     .padding(16.dp)
@@ -121,7 +137,11 @@ fun AchievementCard(
                         text = it,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
-                        color = MyColors().myBluButtonTitle
+                        color = if(!isCompleted) {
+                            MyColors().myBluButtonTitle
+                        }else {
+                            Color.Gray
+                        }
                     )
                 }
 
@@ -132,8 +152,12 @@ fun AchievementCard(
                     Text(
                         text = it,
                         fontSize = 16.sp,
-                        color = MyColors().myBluButtonText,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = if(!isCompleted) {
+                            MyColors().myBluButtonText
+                        }else {
+                            Color.Gray
+                        },
                     )
                 }
 
@@ -175,6 +199,37 @@ fun AchievementCard(
                         colors = myButtonColors(),
                     ) {
                         Text("Scatta + " +  challenge.points.toString() + " punti")
+                    }
+                }
+            )
+        }
+        if (showChallengeDone) {
+            AlertDialog(
+                onDismissRequest = { showChallengeDone = false },
+                title = {
+                    Text(text = "Sfida completata!")
+                },
+                /*text = {
+                    Column {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_launcher_foreground),  // Sostituisci `your_image` con il nome dell'immagine nella cartella drawable
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp)  // Imposta la dimensione dell'icona
+                        )
+                        challenge.description?.let { Text(text = it) }
+                    }
+                },*/
+                text = {
+                    Text(text = "Questa sfida è già stata completata!")
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            showChallengeDone = false // Chiude il popup
+                        },
+                        colors = myButtonColors(),
+                    ) {
+                        Text("Ok" )
                     }
                 }
             )

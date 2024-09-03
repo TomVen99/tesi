@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -47,6 +48,28 @@ fun PlayScreen(
                     currentRoute = "Gioca",
                 )
             },
+            bottomBar = {
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RectangleShape)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.lagoonguard_logo),
+                        contentDescription = "Logo",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp)
+                    )
+                }
+            },
         ) {contentPadding ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -70,6 +93,13 @@ fun MenuGrid(navController: NavController){
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                SingleMenuItem("Foto", R.drawable.ic_badge, SmartlagoonRoute.Photo, navController, 200)
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 MenuItem("Quiz", R.drawable.ic_ricicla, SmartlagoonRoute.Quiz, navController)
                 MenuItem("Sfide", R.drawable.ic_sfide, SmartlagoonRoute.Challenge, navController)
             }
@@ -79,14 +109,14 @@ fun MenuGrid(navController: NavController){
                 modifier = Modifier.fillMaxWidth()
             ) {
                 MenuItem("Classifica", R.drawable.ic_classifica, SmartlagoonRoute.Ranking, navController)
-                MenuItem("About", R.drawable.ic_info, SmartlagoonRoute.About, navController)
+                MenuItem("Profilo", R.drawable.ic_profilo, SmartlagoonRoute.Profile, navController)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                SingleMenuItem("Profilo", R.drawable.ic_profilo, SmartlagoonRoute.Ranking, navController, 80)
+                SingleMenuItem("About", R.drawable.ic_info, SmartlagoonRoute.About, navController, 80)
             }
             Spacer(modifier = Modifier.height(16.dp))
         }

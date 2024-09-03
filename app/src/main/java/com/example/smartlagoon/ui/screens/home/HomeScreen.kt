@@ -259,7 +259,7 @@ fun SingleMenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navContro
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         modifier = Modifier
-            .width(320.dp) // Occupa tutta la larghezza
+            .width(330.dp) // Occupa tutta la larghezza
             .height(size.dp) // Altezza di due caselle
             //.clip(RoundedCornerShape(8.dp))
             .clickable {
