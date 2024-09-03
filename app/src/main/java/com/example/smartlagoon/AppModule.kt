@@ -8,7 +8,6 @@ import com.example.smartlagoon.data.repositories.SettingsRepository
 import com.example.smartlagoon.data.repositories.ThemeRepository
 import com.example.smartlagoon.ui.screens.home.HomeScreenViewModel
 import com.example.smartlagoon.ui.screens.login.LoginViewModel
-import com.example.smartlagoon.ui.screens.profile.ProfileViewModel
 import com.example.smartlagoon.ui.screens.quiz.QuizViewModel
 import com.example.smartlagoon.ui.screens.signin.SigninViewModel
 import com.example.smartlagoon.ui.theme.ThemeViewModel
@@ -66,7 +65,5 @@ val appModule = module {
     viewModel { LoginViewModel() }
 
     viewModel { SigninViewModel() }
-
-    viewModel { ProfileViewModel() }
 
 }

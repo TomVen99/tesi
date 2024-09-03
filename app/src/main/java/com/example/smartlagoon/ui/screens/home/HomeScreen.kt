@@ -33,8 +33,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,8 +47,14 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.smartlagoon.R
 import com.example.smartlagoon.ui.SmartlagoonRoute
+import com.example.smartlagoon.ui.composables.AnimatedImage
 
 @Composable
 fun HomeScreen(
@@ -76,12 +84,14 @@ fun HomeScreen(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
+        // Sfondo animato con Lottie
+        AnimatedImage(R.raw.mare)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(16.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.lagoonguard_logo),
+                painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),
                 contentDescription = "Smart Lagoon Logo",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -92,6 +102,7 @@ fun HomeScreen(
         }
     }
 }
+
 
 @Composable
 fun MenuGrid(navController: NavController){
@@ -114,51 +125,17 @@ fun MenuGrid(navController: NavController){
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                MenuItem("Foto", R.drawable.ic_badge, SmartlagoonRoute.Photo, navController)
-                MenuItem("Gioca", R.drawable.ic_info, SmartlagoonRoute.Play, navController)
+                MenuItem("Foto", R.raw.turtle, SmartlagoonRoute.Photo, navController)
+                MenuItem("Gioca", R.raw.play, SmartlagoonRoute.Play, navController)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            /*Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                MenuItem("Quiz", R.drawable.ic_ricicla, SmartlagoonRoute.Quiz, navController)
-                MenuItem("Sfide", R.drawable.ic_sfide, SmartlagoonRoute.Challenge, navController)
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                MenuItem("Profilo", R.drawable.ic_profilo, SmartlagoonRoute.Profile, navController)
-                MenuItem(
-                    "Classifica",
-                    R.drawable.ic_classifica,
-                    SmartlagoonRoute.Ranking,
-                    navController
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                SingleMenuItem(
-                    "About",
-                    R.drawable.ic_info,
-                    SmartlagoonRoute.About,
-                    navController,
-                    80
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))*/
         }
     }
 }
 
 @Composable
-fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: NavController) {
+fun MenuItem(name: String, resId: Int, route: SmartlagoonRoute, navController: NavController) {
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
@@ -177,14 +154,15 @@ fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: 
             Box(
 
             ) {
-                Image(
+                /*Image(
                     painter = painterResource(id = iconId),
                     contentDescription = name,
                     //contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
                         //.clip(RoundedCornerShape(8.dp))
-                )
+                )*/
+                AnimatedImage(resId = resId)
                 Text(
                     text = name,
                     fontWeight = FontWeight.Bold,
@@ -254,7 +232,7 @@ fun CameraItem(route: SmartlagoonRoute, navController: NavController, size: Int)
     }
 }
 @Composable
-fun SingleMenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: NavController, size: Int) {
+fun SingleMenuItem(name: String, resId: Int, route: SmartlagoonRoute, navController: NavController, size: Int) {
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
@@ -274,14 +252,15 @@ fun SingleMenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navContro
             Box(
 
             ) {
-                Image(
+                /*Image(
                     painter = painterResource(id = iconId),
                     contentDescription = name,
                     //contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
                     /*    .clip(RoundedCornerShape(8.dp))*/
-                )
+                )*/
+                AnimatedImage(resId)
                 Text(
                     text = name,
                     fontWeight = FontWeight.Bold,

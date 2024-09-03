@@ -74,6 +74,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.smartlagoon.R
 import com.example.smartlagoon.ui.SmartlagoonRoute
+import com.example.smartlagoon.ui.composables.AnimatedImage
 import com.example.smartlagoon.ui.composables.TopAppBar
 import com.example.smartlagoon.ui.theme.MyColors
 import com.example.smartlagoon.ui.theme.myButtonColors
@@ -273,7 +274,7 @@ fun ProfileScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.lagoonguard_logo),//smartlagoon_logo),
+                        painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),//smartlagoon_logo),
                         contentDescription = "Logo",
                         modifier = Modifier
                             .fillMaxWidth()
@@ -408,7 +409,6 @@ fun ProfileScreen(
                     }
                 }
                 Spacer(modifier = Modifier.size(15.dp))
-
                 Row(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape)
@@ -462,6 +462,7 @@ fun ProfileScreen(
                     ) {
                         Text("Impostazioni")
                     }
+                    //AnimatedImage(R.raw.poseidonia)
                     Button(
                         onClick = {
                             if (sharedPreferences != null) {

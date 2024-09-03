@@ -21,17 +21,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.smartlagoon.R
 import com.example.smartlagoon.ui.SmartlagoonRoute
+import com.example.smartlagoon.ui.composables.AnimatedImage
 import com.example.smartlagoon.ui.composables.TopAppBar
 import com.example.smartlagoon.ui.screens.home.SingleMenuItem
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
@@ -71,15 +79,20 @@ fun PlayScreen(
                 }
             },
         ) {contentPadding ->
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+            Box(
                 modifier = Modifier
                     .padding(contentPadding)
                     .fillMaxSize()
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
-                MenuGrid(navController)
+                // Sfondo animato con Lottie
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    MenuGrid(navController)
+                }
             }
         }
     }
@@ -93,30 +106,30 @@ fun MenuGrid(navController: NavController){
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                SingleMenuItem("Foto", R.drawable.ic_badge, SmartlagoonRoute.Photo, navController, 200)
+                SingleMenuItem("Foto", R.raw.turtle, SmartlagoonRoute.Photo, navController, 170)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                MenuItem("Quiz", R.drawable.ic_ricicla, SmartlagoonRoute.Quiz, navController)
-                MenuItem("Sfide", R.drawable.ic_sfide, SmartlagoonRoute.Challenge, navController)
+                MenuItem("Quiz", R.raw.quiz, SmartlagoonRoute.Quiz, navController)
+                MenuItem("Sfide", R.raw.challenge, SmartlagoonRoute.Challenge, navController)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                MenuItem("Classifica", R.drawable.ic_classifica, SmartlagoonRoute.Ranking, navController)
-                MenuItem("Profilo", R.drawable.ic_profilo, SmartlagoonRoute.Profile, navController)
+                MenuItem("Classifica", R.raw.ranking, SmartlagoonRoute.Ranking, navController)
+                MenuItem("Profilo", R.raw.profile, SmartlagoonRoute.Profile, navController)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                SingleMenuItem("About", R.drawable.ic_info, SmartlagoonRoute.About, navController, 80)
+                SingleMenuItem("About", R.raw.info, SmartlagoonRoute.About, navController, 110)
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -124,7 +137,7 @@ fun MenuGrid(navController: NavController){
 }
 
 @Composable
-fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: NavController) {
+fun MenuItem(name: String, resId: Int, route: SmartlagoonRoute, navController: NavController) {
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(4.dp),
@@ -143,14 +156,15 @@ fun MenuItem(name: String, iconId: Int, route: SmartlagoonRoute, navController: 
             Box(
 
             ) {
-                Image(
+                /*Image(
                     painter = painterResource(id = iconId),
                     contentDescription = name,
                     //contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxSize()
                     //.clip(RoundedCornerShape(8.dp))
-                )
+                )*/
+                AnimatedImage(resId)
                 Text(
                     text = name,
                     fontWeight = FontWeight.Bold,

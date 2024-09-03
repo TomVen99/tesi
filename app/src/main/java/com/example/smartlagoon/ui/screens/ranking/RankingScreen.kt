@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.smartlagoon.R
+import com.example.smartlagoon.ui.composables.AnimatedImage
 import com.example.smartlagoon.ui.composables.TopAppBar
 import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 
@@ -74,6 +77,7 @@ fun RankingScreen(
             }
         }
     ) { contentPadding ->
+        AnimatedImage(R.raw.sea_background)
         LazyColumn (
             modifier = Modifier
                 .fillMaxSize()
@@ -111,7 +115,8 @@ fun RankingScreen(
                                 1.dp,
                                 MaterialTheme.colorScheme.primaryContainer,
                                 RoundedCornerShape(16.dp)
-                            ),
+                            )
+                            .clip(RoundedCornerShape(16.dp))
                     )
                 }
             }
