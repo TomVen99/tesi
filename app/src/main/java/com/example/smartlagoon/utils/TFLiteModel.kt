@@ -12,7 +12,7 @@ class TFLiteModel(context: Context) {
     private var interpreter: Interpreter
 
     init {
-        val model = loadModelFile(context, "model.tflite") // sostituisci con il nome del tuo modello
+        val model = loadModelFile(context, "model1.tflite") // sostituisci con il nome del tuo modello
         interpreter = Interpreter(model)
     }
 

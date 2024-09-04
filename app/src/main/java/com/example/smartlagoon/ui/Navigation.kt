@@ -13,6 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.smartlagoon.ui.composables.MarineClassificationScreen
 import com.example.smartlagoon.ui.screens.about.AboutScreen
 import com.example.smartlagoon.ui.screens.camera.CameraScreen
 import com.example.smartlagoon.ui.screens.home.HomeScreen
@@ -244,6 +245,7 @@ fun SmartlagoonNavGraph(
                 PlayScreen(
                     navController = navController,
                 )
+                //MarineClassificationScreen()
             }
         }
     }

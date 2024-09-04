@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.smartlagoon.R
 import com.example.smartlagoon.ui.SmartlagoonRoute
+import com.example.smartlagoon.ui.composables.AnimatedImage
 import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 
 
@@ -62,14 +63,17 @@ fun Login(
 
     Box(modifier = Modifier
         .fillMaxSize()
-        .wrapContentHeight(Alignment.CenterVertically))
+        //.wrapContentHeight(Alignment.CenterVertically)
+        )
     {
+        AnimatedImage(R.raw.sea_background)
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .align(Alignment.Center)  // Centrato rispetto al Box
                 .padding(10.dp)
-                .background(MaterialTheme.colorScheme.background)
+                //.background(MaterialTheme.colorScheme.background)
                 .border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
         ) {
             Image(
@@ -143,18 +147,9 @@ fun Login(
                 ) {
                 Text("Login")
             }
-
-            /*// Controlla il risultato del login
-            if (loginResult == false) {
-                Text(loginLog.toString(), color = Color.Red)
-            } else if (loginResult == true) {
-                navController.navigate(SmartlagoonRoute.Home.route)//buildRoute(state.username))
-            } else if (loginResult == null) {
-                Spacer(Modifier.size(15.dp))
-            }*/
             Spacer(Modifier.size(10.dp))
             Text(text = "Oppure")
-            Spacer(Modifier.size(10.dp))
+            //Spacer(Modifier.size(10.dp))
 
             TextButton(
                 onClick = {

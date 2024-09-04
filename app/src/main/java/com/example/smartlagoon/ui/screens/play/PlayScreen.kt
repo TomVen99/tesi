@@ -53,7 +53,7 @@ fun PlayScreen(
             topBar = {
                 TopAppBar(
                     navController = navController,
-                    currentRoute = "Gioca",
+                    currentRoute = "Menu",
                 )
             },
             bottomBar = {
@@ -84,11 +84,13 @@ fun PlayScreen(
                     .padding(contentPadding)
                     .fillMaxSize()
             ) {
-                // Sfondo animato con Lottie
+                AnimatedImage(R.raw.sea_background)
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .align(Alignment.Center)  // Centrato rispetto al Box
                 ) {
                     Spacer(modifier = Modifier.height(16.dp))
                     MenuGrid(navController)

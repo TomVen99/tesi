@@ -1,8 +1,11 @@
 package com.example.smartlagoon.ui.screens.camera
 
+import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.camera.core.CameraControl
@@ -54,6 +57,8 @@ import com.example.smartlagoon.utils.NotificationWorker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 @Composable
@@ -100,7 +105,7 @@ fun CameraScreen(
                 // Associa i use cases alla fotocamera
                 val camera = cameraProvider.bindToLifecycle(
                     lifecycleOwner,
-                    cameraSelector.value,
+                    CameraSelector.DEFAULT_BACK_CAMERA,//cameraSelector.value,
                     preview,
                     imageCaptureConfig
                 )
@@ -121,14 +126,11 @@ fun CameraScreen(
                 // Avvia una coroutine per gestire il delay
                 coroutineScope.launch {
                     // Utilizza la funzione takePhoto modificata
-                    takePhoto(ctx, imageCapture.value) { uri ->
+                    takePhoto(ctx, imageCapture.value)  { uri ->
                         if (uri != null) {
                             photosDbVm.uploadPhoto(uri)
                         } else {
-                            Log.e(
-                                "CameraScreen",
-                                "Errore: URI della foto è nullo. Foto non caricata."
-                            )
+                            Log.e("CameraScreen","Errore: URI della foto è nullo. Foto non caricata.")
                         }
                     }
                     delay(500L) // Delay di 1 secondo (1000 millisecondi)
@@ -197,8 +199,60 @@ fun CameraScreen(
         }
     }
 }
+/*private fun takePhoto(imageCapture: ImageCapture, ctx: Context) {
+    // Get a stable reference of the modifiable image capture use case
+    //val imageCapture = imageCapture ?: return
+
+    // Create time stamped name and MediaStore entry.
+    val name = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
+        .format(System.currentTimeMillis())
+    val contentValues = ContentValues().apply {
+        put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+        put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
+        }
+    }
+
+    // Ottieni il ContentResolver dal contesto
+    val contentResolver = ctx.contentResolver
+    // Create output options object which contains file + metadata
+    val outputOptions = ImageCapture.OutputFileOptions
+        .Builder(contentResolver,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues)
+        .build()
+
+    // Set up image capture listener, which is triggered after photo has
+    // been taken
+    imageCapture.takePicture(
+        outputOptions,
+        ContextCompat.getMainExecutor(ctx),
+        object : ImageCapture.OnImageSavedCallback {
+            override fun onError(exc: ImageCaptureException) {
+                Log.e("cameraXnew", "Photo capture failed: ${exc.message}", exc)
+            }
+
+            override fun
+                    onImageSaved(output: ImageCapture.OutputFileResults){
+                val msg = "Photo capture succeeded: ${output.savedUri}"
+                Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show()
+                Log.d("info", msg)
+            }
+        }
+    )
+}
+*/
 
 private fun takePhoto(context: Context, imageCapture: ImageCapture?, onPhotoTaken: (Uri?) -> Unit) {
+    if (imageCapture == null) {
+        Log.e("CameraX", "Errore: ImageCapture non è pronto.")
+        onPhotoTaken(null)
+        return
+    }else {
+        Log.e("CameraX", "NON NULLO")
+    }
+
     // Crea un file temporaneo per salvare la foto
     val photoFile = File(
         context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
@@ -207,7 +261,7 @@ private fun takePhoto(context: Context, imageCapture: ImageCapture?, onPhotoTake
 
     val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
 
-    imageCapture?.takePicture(
+    imageCapture.takePicture(
         outputOptions,
         ContextCompat.getMainExecutor(context),
         object : ImageCapture.OnImageSavedCallback {

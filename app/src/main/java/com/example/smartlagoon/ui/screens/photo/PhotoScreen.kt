@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -87,9 +88,8 @@ fun PhotoScreen(
             if(photos.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(contentPadding),
-                    contentPadding = PaddingValues(8.dp),
+                        .fillMaxSize(),
+                    contentPadding = contentPadding,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(photos) { photo ->  // Usa l'elenco delle foto dal ViewModel
@@ -188,8 +188,9 @@ fun PhotoScreen(
 fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersDbVm: UsersDbViewModel) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
+            .fillMaxWidth(),
+            //.padding(8.dp),
+        shape = RectangleShape,
         elevation = CardDefaults.cardElevation(16.dp),
     ) {
         Box {
@@ -200,9 +201,9 @@ fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersD
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .clip(RoundedCornerShape(16.dp))
-                        .border(2.dp, MyColors().borders, RoundedCornerShape(16.dp)), // Add border to image
+                        .aspectRatio(1f),
+                        //.clip(RoundedCornerShape(16.dp))
+                        //.border(2.dp, MyColors().borders, RoundedCornerShape(16.dp)), // Add border to image
                     contentScale = ContentScale.Crop
                 )
             }
@@ -224,7 +225,7 @@ fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersD
                     Image(
                         //painter = painterResource(id = R.drawable.ic_badge), // Badge image
                         painter = rememberAsyncImagePainter(user.profileImageUrl),
-                        contentDescription = "User Badge",
+                        contentDescription = "User Image",
                         modifier = Modifier
                             .size(28.dp) // Larger badge
                             .border(2.dp, MyColors().borders, CircleShape)
@@ -247,7 +248,7 @@ fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersD
                     }
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                //Spacer(modifier = Modifier.height(6.dp))
 
             }
         }

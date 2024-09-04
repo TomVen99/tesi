@@ -66,6 +66,8 @@ fun HomeScreen(
     ) { isGranted ->
         if (!isGranted) {
             Toast.makeText(ctx, "Camera permission is required", Toast.LENGTH_SHORT).show()
+        }else {
+            //startCamera()
         }
     }
 
@@ -73,6 +75,7 @@ fun HomeScreen(
         when (PackageManager.PERMISSION_GRANTED) {
             ContextCompat.checkSelfPermission(ctx, Manifest.permission.CAMERA) -> {
                 // Permission already granted, proceed normally
+                //startCamera()
             }
             else -> {
                 // Request camera permission
@@ -85,7 +88,7 @@ fun HomeScreen(
         color = MaterialTheme.colorScheme.background
     ) {
         // Sfondo animato con Lottie
-        AnimatedImage(R.raw.mare)
+        AnimatedImage(R.raw.sea_background)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(16.dp)
@@ -126,7 +129,7 @@ fun MenuGrid(navController: NavController){
                 modifier = Modifier.fillMaxWidth()
             ) {
                 MenuItem("Foto", R.raw.turtle, SmartlagoonRoute.Photo, navController)
-                MenuItem("Gioca", R.raw.play, SmartlagoonRoute.Play, navController)
+                MenuItem("Menu", R.raw.play, SmartlagoonRoute.Play, navController)
             }
 
             Spacer(modifier = Modifier.height(16.dp))

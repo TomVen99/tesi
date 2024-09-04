@@ -44,6 +44,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.example.smartlagoon.R
 import com.example.smartlagoon.data.database.User_old
 import com.example.smartlagoon.ui.SmartlagoonRoute
+import com.example.smartlagoon.ui.composables.AnimatedImage
 import com.example.smartlagoon.ui.theme.myButtonColors
 import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -70,17 +71,18 @@ fun SigninScreen(
     var isEnabled by remember { mutableStateOf(false) }
     var showMessage by remember { mutableStateOf(false) }
     var showAlertDialog by remember { mutableStateOf(false) }
-    val auth = FirebaseAuth.getInstance()
-    val firestore = FirebaseFirestore.getInstance()
 
     Box(modifier = Modifier
         .fillMaxSize()
-        .wrapContentHeight(Alignment.CenterVertically))
+        //.wrapContentHeight(Alignment.CenterVertically)
+        )
     {
+        AnimatedImage(R.raw.sea_background)
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .align(Alignment.Center)
                 .padding(10.dp)
                 .border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
         ) {
