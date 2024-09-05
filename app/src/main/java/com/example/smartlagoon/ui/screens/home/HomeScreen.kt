@@ -36,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -55,10 +56,14 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.smartlagoon.R
 import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.composables.AnimatedImage
+import com.example.smartlagoon.ui.composables.CameraItem
+import com.example.smartlagoon.ui.composables.MenuItem
+import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 
 @Composable
 fun HomeScreen(
     navController: NavHostController,
+    photosDbVm: PhotosDbViewModel
 ) {
     val ctx = LocalContext.current
     val cameraPermissionState = rememberLauncherForActivityResult(
@@ -101,14 +106,14 @@ fun HomeScreen(
                     .height(110.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            MenuGrid(navController)
+            MenuGrid(navController, photosDbVm)
         }
     }
 }
 
 
 @Composable
-fun MenuGrid(navController: NavController){
+fun MenuGrid(navController: NavController, photosDbVm: PhotosDbViewModel){
     LazyColumn {
         item {
             Row(
@@ -116,9 +121,8 @@ fun MenuGrid(navController: NavController){
                 modifier = Modifier.fillMaxWidth()
             ) {
                 CameraItem(
-                    SmartlagoonRoute.Camera,
-                    navController,
-                    450
+                    navController = navController,
+                    size = 450,
                 )
                 /*
             MenuItem("Classifica", R.drawable.ic_classifica, SmartlagoonRoute.Ranking, navController)*/
@@ -128,150 +132,11 @@ fun MenuGrid(navController: NavController){
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                MenuItem("Foto", R.raw.turtle, SmartlagoonRoute.Photo, navController)
-                MenuItem("Menu", R.raw.play, SmartlagoonRoute.Play, navController)
+                MenuItem("Foto", R.raw.turtle, SmartlagoonRoute.Photo.route, navController)
+                MenuItem("Menu", R.raw.play, SmartlagoonRoute.Play.route, navController)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-        }
-    }
-}
-
-@Composable
-fun MenuItem(name: String, resId: Int, route: SmartlagoonRoute, navController: NavController) {
-    Card(
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        modifier = Modifier
-            .size(150.dp)
-            //.clip(RoundedCornerShape(8.dp))
-            .clickable {
-                navController.navigate(route.route)
-            }
-            .border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RoundedCornerShape(8.dp))
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Box(
-
-            ) {
-                /*Image(
-                    painter = painterResource(id = iconId),
-                    contentDescription = name,
-                    //contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        //.clip(RoundedCornerShape(8.dp))
-                )*/
-                AnimatedImage(resId = resId)
-                Text(
-                    text = name,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun CameraItem(route: SmartlagoonRoute, navController: NavController, size: Int) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    Card(
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        modifier = Modifier
-            .width(320.dp) // Occupa tutta la larghezza
-            .height(size.dp) // Altezza di due caselle
-            //.clip(RoundedCornerShape(8.dp))
-            .clickable {
-                navController.navigate(route.route)
-            }
-            .border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RoundedCornerShape(8.dp),)
-    ) {
-        // Usa AndroidView per incorporare PreviewView
-        AndroidView(
-            factory = { ctx ->
-                val previewView = PreviewView(ctx).apply {
-                    scaleType = PreviewView.ScaleType.FILL_CENTER
-                }
-
-                // Configura CameraX
-                val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
-                cameraProviderFuture.addListener({
-                    val cameraProvider = cameraProviderFuture.get()
-
-                    // Imposta l'anteprima
-                    val preview = Preview.Builder().build().also {
-                        it.setSurfaceProvider(previewView.surfaceProvider)
-                    }
-
-                    val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-                    try {
-                        // Disattiva tutti i use cases
-                        cameraProvider.unbindAll()
-
-                        // Associa i use cases alla fotocamera
-                        cameraProvider.bindToLifecycle(
-                            lifecycleOwner,
-                            cameraSelector,
-                            preview
-                        )
-
-                    } catch (exc: Exception) {
-                        Log.e("CameraX", "Impossibile associare i use cases alla fotocamera", exc)
-                    }
-                }, ContextCompat.getMainExecutor(ctx))
-
-                previewView // Ritorna PreviewView
-            },
-            modifier = Modifier.fillMaxSize() // Usa tutto lo spazio disponibile
-        )
-    }
-}
-@Composable
-fun SingleMenuItem(name: String, resId: Int, route: SmartlagoonRoute, navController: NavController, size: Int) {
-    Card(
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        modifier = Modifier
-            .width(330.dp) // Occupa tutta la larghezza
-            .height(size.dp) // Altezza di due caselle
-            //.clip(RoundedCornerShape(8.dp))
-            .clickable {
-                navController.navigate(route.route)
-            }
-            .border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RoundedCornerShape(8.dp),)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Box(
-
-            ) {
-                /*Image(
-                    painter = painterResource(id = iconId),
-                    contentDescription = name,
-                    //contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                    /*    .clip(RoundedCornerShape(8.dp))*/
-                )*/
-                AnimatedImage(resId)
-                Text(
-                    text = name,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                )
-            }
         }
     }
 }

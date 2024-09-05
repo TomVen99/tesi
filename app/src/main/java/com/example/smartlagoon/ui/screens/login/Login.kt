@@ -50,7 +50,6 @@ import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 @Composable
 fun Login(
     navController: NavHostController,
-    //viewModel: UsersViewModel,
     viewModel: UsersDbViewModel,
     sharedPreferences: SharedPreferences,
 ) {
@@ -61,9 +60,9 @@ fun Login(
     var password by remember { mutableStateOf("") }
     var isEnabled by remember { mutableStateOf(false) }
 
+
     Box(modifier = Modifier
         .fillMaxSize()
-        //.wrapContentHeight(Alignment.CenterVertically)
         )
     {
         AnimatedImage(R.raw.sea_background)
@@ -95,7 +94,8 @@ fun Login(
 
             OutlinedTextField(
                 value = mail,
-                onValueChange = { mail = it },
+                onValueChange = {
+                    mail = it},
                 label = { Text("Mail") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -109,7 +109,8 @@ fun Login(
 
             OutlinedTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = {
+                    password = it },
                 label = { Text("Password") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -122,13 +123,20 @@ fun Login(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
-                if (loginResult == false) {
+                if(loginResult == false) {
                     Text(loginLog.toString(), color = Color.Red)
                 } else if (loginResult == true) {
-                    navController.navigate(SmartlagoonRoute.Home.route)//.buildRoute(state.username))
-                } else if (loginResult == null) {
-                    Spacer(Modifier.size(15.dp))
+                    Log.d("login", loginResult.toString())
+                    navController.navigate(SmartlagoonRoute.Home.route)
                 }
+                /*if (loginResult == false) {
+                    Text(loginLog.toString(), color = Color.Red)
+                } else {//if (loginResult == true) {
+                    navController.navigate(SmartlagoonRoute.Home.route)//.buildRoute(state.username))
+                } /*else if (loginResult == null) {
+                    Spacer(Modifier.size(15.dp))
+                }*/
+                */
             }
 
             if(mail.isNotEmpty() && password.isNotEmpty()) {
@@ -138,8 +146,12 @@ fun Login(
                 enabled = isEnabled,
                 onClick = {
                     viewModel.login(mail, password, sharedPreferences)
-                    navController.navigate(SmartlagoonRoute.Home.route)
-                    Log.d("login", "vado in home")
+                    if(loginResult == true) {
+                        Log.e("login", "login success")
+                        navController.navigate(SmartlagoonRoute.Home.route)
+                    }else if(loginResult == false) {
+                        Log.e("login", "errore login")
+                    }
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,

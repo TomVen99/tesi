@@ -5,23 +5,25 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.smartlagoon.data.repository.UserRepository
 import com.example.smartlagoon.ui.screens.quiz.QuizQuestion
 import com.google.common.reflect.TypeToken
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.PropertyName
 import com.google.gson.Gson
 import java.util.UUID
 
-class ChallengesDbViewModel() : ViewModel() {
+class ChallengesDbViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     private val _allChallenges = MutableLiveData<List<Challenge>>()
     var allChallenges: LiveData<List<Challenge>> = _allChallenges
 
     private val firestore = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance()
-    private val currentUser = auth.currentUser
-    private val userId = currentUser?.uid
+    //private val auth = FirebaseAuth.getInstance()
+    val currentUser: LiveData<FirebaseUser?> = userRepository.currentUser
+
 
     private val _currentChallenge = MutableLiveData<Challenge?>()
     var currentChallenge: LiveData<Challenge?> = _currentChallenge
@@ -31,7 +33,7 @@ class ChallengesDbViewModel() : ViewModel() {
     }
 
     fun getAllChallenges() {
-        Log.d("chDBVM", userId.toString())
+        //Log.d("chDBVM", userId.toString())
         firestore.collection("challenges")
             .get()
             .addOnSuccessListener { result ->
@@ -56,7 +58,7 @@ class ChallengesDbViewModel() : ViewModel() {
             }
     }
     fun challengeDone(challengeId: String) {
-        val userUUID = userId ?: return
+        val userUUID = currentUser.value?.uid ?: return
 
         Log.d("challengeId", challengeId)
         val questionRef = firestore.collection("challenges").document(challengeId)

@@ -2,19 +2,40 @@ package com.example.smartlagoon.ui.viewmodel
 
 import android.content.SharedPreferences
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.smartlagoon.data.repository.UserRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.launch
 
-class UsersDbViewModel : ViewModel() {
-    val auth: FirebaseAuth = FirebaseAuth.getInstance()
+class UsersDbViewModel(private val userRepository: UserRepository) : ViewModel() {
+
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    val currentUser: LiveData<FirebaseUser?> = userRepository.currentUser
+
+    //private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    fun logout() {
+        Log.e("Logout", "chiamoLogOut")
+        viewModelScope.launch {
+            userRepository.logout()
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        userRepository.cleanUp()
+    }
 
     // LiveData per osservare i risultati del login e del signin
     private val _loginResult = MutableLiveData<Boolean?>()
@@ -38,6 +59,9 @@ class UsersDbViewModel : ViewModel() {
     private val _rankingLiveData = MutableLiveData<List<User?>>()
     val rankingLiveData: LiveData<List<User?>> = _rankingLiveData
 
+    fun setLoginResult() {
+         _loginResult.value = false
+     }
     fun getRanking() {
         firestore.collection("users")
             .orderBy("points", Query.Direction.DESCENDING)
@@ -53,7 +77,6 @@ class UsersDbViewModel : ViewModel() {
 
     fun getUser(userId: String, callback: (User?) -> Unit) {
         val userDocRef = FirebaseFirestore.getInstance().collection("users").document(userId)
-
         userDocRef.get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
@@ -70,8 +93,18 @@ class UsersDbViewModel : ViewModel() {
 
 
     // Funzione per gestire il login
-    fun login(username: String, password: String, sharedPreferences: SharedPreferences) {
-        auth.signInWithEmailAndPassword(username, password)
+    fun login(email: String, password: String, sharedPreferences: SharedPreferences) {
+        viewModelScope.launch {
+            userRepository.login(email, password, sharedPreferences) { success, message ->
+                _loginResult.value = success
+                _loginLog.value = message
+                Log.d("login", message)
+            }
+        }
+    }
+    /*fun login(email: String, password: String, sharedPreferences: SharedPreferences) {
+        login()
+        auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     _loginResult.value = true
@@ -80,18 +113,44 @@ class UsersDbViewModel : ViewModel() {
                     // Salva i dati dell'utente nelle SharedPreferences
                     val edit = sharedPreferences.edit()
                     edit.putBoolean("isUserLogged", true)
-                    edit.putString("username", username)
+                    edit.putString("mail", email)
                     edit.putString("password", password)
                     edit.apply()
+                    Log.d("login", "lugin success")
                 } else {
                     _loginResult.value = false
-                    _loginLog.value = task.exception?.message ?: "Login failed"
+                    _loginLog.value = "Login failed"
+                    Log.d("login", "lugin failed ${task.exception?.message}")
                 }
             }
+    }*/
+
+    fun register(
+        email: String,
+        password: String,
+        firstName: String,
+        lastName: String,
+        username: String,
+        points: Int = 0,
+        profileImageUrl: String = ""
+    ) {
+        userRepository.register(email, password, firstName, lastName, username, points, profileImageUrl) { success, message ->
+            _signinResult.postValue(success)
+            _signinLog.postValue(message)
+        }
+    }
+
+    fun addPoints(challengePoints: Int) {
+        userRepository.addPoints(challengePoints) { success, message ->
+            _log.postValue(message)
+            if (success) {
+                fetchUserProfile() // Aggiorna il profilo dell'utente se l'operazione ha successo
+            }
+        }
     }
 
     // Funzione per gestire la registrazione
-    fun register(
+    /*fun register(
         email: String,
         password: String,
         firstName: String,
@@ -159,7 +218,7 @@ class UsersDbViewModel : ViewModel() {
         } ?: run {
             _log.value = "No user is currently logged in."
         }
-    }
+    }*/
 
     fun uploadProfileImage(userId: String, imageUri: Uri, onComplete: () -> Unit) {
         val storageRef: StorageReference = FirebaseStorage.getInstance().reference
@@ -195,7 +254,7 @@ class UsersDbViewModel : ViewModel() {
             }
     }
 
-    fun updateUserProfile(name: String, surname: String, username: String) {
+    /*fun updateUserProfile(name: String, surname: String, username: String) {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             val userId = currentUser.uid
@@ -218,6 +277,16 @@ class UsersDbViewModel : ViewModel() {
                     .addOnFailureListener { e ->
                         Log.e("Firebase", "Error updating user profile", e)
                     }
+            }
+        }
+    }*/
+    fun updateUserProfile(name: String, surname: String, username: String) {
+        userRepository.updateUserProfile(name, surname, username) { success ->
+            //_updateResult.postValue(success)
+            if (success) {
+                fetchUserProfile() // Ricarica il profilo aggiornato
+            } else {
+                Log.e("UserViewModel", "Failed to update user profile")
             }
         }
     }
@@ -245,8 +314,12 @@ class UsersDbViewModel : ViewModel() {
     }
 
     // Funzione per recuperare i dati del profilo utente
-    fun fetchUserProfile() {
+    /*fun fetchUserProfile() {
+        Log.d("A","sono qui")
+        //val auth1 : FirebaseAuth = FirebaseAuth.getInstance()
+        Log.d("A", auth.currentUser?.email.toString())
         auth.currentUser?.let { user ->
+            Log.d("fetch", user.toString())
             firestore.collection("users").document(user.uid)
                 .get()
                 .addOnSuccessListener { document ->
@@ -257,11 +330,18 @@ class UsersDbViewModel : ViewModel() {
                         Log.d("fetch", "update fatto")
                     } else {
                         _userLiveData.value = null
+                        Log.d("fetch", "update NON fatto")
                     }
                 }
                 .addOnFailureListener { e ->
                     Log.e("Firebase", "Error fetching profile: ${e.message}")
                 }
+        }
+    }*/
+    fun fetchUserProfile() {
+        userRepository.fetchUserProfile { user ->
+            _userLiveData.postValue(user)
+
         }
     }
 

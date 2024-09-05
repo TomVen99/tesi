@@ -129,7 +129,7 @@ fun QuizScreen(
                         it.question?.let { it1 ->
                             Text(
                                 text = it1,
-                                style = MaterialTheme.typography.headlineMedium,
+                                style = MaterialTheme.typography.titleLarge,
                                 modifier = Modifier.padding(bottom = 16.dp),
                                 color = MaterialTheme.colorScheme.onBackground
                             )

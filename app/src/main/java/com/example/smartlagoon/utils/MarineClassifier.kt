@@ -38,10 +38,6 @@ class MarineClassifier(context: Context) {
         return outputList.indexOf(outputList.maxOrNull() ?: 0f)
     }
 
-    /*private fun preprocessImage(bitmap: Bitmap): Array<FloatArray> {
-        // Converti l'immagine in un array FloatArray con la dimensione corretta
-        return arrayOf(FloatArray(bitmap.width * bitmap.height))
-    }*/
     private fun preprocessImage(bitmap: Bitmap): ByteBuffer {
         // Dimensioni dell'immagine di input
         val imgHeight = 224
@@ -53,7 +49,9 @@ class MarineClassifier(context: Context) {
         inputBuffer.order(ByteOrder.nativeOrder())
 
         // Scala l'immagine al formato desiderato
-        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, imgWidth, imgHeight, true)
+        //val scaledBitmap = Bitmap.createScaledBitmap(bitmap, imgWidth, imgHeight, true)
+        val bitmapArgb8888 = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        val scaledBitmap = Bitmap.createScaledBitmap(bitmapArgb8888, imgWidth, imgHeight, true)
 
         // Converti l'immagine in un tensore di input di 4 dimensioni [1, height, width, channels]
         val intValues = IntArray(imgHeight * imgWidth)

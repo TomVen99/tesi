@@ -2,7 +2,9 @@ package com.example.smartlagoon.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -13,6 +15,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navigation
 import com.example.smartlagoon.ui.composables.MarineClassificationScreen
 import com.example.smartlagoon.ui.screens.about.AboutScreen
 import com.example.smartlagoon.ui.screens.camera.CameraScreen
@@ -67,6 +70,7 @@ sealed class SmartlagoonRoute(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun SmartlagoonNavGraph(
@@ -81,26 +85,17 @@ fun SmartlagoonNavGraph(
 
     val ctx = LocalContext.current
     val sharedPreferences = ctx.getSharedPreferences("isUserLogged", Context.MODE_PRIVATE)
-    var start = ""
-    Log.d("Navigation", startDestination.toString())
-    start = if (sharedPreferences.getBoolean("isUserLogged", false)) {
-        Log.d("Navigation", "1")
-        val username = sharedPreferences.getString("username", "")
-        Log.d("Navigation", "2")
-        if(username != null && username != "") {
-            Log.d("Navigation", "3")
-            if(startDestination != null) {
-                Log.d("Navigation", "4")
-                SmartlagoonRoute.Challenge.route
-            } else {
-                SmartlagoonRoute.Home.route//buildRoute(username)
-            }
-        } else {
-            SmartlagoonRoute.Login.route
-        }
+    val currentUser by usersDbVm.currentUser.observeAsState()
+    val start = SmartlagoonRoute.Login.route
+    /*if (currentUser != null) {
+        // Mostra l'interfaccia per l'utente autenticato
+        Log.d("navigation", "currentUser != null")
+        SmartlagoonRoute.Home.route
     } else {
+        Log.d("navigation", "currentUser = null")
         SmartlagoonRoute.Login.route
-    }
+    }*/
+    Log.d("Navigation", startDestination.toString())
     NavHost(
         navController = navController,
         startDestination = start,
@@ -133,7 +128,8 @@ fun SmartlagoonNavGraph(
         with(SmartlagoonRoute.Home) {
             composable(route) {_ ->
                 HomeScreen(
-                    navController,
+                    navController = navController,
+                    photosDbVm = photosDbVm
                 )
             }
         }
@@ -155,6 +151,7 @@ fun SmartlagoonNavGraph(
                         usersDbVm.fetchUserProfile()
                     }
                 }
+                usersDbVm.fetchUserProfile()
                 ProfileScreen(
                     navController = navController,
                     usersDbVm = usersDbVm,
@@ -178,7 +175,7 @@ fun SmartlagoonNavGraph(
 
                 challengesDbVm.loadChallengesFromJson(ctx)
                 challengesDbVm.getAllChallenges()
-                usersDbVm.auth.currentUser?.uid?.let {
+                usersDbVm.currentUser.value?.uid?.let {
                     ChallengeScreen(
                         navController = navController,
                         //challengeList = userUncompleteChallenge,
@@ -190,17 +187,18 @@ fun SmartlagoonNavGraph(
         }
         with(SmartlagoonRoute.Photo) {
             composable(route) {
-                LaunchedEffect(Unit) {
+                /*LaunchedEffect(Unit) {
                     val currentTime = System.currentTimeMillis()
                     val cutoff = currentTime - 24 * 60 * 60 * 1000 // 24 ore in millisecondi
                     //photosDbVm.deleteOldPhoto(cutoff)
-                }
-                LaunchedEffect(Unit) {
+                }*/
+                /*LaunchedEffect(Unit) {
                     val userId = photosDbVm.currentUser?.uid
                     if (userId != null) {
                         photosDbVm.fetchPhotosByUser(userId)
                     }
-                }
+                }*/
+                photosDbVm.fetchAllPhotos()
                 PhotoScreen(
                     photosDbVm = photosDbVm,
                     navController = navController,
@@ -242,9 +240,28 @@ fun SmartlagoonNavGraph(
         }
         with(SmartlagoonRoute.Play) {
             composable(route) {
-                PlayScreen(
-                    navController = navController,
-                )
+                /*LaunchedEffect(Unit) {
+                    usersDbVm.fetchUserProfile()
+                    Log.d("a", "aaaaaaaaaaaa")
+                }*/
+                /*usersDbVm.auth.signOut()
+                usersDbVm.setLoginResult()
+                navController.navigate(SmartlagoonRoute.Login.route)*/
+
+                LaunchedEffect(Unit) {
+                    usersDbVm.fetchUserProfile()
+                }
+
+                if (currentUser != null) {
+                    PlayScreen(
+                        navController = navController,
+                        usersDbVm = usersDbVm
+                    )
+                } else {
+                    navController.navigate(SmartlagoonRoute.Login.route)
+                }
+
+
                 //MarineClassificationScreen()
             }
         }

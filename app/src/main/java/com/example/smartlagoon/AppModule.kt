@@ -4,13 +4,11 @@ import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.example.smartlagoon.data.database.SmartlagoonDatabase
-import com.example.smartlagoon.data.repositories.SettingsRepository
-import com.example.smartlagoon.data.repositories.ThemeRepository
+import com.example.smartlagoon.data.repository.UserRepository
 import com.example.smartlagoon.ui.screens.home.HomeScreenViewModel
 import com.example.smartlagoon.ui.screens.login.LoginViewModel
 import com.example.smartlagoon.ui.screens.quiz.QuizViewModel
 import com.example.smartlagoon.ui.screens.signin.SigninViewModel
-import com.example.smartlagoon.ui.theme.ThemeViewModel
 import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
@@ -46,21 +44,17 @@ val appModule = module {
         }
     }
 
-    single { SettingsRepository(get()) }
-
-    single { ThemeRepository(get()) }
+    single {UserRepository()}
 
     viewModel { HomeScreenViewModel() }
 
-    viewModel { ThemeViewModel(get()) }
+    viewModel { UsersDbViewModel(get()) }
 
-    viewModel { UsersDbViewModel() }
-
-    viewModel { PhotosDbViewModel() }
+    viewModel { PhotosDbViewModel(get()) }
 
     viewModel { QuizViewModel() }
 
-    viewModel { ChallengesDbViewModel() }
+    viewModel { ChallengesDbViewModel(get()) }
 
     viewModel { LoginViewModel() }
 

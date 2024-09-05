@@ -2,6 +2,7 @@ package com.example.smartlagoon.ui.screens.ranking
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -39,6 +40,7 @@ import com.example.smartlagoon.R
 import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.composables.AnimatedImage
 import com.example.smartlagoon.ui.composables.TopAppBar
+import com.example.smartlagoon.ui.theme.MyColors
 import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 
 
@@ -71,7 +73,7 @@ fun RankingScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.lagoonguard_logo),//smartlagoon_logo),
+                    painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),//smartlagoon_logo),
                     contentDescription = "Logo",
                     modifier = Modifier
                         .fillMaxWidth()
@@ -115,8 +117,10 @@ fun RankingScreen(
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(64.dp)
-                                    .padding(4.dp),
-                                contentScale = ContentScale.Crop
+                                    .padding(4.dp)
+                                    .border(BorderStroke(2.dp, MyColors().borders), CircleShape)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop,
                             )
                         },
                         trailingContent = { Text(text = user.points.toString()) },

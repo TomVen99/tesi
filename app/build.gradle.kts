@@ -131,6 +131,8 @@ dependencies {
     implementation ("androidx.camera:camera-view:1.3.4")
     //sfondo animato
     implementation("com.airbnb.android:lottie-compose:6.0.0")
+    //font
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.7.0")
     //Fine miei import
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

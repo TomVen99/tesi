@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -92,6 +93,7 @@ fun ProfileScreen(
     val sharedPreferences = ctx.getSharedPreferences("isUserLogged", Context.MODE_PRIVATE)
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val user by usersDbVm.userLiveData.observeAsState()
+
     var name by remember { mutableStateOf(user?.name ?: "") }
     var surname by remember { mutableStateOf(user?.surname ?: "") }
     var username by remember { mutableStateOf(user?.username ?: "") }
@@ -112,11 +114,13 @@ fun ProfileScreen(
                 val uri = result.data?.data ?: imageUri
                 uri?.let {
                     imageUri = it
-                    usersDbVm.auth.currentUser?.let { fbUser ->
-                        usersDbVm.uploadProfileImage(fbUser.uid, imageUri!!) {
-                            // Questo verrà eseguito solo dopo che l'upload e l'update sono completati
-                            usersDbVm.fetchUserProfile() // Assicurati che questo aggiorni i dati correttamente
-                            user?.let { it1 -> Log.d("uploadProf", it1.profileImageUrl) }
+                    usersDbVm.currentUser.let { fbUser ->
+                        fbUser.value?.let { it1 ->
+                            usersDbVm.uploadProfileImage(it1.uid, imageUri!!) {
+                                // Questo verrà eseguito solo dopo che l'upload e l'update sono completati
+                                usersDbVm.fetchUserProfile() // Assicurati che questo aggiorni i dati correttamente
+                                user?.let { it1 -> Log.d("uploadProf", it1.profileImageUrl) }
+                            }
                         }
                     }
                 }
@@ -151,7 +155,7 @@ fun ProfileScreen(
     fun setProfileImage() {
         val imageModifier = Modifier
             .size(200.dp)
-            .border(BorderStroke(2.dp, Color.Black), CircleShape)
+            .border(BorderStroke(2.dp, MyColors().borders), CircleShape)
             .clip(CircleShape)
 
         when {
@@ -207,7 +211,7 @@ fun ProfileScreen(
                 Text(
                     text = "Modifica dati profilo",
                     modifier = Modifier.fillMaxWidth()
-                        .background(MyColors().myBlu)
+                        .background(MyColors().myBlu, RoundedCornerShape(8.dp))
                         .padding(8.dp),
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
@@ -252,12 +256,11 @@ fun ProfileScreen(
         },
         sheetState = sheetState
     ) {
-
         Scaffold(
             topBar = {
                 TopAppBar(
                     navController = navController,
-                    currentRoute = "Profilo"
+                    currentRoute = "Profilo",
                 )
             },
             bottomBar = {
@@ -343,7 +346,10 @@ fun ProfileScreen(
                                 modifier = Modifier.size(ButtonDefaults.IconSize)
                             )
                             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                            Text(text = "Modifica profilo")
+                            Text(
+                                text = "Modifica profilo",
+                                style = MaterialTheme.typography.labelLarge
+                            )
                         }
                     }
                 }
@@ -354,10 +360,9 @@ fun ProfileScreen(
                         .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape)
                         .padding(8.dp),
                     text = "${user?.name ?: ""} ${user?.surname ?: ""}",
-                    fontSize = 25.sp,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
                 )
                 Spacer(modifier = Modifier.size(15.dp))
 
@@ -376,10 +381,9 @@ fun ProfileScreen(
                     user?.username?.let {
                         Text(
                             text = it,
-                            fontSize = 20.sp,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.labelLarge,
                         )
                     }
                 }
@@ -401,10 +405,9 @@ fun ProfileScreen(
                     user?.email?.let {
                         Text(
                             text = it,
-                            fontSize = 20.sp,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.labelLarge
                         )
                     }
                 }
@@ -423,10 +426,9 @@ fun ProfileScreen(
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                     Text(
                         text = "Punti: ${user?.points ?: 0}",
-                        fontSize = 20.sp,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.labelLarge,
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -470,9 +472,11 @@ fun ProfileScreen(
                                 edit.putBoolean("isUserLogged", false)
                                 edit.putString("username", "")
                                 edit.apply()
+                                Log.d("SharedPreferences", "tolgo sharedPreference")
                             }
-                            Log.d("Logout", SmartlagoonRoute.Login.route)
+                            usersDbVm.setLoginResult()
                             navController.navigate(SmartlagoonRoute.Login.route)
+                            usersDbVm.logout()
                         },
                         modifier = Modifier
                             .align(Alignment.Bottom),

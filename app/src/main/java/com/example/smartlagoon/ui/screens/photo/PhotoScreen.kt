@@ -16,17 +16,28 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -40,13 +51,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.smartlagoon.R
@@ -70,10 +87,13 @@ fun PhotoScreen(
     challengesDbVm: ChallengesDbViewModel,
 ) {
     val showDialog = photosDbVm.showDialog.observeAsState().value ?: false
+    val showDeleteDialog = photosDbVm.showDeleteDialog.observeAsState().value ?: false
+    val message = photosDbVm.message.observeAsState().value
+    val category = photosDbVm.category.observeAsState().value
     Log.d("showDialog", showDialog.toString())
     // Osserva i dati delle foto dal ViewModel
     val photos by photosDbVm.photosLiveData.observeAsState(emptyList()) // Utilizza LiveData per osservare le foto
-    photosDbVm.fetchAllPhotos()
+    //photosDbVm.fetchAllPhotos()
     val currentChallenge by challengesDbVm.currentChallenge.observeAsState()
 
     SmartlagoonTheme {
@@ -103,7 +123,7 @@ fun PhotoScreen(
                             }
                         }
                         if (user != null) {
-                            PhotoItem(photo = photo, user = user!!, navController, usersDbVm)
+                            PhotoItem(photo = photo, user = user!!, navController, usersDbVm, photosDbVm)
                         } else {
                             Card(
                                 modifier = Modifier
@@ -117,22 +137,51 @@ fun PhotoScreen(
                         }
                     }
                 }
-                if (showDialog && currentChallenge != null) {
+                if(showDeleteDialog) {
+                    AlertDialog(
+                        onDismissRequest = {},
+                        title = {
+                            Text(text = "Informazione")
+                        },
+                        text = {
+                            Column {
+                                Text(text = "$message")
+                            }
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    photosDbVm.setShowDeleteDialog(false)
+                                },
+                                colors = myButtonColors(),
+                            ) {
+                                Text("Ok")
+                            }
+                        },
+                        containerColor = MyColors().myBluButtonBackground
+                    )
+
+                }
+
+                if (showDialog) {
                     AlertDialog(
                         onDismissRequest = {
                             photosDbVm.setShowDialog(false)
                             challengesDbVm.setCurrentChallenge(null)},
                         title = {
-                            Text(text = "Congratulazioni!!")
+                            Text(text = if(currentChallenge != null) {"Congratulazioni!!"} else {"Foto caricata!"})
                         },
                         text = {
                             Column {
-                                Image(
+                                /*Image(
                                     painter = painterResource(id = R.drawable.ic_launcher_foreground),  // Sostituisci `your_image` con il nome dell'immagine nella cartella drawable
                                     contentDescription = null,
                                     modifier = Modifier.size(40.dp)  // Imposta la dimensione dell'icona
-                                )
-                                Text(text = "Hai guadagnato  ${currentChallenge!!.points} punti!")
+                                )*/
+                                if(currentChallenge != null) {
+                                    Text(text = "Hai guadagnato  ${currentChallenge!!.points} punti!")
+                                }
+                                Text(text = "Categoria della foto: $category")
                             }
                         },
                         confirmButton = {
@@ -145,7 +194,8 @@ fun PhotoScreen(
                             ) {
                                 Text("Ok")
                             }
-                        }
+                        },
+                        containerColor = MyColors().myBluButtonBackground
                     )
                 }
             } else {
@@ -185,7 +235,7 @@ fun PhotoScreen(
 
 
 @Composable
-fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersDbVm: UsersDbViewModel) {
+fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersDbVm: UsersDbViewModel, photosDbVm: PhotosDbViewModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -201,7 +251,8 @@ fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersD
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1f),
+                        //.aspectRatio(1f),
+                        .height(600.dp),
                         //.clip(RoundedCornerShape(16.dp))
                         //.border(2.dp, MyColors().borders, RoundedCornerShape(16.dp)), // Add border to image
                     contentScale = ContentScale.Crop
@@ -212,9 +263,7 @@ fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersD
             Column(
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .background(
-                        color = MyColors().myBlu
-                    )
+                    .background(color = MyColors().myBlu)
                     .padding(5.dp)
                     .fillMaxWidth()
             ) {
@@ -246,10 +295,102 @@ fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersD
                             }
                         )
                     }
+                    Spacer(modifier = Modifier.weight(1f))
+                    if(photo.userId == usersDbVm.currentUser.value?.uid)
+                    {
+                        MenuWithIconButton(photo.photoId, photosDbVm)
+                    }
                 }
 
                 //Spacer(modifier = Modifier.height(6.dp))
 
+            }
+        }
+    }
+}
+
+/*@Composable
+fun MenuWithIconButton() {
+    // Stato per gestire la visibilità del menu
+    var expanded by remember { mutableStateOf(false) }
+    var anchor by remember { mutableStateOf(Offset.Zero) }
+
+
+    // IconButton che mostra il menu
+    IconButton(onClick = { expanded = !expanded }) {
+        Icon(
+            imageVector = Icons.Default.Menu,
+            contentDescription = "Menu",
+            tint = Color.White
+        )
+    }
+
+    // DropdownMenu che appare quando expanded è true
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false } // Chiude il menu quando si clicca al di fuori
+    ) {
+        DropdownMenuItem(
+            text = { Text("Elimina") },
+            onClick = {
+            // Azione per la voce del menu 1
+            expanded = false // Chiude il menu
+        })
+    }
+}
+*/
+
+@Composable
+fun MenuWithIconButton(photoId: String, photosDbVm: PhotosDbViewModel) {
+    // Stato per gestire la visibilità del menu
+    var expanded by remember { mutableStateOf(false) }
+    // Stato per gestire la posizione del popup
+    var anchor by remember { mutableStateOf(Offset.Zero) }
+
+    Box(
+        modifier = Modifier
+            .padding(16.dp)
+            .wrapContentSize(Alignment.TopEnd)
+    ) {
+        IconButton(
+            onClick = {
+                expanded = !expanded
+            },
+            modifier = Modifier.onGloballyPositioned { coordinates ->
+                anchor = coordinates.positionInRoot() // Ottieni la posizione dell'IconButton
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Menu,
+                contentDescription = "Menu",
+                tint = Color.White
+            )
+        }
+
+        // Popup che appare sopra l'IconButton
+        if (expanded) {
+            Popup(
+                alignment = Alignment.TopEnd,
+                offset = IntOffset(x = anchor.x.toInt(), y = (anchor.y - 56).toInt()) // Posizione sopra l'IconButton
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(Color.White, RoundedCornerShape(8.dp))
+                        .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+                        .padding(8.dp)
+                        .wrapContentWidth()
+                        .wrapContentHeight()
+                ) {
+                    Column {
+                        DropdownMenuItem(
+                            onClick = {
+                                photosDbVm.deletePhoto(photoId)
+                                expanded = false // Chiude il menu
+                            },
+                            text = {Text("Elimina")}
+                        )
+                    }
+                }
             }
         }
     }
