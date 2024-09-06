@@ -91,9 +91,7 @@ fun PhotoScreen(
     val message = photosDbVm.message.observeAsState().value
     val category = photosDbVm.category.observeAsState().value
     Log.d("showDialog", showDialog.toString())
-    // Osserva i dati delle foto dal ViewModel
-    val photos by photosDbVm.photosLiveData.observeAsState(emptyList()) // Utilizza LiveData per osservare le foto
-    //photosDbVm.fetchAllPhotos()
+    val photos by photosDbVm.photosLiveData.observeAsState(emptyList())
     val currentChallenge by challengesDbVm.currentChallenge.observeAsState()
 
     SmartlagoonTheme {
@@ -112,11 +110,8 @@ fun PhotoScreen(
                     contentPadding = contentPadding,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(photos) { photo ->  // Usa l'elenco delle foto dal ViewModel
-                        // Ottieni l'utente associato alla foto
+                    items(photos) { photo ->
                         var user by remember { mutableStateOf<User?>(null) }
-
-                        // Chiamata per ottenere l'utente
                         LaunchedEffect(photo.userId) {
                             usersDbVm.getUser(photo.userId) { fetchedUser ->
                                 user = fetchedUser
@@ -152,6 +147,7 @@ fun PhotoScreen(
                             Button(
                                 onClick = {
                                     photosDbVm.setShowDeleteDialog(false)
+                                    photosDbVm.fetchAllPhotos()
                                 },
                                 colors = myButtonColors(),
                             ) {
@@ -173,15 +169,10 @@ fun PhotoScreen(
                         },
                         text = {
                             Column {
-                                /*Image(
-                                    painter = painterResource(id = R.drawable.ic_launcher_foreground),  // Sostituisci `your_image` con il nome dell'immagine nella cartella drawable
-                                    contentDescription = null,
-                                    modifier = Modifier.size(40.dp)  // Imposta la dimensione dell'icona
-                                )*/
                                 if(currentChallenge != null) {
                                     Text(text = "Hai guadagnato  ${currentChallenge!!.points} punti!")
                                 }
-                                Text(text = "Categoria della foto: $category")
+                                Text(text = "Categoria rilevata: $category")
                             }
                         },
                         confirmButton = {
@@ -239,7 +230,6 @@ fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersD
     Card(
         modifier = Modifier
             .fillMaxWidth(),
-            //.padding(8.dp),
         shape = RectangleShape,
         elevation = CardDefaults.cardElevation(16.dp),
     ) {
@@ -251,15 +241,10 @@ fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersD
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        //.aspectRatio(1f),
                         .height(600.dp),
-                        //.clip(RoundedCornerShape(16.dp))
-                        //.border(2.dp, MyColors().borders, RoundedCornerShape(16.dp)), // Add border to image
                     contentScale = ContentScale.Crop
                 )
             }
-
-            // Overlay with more dynamic style
             Column(
                 modifier = Modifier
                     .align(Alignment.TopStart)
@@ -267,16 +252,14 @@ fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersD
                     .padding(5.dp)
                     .fillMaxWidth()
             ) {
-                // Username with badge and styled text
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        //painter = painterResource(id = R.drawable.ic_badge), // Badge image
                         painter = rememberAsyncImagePainter(user.profileImageUrl),
                         contentDescription = "User Image",
                         modifier = Modifier
-                            .size(28.dp) // Larger badge
+                            .size(28.dp)
                             .border(2.dp, MyColors().borders, CircleShape)
                             .background(Color.White, CircleShape)
                             .clip(CircleShape)
@@ -289,7 +272,6 @@ fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersD
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
                             modifier = Modifier.clickable {
-                                //usersDbVm.fetchUserProfileByUsername(user.username)
                                 val route = SmartlagoonRoute.Profile.createRoute(user.username)
                                 navController.navigate(route)
                             }
@@ -301,64 +283,20 @@ fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersD
                         MenuWithIconButton(photo.photoId, photosDbVm)
                     }
                 }
-
-                //Spacer(modifier = Modifier.height(6.dp))
-
             }
         }
     }
 }
 
-/*@Composable
-fun MenuWithIconButton() {
-    // Stato per gestire la visibilità del menu
-    var expanded by remember { mutableStateOf(false) }
-    var anchor by remember { mutableStateOf(Offset.Zero) }
-
-
-    // IconButton che mostra il menu
-    IconButton(onClick = { expanded = !expanded }) {
-        Icon(
-            imageVector = Icons.Default.Menu,
-            contentDescription = "Menu",
-            tint = Color.White
-        )
-    }
-
-    // DropdownMenu che appare quando expanded è true
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { expanded = false } // Chiude il menu quando si clicca al di fuori
-    ) {
-        DropdownMenuItem(
-            text = { Text("Elimina") },
-            onClick = {
-            // Azione per la voce del menu 1
-            expanded = false // Chiude il menu
-        })
-    }
-}
-*/
-
 @Composable
 fun MenuWithIconButton(photoId: String, photosDbVm: PhotosDbViewModel) {
-    // Stato per gestire la visibilità del menu
     var expanded by remember { mutableStateOf(false) }
-    // Stato per gestire la posizione del popup
-    var anchor by remember { mutableStateOf(Offset.Zero) }
 
     Box(
-        modifier = Modifier
-            .padding(16.dp)
-            .wrapContentSize(Alignment.TopEnd)
+        modifier = Modifier.wrapContentSize(Alignment.TopEnd)
     ) {
         IconButton(
-            onClick = {
-                expanded = !expanded
-            },
-            modifier = Modifier.onGloballyPositioned { coordinates ->
-                anchor = coordinates.positionInRoot() // Ottieni la posizione dell'IconButton
-            }
+            onClick = { expanded = !expanded }
         ) {
             Icon(
                 imageVector = Icons.Default.Menu,
@@ -366,32 +304,18 @@ fun MenuWithIconButton(photoId: String, photosDbVm: PhotosDbViewModel) {
                 tint = Color.White
             )
         }
-
-        // Popup che appare sopra l'IconButton
-        if (expanded) {
-            Popup(
-                alignment = Alignment.TopEnd,
-                offset = IntOffset(x = anchor.x.toInt(), y = (anchor.y - 56).toInt()) // Posizione sopra l'IconButton
-            ) {
-                Box(
-                    modifier = Modifier
-                        .background(Color.White, RoundedCornerShape(8.dp))
-                        .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                        .padding(8.dp)
-                        .wrapContentWidth()
-                        .wrapContentHeight()
-                ) {
-                    Column {
-                        DropdownMenuItem(
-                            onClick = {
-                                photosDbVm.deletePhoto(photoId)
-                                expanded = false // Chiude il menu
-                            },
-                            text = {Text("Elimina")}
-                        )
-                    }
-                }
-            }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                onClick = {
+                    photosDbVm.deletePhoto(photoId)
+                    expanded = false
+                },
+                text = { Text("Elimina") }
+            )
         }
     }
 }
+

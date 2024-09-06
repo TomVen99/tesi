@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -70,13 +71,12 @@ fun Login(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .align(Alignment.Center)  // Centrato rispetto al Box
+                .align(Alignment.Center)
                 .padding(10.dp)
-                //.background(MaterialTheme.colorScheme.background)
                 .border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),//smartlagoon_logo_nosfondo),
+                painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),
                 contentDescription = "Logo",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -86,8 +86,8 @@ fun Login(
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(1.dp)  // Altezza del tuo spacer
-                    .background(MaterialTheme.colorScheme.onTertiaryContainer)  // Colore del tuo spacer
+                    .height(1.dp)
+                    .background(MaterialTheme.colorScheme.onTertiaryContainer)
             )
             val mailFocusRequester = remember { FocusRequester() }
             val passwordFocusRequester = remember { FocusRequester() }
@@ -101,7 +101,7 @@ fun Login(
                     .fillMaxWidth()
                     .padding(10.dp)
                     .focusRequester(mailFocusRequester),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email,imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(
                     onNext = { passwordFocusRequester.requestFocus() }
                 )
@@ -129,14 +129,6 @@ fun Login(
                     Log.d("login", loginResult.toString())
                     navController.navigate(SmartlagoonRoute.Home.route)
                 }
-                /*if (loginResult == false) {
-                    Text(loginLog.toString(), color = Color.Red)
-                } else {//if (loginResult == true) {
-                    navController.navigate(SmartlagoonRoute.Home.route)//.buildRoute(state.username))
-                } /*else if (loginResult == null) {
-                    Spacer(Modifier.size(15.dp))
-                }*/
-                */
             }
 
             if(mail.isNotEmpty() && password.isNotEmpty()) {
@@ -161,7 +153,6 @@ fun Login(
             }
             Spacer(Modifier.size(10.dp))
             Text(text = "Oppure")
-            //Spacer(Modifier.size(10.dp))
 
             TextButton(
                 onClick = {

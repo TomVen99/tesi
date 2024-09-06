@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -32,41 +33,27 @@ import org.koin.androidx.compose.koinViewModel
 class MainActivity : ComponentActivity() {
 
     private lateinit var permissionHelper: PermissionsManager
-    //private lateinit var db: FirebaseFirestore
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                // L'autorizzazione è stata concessa, puoi schedulare le notifiche
-                //scheduleNotifications()
             } else {
-                // L'autorizzazione è stata negata, gestisci di conseguenza
             }
         }
 
     private var startRoute = ""
     private var generateTest = true
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Inizializza Firestore
-        //db = Firebase.firestore
-
-        // Aggiungi un punteggio alla classifica
-        /*addChallenge("ch", Challenge("Titolo", "Descr",10, emptyList() ))
-        addChallenge( "ch1", Challenge("Titolo1", "Descr1",20, listOf("QaGgBwPB0rS0KTHWzPby7ZbRWrl1")))*/
-        // Leggi la classifica ordinata
-        //readLeaderboard()
-
 
         val intent: Intent? = intent
         if (intent != null) {
-            // Recupera l'intero passato tramite l'Intent
-            startRoute = intent.getStringExtra("route").toString()  // 0 è il valore predefinito se l'extra non è trovato
+            startRoute = intent.getStringExtra("route").toString()
             Log.d("route ricevuta", startRoute)
         } else {
             Log.d("route ricevuta", "Intent NULLO")
-            // Gestisci il caso in cui l'Intent è nullo
         }
 
         permissionHelper = PermissionsManager(this, requestPermissionLauncher)
@@ -74,24 +61,19 @@ class MainActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissionHelper.checkAndRequestPermissionNotification(
                 onPermissionGranted = {
-                    //scheduleNotifications()
-                    //sendNotification(this)
                                       },
                 onPermissionDenied = {
-                    Toast.makeText(this, "Permesso non concesso", Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "Permesso notifiche non concesso", Toast.LENGTH_SHORT)
                         .show()
                 }
             )
         } else {
-            // Per le versioni di Android precedenti, non è necessaria alcuna autorizzazione aggiuntiva
-            //scheduleNotifications()
-            //sendNotification(this)
         }
 
         val sharedPreferences = getPreferences(Context.MODE_PRIVATE)
         generateTest = sharedPreferences.getBoolean("generateTest", true)
         setContent {
-            SmartlagoonTheme(/*darkTheme = theme == "Dark"*/) {
+            SmartlagoonTheme() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -117,25 +99,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-
-
-    // Funzione per leggere e visualizzare la classifica ordinata per punteggio
-    /*private fun readLeaderboard() {
-        db.collection("leaderboard")
-            .orderBy("score", com.google.firebase.firestore.Query.Direction.DESCENDING)
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-                    val name = document.getString("name")
-                    val score = document.getLong("score")
-                    println("Nome: $name, Punteggio: $score")
-                }
-            }
-            .addOnFailureListener { e ->
-                println("Errore nel recupero della classifica: $e")
-            }
-    }*/
 
     override fun onPause() {
         super.onPause()

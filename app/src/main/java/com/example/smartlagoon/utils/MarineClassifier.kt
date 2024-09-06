@@ -33,7 +33,6 @@ class MarineClassifier(context: Context) {
         val input = preprocessImage(bitmap)
         val output = Array(1) { FloatArray(NUM_CLASSES) }
         interpreter.run(input, output)
-        //return output[0].indexOf(output[0].maxOrNull() ?: 0f)
         val outputList = output[0].toList()
         return outputList.indexOf(outputList.maxOrNull() ?: 0f)
     }
@@ -49,7 +48,6 @@ class MarineClassifier(context: Context) {
         inputBuffer.order(ByteOrder.nativeOrder())
 
         // Scala l'immagine al formato desiderato
-        //val scaledBitmap = Bitmap.createScaledBitmap(bitmap, imgWidth, imgHeight, true)
         val bitmapArgb8888 = bitmap.copy(Bitmap.Config.ARGB_8888, true)
         val scaledBitmap = Bitmap.createScaledBitmap(bitmapArgb8888, imgWidth, imgHeight, true)
 
@@ -57,21 +55,18 @@ class MarineClassifier(context: Context) {
         val intValues = IntArray(imgHeight * imgWidth)
         scaledBitmap.getPixels(intValues, 0, imgWidth, 0, 0, imgWidth, imgHeight)
 
-        // Riempie il ByteBuffer con i dati del bitmap
         for (pixel in intValues) {
-            // Estrai i valori di colore RGB dal pixel e normalizza tra 0 e 1
             inputBuffer.putFloat(((pixel shr 16) and 0xFF) / 255.0f) // R
             inputBuffer.putFloat(((pixel shr 8) and 0xFF) / 255.0f)  // G
             inputBuffer.putFloat((pixel and 0xFF) / 255.0f)         // B
         }
 
-        // Restituisce il buffer di input preparato
         return inputBuffer
     }
 
 
     companion object {
-        private const val NUM_CLASSES = 10 // Modifica in base al numero di classi nel tuo modello
+        private const val NUM_CLASSES = 10
     }
 
     enum class Categories {

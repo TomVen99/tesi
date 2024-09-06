@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.smartlagoon.data.database.Photo_old
 import com.example.smartlagoon.data.repository.UserRepository
 import com.example.smartlagoon.utils.MarineClassifier
 import com.google.firebase.auth.FirebaseAuth
@@ -36,7 +35,9 @@ class PhotosDbViewModel(private val userRepository: UserRepository) : ViewModel(
 
     private val _category = MutableLiveData<MarineClassifier.Categories>()
     val category: LiveData<MarineClassifier.Categories> = _category
-    // Funzione per mostrare o nascondere il dialogo
+
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
     fun setShowDialog(show: Boolean) {
         _showDialog.value = show
     }
@@ -56,9 +57,7 @@ class PhotosDbViewModel(private val userRepository: UserRepository) : ViewModel(
     private val _photosLiveData = MutableLiveData<List<Photo>>()
     val photosLiveData: LiveData<List<Photo>> get() = _photosLiveData
 
-    // Metodo per caricare una foto e salvarla nel database
     fun uploadPhoto(uri: Uri) {
-        currentUser.value?.email?.let { Log.d("mailUploadFoto", it) }
         val userId = currentUser.value?.uid
         if (userId != null) {
             Log.d("upload", userId)
@@ -68,10 +67,8 @@ class PhotosDbViewModel(private val userRepository: UserRepository) : ViewModel(
         val storageRef = storage.reference.child("photos/$photoId.jpg")
         Log.e("test","son qui")
 
-        // Carica la foto su Firebase Storage
         storageRef.putFile(uri)
             .addOnSuccessListener {
-                // Recupera l'URL della foto dal Firebase Storage
                 storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
                     if (userId != null) {
                         savePhotoToFirestore(userId, photoId, downloadUri.toString())
@@ -86,14 +83,12 @@ class PhotosDbViewModel(private val userRepository: UserRepository) : ViewModel(
             }
     }
 
-    // Salva i dettagli della foto nel database Firestore
     private fun savePhotoToFirestore(userId: String, photoId: String, photoUrl: String) {
         val photo = Photo(photoId, userId, photoUrl)
         firestore.collection("photos").document(photoId)
             .set(photo)
             .addOnSuccessListener {
                 Log.d("PhotoDbViewModel", "Foto salvata con successo nel database")
-                //fetchPhotosByUser(userId) // Aggiorna l'elenco delle foto dell'utente
                 fetchAllPhotos()
             }
             .addOnFailureListener { exception ->
@@ -101,7 +96,6 @@ class PhotosDbViewModel(private val userRepository: UserRepository) : ViewModel(
             }
     }
 
-    // Metodo per recuperare tutte le foto di un utente specifico
     fun fetchPhotosByUser(userId: String) {
         firestore.collection("photos")
             .whereEqualTo("userId", userId)
@@ -118,23 +112,23 @@ class PhotosDbViewModel(private val userRepository: UserRepository) : ViewModel(
     }
 
     fun fetchAllPhotos() {
+        _isLoading.value = true
         firestore.collection("photos")
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
                 val photos = result.documents.mapNotNull { it.toObject(Photo::class.java) }
                 _photosLiveData.value = photos
+                _isLoading.value = false
             }
             .addOnFailureListener { exception ->
                 Log.e("PhotoDbViewModel", "Errore durante il recupero delle foto: ", exception)
+                _isLoading.value = false
             }
     }
 
     fun deletePhoto(photoId: String) {
-        // Ottieni una referenza al documento della foto in Firestore
         val photoDocRef = firestore.collection("photos").document(photoId)
-
-        // Ottieni una referenza al file dell'immagine in Firebase Storage
         val photoStorageRef = storage.reference.child("photos/$photoId.jpg")
 
         firestore.runTransaction { transaction ->
@@ -145,7 +139,6 @@ class PhotosDbViewModel(private val userRepository: UserRepository) : ViewModel(
                 throw Exception("Photo document does not exist.")
             }
         }.addOnSuccessListener {
-            // Dopo aver eliminato il documento, elimina il file dell'immagine
             photoStorageRef.delete()
                 .addOnSuccessListener {
                     _message.value = "Foto eliminata correttamente."

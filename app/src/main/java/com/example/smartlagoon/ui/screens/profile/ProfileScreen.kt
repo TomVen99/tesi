@@ -82,23 +82,25 @@ import com.example.smartlagoon.ui.theme.myButtonColors
 import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
     usersDbVm: UsersDbViewModel,
-    showModifyButton: Boolean
 ) {
     val ctx = LocalContext.current
     val sharedPreferences = ctx.getSharedPreferences("isUserLogged", Context.MODE_PRIVATE)
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-    val user by usersDbVm.userLiveData.observeAsState()
+    val usr by usersDbVm.userLiveData.observeAsState()
+    val tmpUser by usersDbVm.tmpUserLiveData.observeAsState()
+    val user = if(tmpUser != null) tmpUser else usr
+    user?.email?.let { Log.d("profileUSerLivedata", it) }
+    val showModifyButton = usersDbVm.showModifyButton.observeAsState().value ?: false
 
     var name by remember { mutableStateOf(user?.name ?: "") }
     var surname by remember { mutableStateOf(user?.surname ?: "") }
     var username by remember { mutableStateOf(user?.username ?: "") }
 
-    // Funzione per creare URI temporaneo per l'immagine
     fun createImageUri(): Uri {
         val resolver = ctx.contentResolver
         val contentValues = ContentValues().apply {
@@ -107,7 +109,6 @@ fun ProfileScreen(
         return resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
     }
 
-    // Funzione per lanciare la selezione dell'immagine
     val imagePickerLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -117,8 +118,7 @@ fun ProfileScreen(
                     usersDbVm.currentUser.let { fbUser ->
                         fbUser.value?.let { it1 ->
                             usersDbVm.uploadProfileImage(it1.uid, imageUri!!) {
-                                // Questo verrà eseguito solo dopo che l'upload e l'update sono completati
-                                usersDbVm.fetchUserProfile() // Assicurati che questo aggiorni i dati correttamente
+                                usersDbVm.fetchUserProfile()
                                 user?.let { it1 -> Log.d("uploadProf", it1.profileImageUrl) }
                             }
                         }
@@ -127,7 +127,6 @@ fun ProfileScreen(
             }
         }
 
-    // Funzione per richiedere permesso della fotocamera e scegliere un'immagine
     val requestCameraPermissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             if (isGranted) {
@@ -146,11 +145,10 @@ fun ProfileScreen(
 
                 imagePickerLauncher.launch(chooserIntent)
             } else {
-                Toast.makeText(ctx, "Permesso non concesso", Toast.LENGTH_SHORT).show()
+                Toast.makeText(ctx, "Permesso camera e galleria non concesso", Toast.LENGTH_SHORT).show()
             }
         }
 
-    // Funzione per gestire l'immagine del profilo
     @Composable
     fun setProfileImage() {
         val imageModifier = Modifier
@@ -159,6 +157,18 @@ fun ProfileScreen(
             .clip(CircleShape)
 
         when {
+            user?.profileImageUrl?.isNotEmpty() == true -> {
+                Log.d("non empty", "aaa")
+                AsyncImage(
+                    model = ImageRequest.Builder(ctx)
+                        .data(user?.profileImageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Profile Image",
+                    modifier = imageModifier,
+                    contentScale = ContentScale.Crop
+                )
+            }
             user?.profileImageUrl?.isNotEmpty() == true -> {
                 Log.d("non empty", "aaa")
                 AsyncImage(
@@ -201,7 +211,6 @@ fun ProfileScreen(
         initialValue = ModalBottomSheetValue.Hidden,
         skipHalfExpanded = true
     )
-    // Per lanciare coroutine per l'apertura/chiusura del Bottom Sheet
     val coroutineScope = rememberCoroutineScope()
     ModalBottomSheetLayout(
         sheetContent = {
@@ -277,7 +286,7 @@ fun ProfileScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),//smartlagoon_logo),
+                        painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),
                         contentDescription = "Logo",
                         modifier = Modifier
                             .fillMaxWidth()
@@ -359,7 +368,7 @@ fun ProfileScreen(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape)
                         .padding(8.dp),
-                    text = "${user?.name ?: ""} ${user?.surname ?: ""}",
+                    text = /*if(tmpUser != null) "${tmpUser?.name ?: ""} ${tmpUser?.surname ?: ""}" else */"${user?.name ?: ""} ${user?.surname ?: ""}",
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleLarge,
@@ -378,14 +387,12 @@ fun ProfileScreen(
                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                    user?.username?.let {
                         Text(
-                            text = it,
+                            text = /*if(tmpUser != null) "${tmpUser!!.username}" else*/ "${user?.username}",
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.labelLarge,
                         )
-                    }
                 }
                 Spacer(modifier = Modifier.size(15.dp))
 
@@ -402,14 +409,12 @@ fun ProfileScreen(
                     )
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
 
-                    user?.email?.let {
                         Text(
-                            text = it,
+                            text = /*if(tmpUser != null) "${tmpUser!!.email}" else */"${user?.email}",
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.labelLarge
                         )
-                    }
                 }
                 Spacer(modifier = Modifier.size(15.dp))
                 Row(
@@ -425,7 +430,7 @@ fun ProfileScreen(
                     )
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                     Text(
-                        text = "Punti: ${user?.points ?: 0}",
+                        text = "Punti: ${user?.points}",
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.labelLarge,
@@ -433,17 +438,10 @@ fun ProfileScreen(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Spacer(modifier = Modifier.weight(1f))
-                /*Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(10.dp)
-                        .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RectangleShape)
-                )*/
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(10.dp), // Aggiungi padding se necessario
+                        .padding(10.dp),
                     verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = Arrangement.SpaceBetween
                 )
@@ -464,7 +462,6 @@ fun ProfileScreen(
                     ) {
                         Text("Impostazioni")
                     }
-                    //AnimatedImage(R.raw.poseidonia)
                     Button(
                         onClick = {
                             if (sharedPreferences != null) {

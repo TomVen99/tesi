@@ -5,6 +5,10 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,8 +27,6 @@ class UsersDbViewModel(private val userRepository: UserRepository) : ViewModel()
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     val currentUser: LiveData<FirebaseUser?> = userRepository.currentUser
 
-    //private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-
     fun logout() {
         Log.e("Logout", "chiamoLogOut")
         viewModelScope.launch {
@@ -37,7 +39,12 @@ class UsersDbViewModel(private val userRepository: UserRepository) : ViewModel()
         userRepository.cleanUp()
     }
 
-    // LiveData per osservare i risultati del login e del signin
+    private val _showModifyButton = MutableLiveData<Boolean?>()
+    val showModifyButton: LiveData<Boolean?> = _showModifyButton
+
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
+
     private val _loginResult = MutableLiveData<Boolean?>()
     val loginResult: LiveData<Boolean?> = _loginResult
 
@@ -56,8 +63,19 @@ class UsersDbViewModel(private val userRepository: UserRepository) : ViewModel()
     private val _userLiveData = MutableLiveData<User?>()
     val userLiveData: LiveData<User?> = _userLiveData
 
+    private val _tmpUserLiveData = MutableLiveData<User?>()
+    val tmpUserLiveData: LiveData<User?> = _tmpUserLiveData
+
     private val _rankingLiveData = MutableLiveData<List<User?>>()
     val rankingLiveData: LiveData<List<User?>> = _rankingLiveData
+
+    fun setNullTmpUserLiveData(){
+        _tmpUserLiveData.value = null
+    }
+
+    fun setShowModifyButton(value: Boolean) {
+        _showModifyButton.value = value
+    }
 
     fun setLoginResult() {
          _loginResult.value = false
@@ -90,9 +108,6 @@ class UsersDbViewModel(private val userRepository: UserRepository) : ViewModel()
                 callback(null)
             }
     }
-
-
-    // Funzione per gestire il login
     fun login(email: String, password: String, sharedPreferences: SharedPreferences) {
         viewModelScope.launch {
             userRepository.login(email, password, sharedPreferences) { success, message ->
@@ -102,28 +117,6 @@ class UsersDbViewModel(private val userRepository: UserRepository) : ViewModel()
             }
         }
     }
-    /*fun login(email: String, password: String, sharedPreferences: SharedPreferences) {
-        login()
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    _loginResult.value = true
-                    _loginLog.value = "Login successful"
-
-                    // Salva i dati dell'utente nelle SharedPreferences
-                    val edit = sharedPreferences.edit()
-                    edit.putBoolean("isUserLogged", true)
-                    edit.putString("mail", email)
-                    edit.putString("password", password)
-                    edit.apply()
-                    Log.d("login", "lugin success")
-                } else {
-                    _loginResult.value = false
-                    _loginLog.value = "Login failed"
-                    Log.d("login", "lugin failed ${task.exception?.message}")
-                }
-            }
-    }*/
 
     fun register(
         email: String,
@@ -144,82 +137,10 @@ class UsersDbViewModel(private val userRepository: UserRepository) : ViewModel()
         userRepository.addPoints(challengePoints) { success, message ->
             _log.postValue(message)
             if (success) {
-                fetchUserProfile() // Aggiorna il profilo dell'utente se l'operazione ha successo
-            }
-        }
-    }
-
-    // Funzione per gestire la registrazione
-    /*fun register(
-        email: String,
-        password: String,
-        firstName: String,
-        lastName: String,
-        username: String,
-        points: Int = 0,
-        profileImageUrl: String = ""
-    ) {
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val user = auth.currentUser
-                    user?.let {
-                        val userData = mapOf(
-                            "name" to firstName,
-                            "surname" to lastName,
-                            "username" to username,
-                            "email" to email,
-                            "points" to points,
-                            "profileImageUrl" to profileImageUrl
-                        )
-                        firestore.collection("users").document(it.uid).set(userData)
-                            .addOnSuccessListener {
-                                _signinResult.value = true
-                                _signinLog.value = "User registered successfully."
-                            }
-                            .addOnFailureListener { e ->
-                                _signinResult.value = false
-                                _signinLog.value = "Error saving user data: ${e.message}"
-                            }
-                    }
-                } else {
-                    _signinResult.value = false
-                    _signinLog.value = task.exception?.message ?: "Registration failed"
-                }
-            }
-    }
-
-    fun addPoints(challengePoints: Int) {
-        val user = auth.currentUser
-        user?.let {
-            // Recupera il documento dell'utente da Firestore
-            val userDocRef = firestore.collection("users").document(it.uid)
-
-            firestore.runTransaction { transaction ->
-                // Ottieni il documento dell'utente
-                val userDoc = transaction.get(userDocRef)
-
-                // Ottieni i punti attuali
-                val currentPoints = userDoc.getLong("points") ?: 0
-
-                // Calcola i nuovi punti
-                val newPoints = currentPoints + challengePoints
-
-                // Aggiorna il documento con i nuovi punti
-                transaction.update(userDocRef, "points", newPoints)
-                Log.d("addPoints2","punti aggiunti")
-            }.addOnSuccessListener {
-                Log.d("addPoints","punti aggiunti")
-                _log.value = "Points added successfully."
                 fetchUserProfile()
-            }.addOnFailureListener { e ->
-                _log.value = "Error updating points: ${e.message}"
             }
-        } ?: run {
-            _log.value = "No user is currently logged in."
         }
-    }*/
-
+    }
     fun uploadProfileImage(userId: String, imageUri: Uri, onComplete: () -> Unit) {
         val storageRef: StorageReference = FirebaseStorage.getInstance().reference
         val userProfileImageRef = storageRef.child("profile_images/${userId}.jpg")
@@ -228,7 +149,6 @@ class UsersDbViewModel(private val userRepository: UserRepository) : ViewModel()
             .addOnSuccessListener {
                 userProfileImageRef.downloadUrl.addOnSuccessListener { uri ->
                     updateProfileImageUrl(userId, uri.toString()) {
-                        // Chiamata al callback dopo l'aggiornamento dell'URL
                         onComplete()
                     }
                 }.addOnFailureListener { e ->
@@ -254,57 +174,29 @@ class UsersDbViewModel(private val userRepository: UserRepository) : ViewModel()
             }
     }
 
-    /*fun updateUserProfile(name: String, surname: String, username: String) {
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            val userId = currentUser.uid
-            val userDocRef = firestore.collection("users").document(userId)
 
-            val updatedData = mutableMapOf<String, Any>()
-
-            // Aggiungi solo i valori non vuoti
-            if (name.isNotBlank()) updatedData["name"] = name
-            if (surname.isNotBlank()) updatedData["surname"] = surname
-            if (username.isNotBlank()) updatedData["username"] = username
-
-            // Solo se ci sono dati da aggiornare
-            if (updatedData.isNotEmpty()) {
-                userDocRef.update(updatedData)
-                    .addOnSuccessListener {
-                        Log.d("Firebase", "User profile updated successfully.")
-                        fetchUserProfile()
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e("Firebase", "Error updating user profile", e)
-                    }
-            }
-        }
-    }*/
     fun updateUserProfile(name: String, surname: String, username: String) {
         userRepository.updateUserProfile(name, surname, username) { success ->
-            //_updateResult.postValue(success)
             if (success) {
-                fetchUserProfile() // Ricarica il profilo aggiornato
+                fetchUserProfile()
             } else {
                 Log.e("UserViewModel", "Failed to update user profile")
             }
         }
     }
 
-    // Funzione per recuperare i dati del profilo utente
     fun fetchUserProfileByUsername(username: String) {
         firestore.collection("users")
             .whereEqualTo("username", username)
             .get()
             .addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.isEmpty) {
-                    _userLiveData.value = null
+                    _tmpUserLiveData.value = null
                     Log.d("fetch", "Nessun utente trovato con l'username: $username")
                 } else {
-                    // Supponiamo che ci sia solo un utente con un determinato username
                     val document = querySnapshot.documents.firstOrNull()
                     val usr = document?.toObject(User::class.java)
-                    _userLiveData.postValue(usr)
+                    _tmpUserLiveData.value = usr
                     Log.d("fetch", "Profilo utente aggiornato per l'username: $username")
                 }
             }
@@ -313,36 +205,15 @@ class UsersDbViewModel(private val userRepository: UserRepository) : ViewModel()
             }
     }
 
-    // Funzione per recuperare i dati del profilo utente
-    /*fun fetchUserProfile() {
-        Log.d("A","sono qui")
-        //val auth1 : FirebaseAuth = FirebaseAuth.getInstance()
-        Log.d("A", auth.currentUser?.email.toString())
-        auth.currentUser?.let { user ->
-            Log.d("fetch", user.toString())
-            firestore.collection("users").document(user.uid)
-                .get()
-                .addOnSuccessListener { document ->
-                    if (document.exists()) {
-                        val usr = document.toObject(User::class.java)
-                        //_userLiveData.value = user
-                        _userLiveData.postValue(usr)
-                        Log.d("fetch", "update fatto")
-                    } else {
-                        _userLiveData.value = null
-                        Log.d("fetch", "update NON fatto")
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Log.e("Firebase", "Error fetching profile: ${e.message}")
-                }
-        }
-    }*/
     fun fetchUserProfile() {
-        userRepository.fetchUserProfile { user ->
-            _userLiveData.postValue(user)
-
+        _isLoading.value = true
+        viewModelScope.launch {
+            userRepository.fetchUserProfile { user ->
+                _userLiveData.value = user
+                _isLoading.value = false
+            }
         }
+        _tmpUserLiveData.value = null
     }
 
     private fun Map<String, Any?>.toUser(): User {
@@ -356,8 +227,6 @@ class UsersDbViewModel(private val userRepository: UserRepository) : ViewModel()
         )
     }
 }
-
-// Definizione della classe UserData (modifica secondo il tuo schema)
 data class User(
     val name: String? = null,
     val surname: String? = null,

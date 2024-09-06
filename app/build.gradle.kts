@@ -84,17 +84,12 @@ dependencies {
     implementation("androidx.work:work-runtime-ktx:2.9.0")
     //fine notifiche
     implementation("androidx.datastore:datastore-preferences:1.1.1")
-    //
     //immagini
     implementation("io.coil-kt:coil-compose:2.3.0")
     //fine immagini
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
     implementation("com.google.android.gms:play-services-maps:19.0.0")
     implementation("com.android.identity:identity-jvm:202408.1")
-    /*implementation("androidx.compose.material3:material3-android:1.2.1")
-    implementation("com.example.some-library") {
-        exclude(group = "androidx.compose.material3", module = "material3")
-    }*/
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
@@ -119,8 +114,8 @@ dependencies {
     implementation ("com.google.android.gms:play-services-identity:18.1.0")
     // Dipendenze per TensorFlow Lite
     implementation ("org.tensorflow:tensorflow-lite:2.10.0")
-    implementation ("org.tensorflow:tensorflow-lite-gpu:2.10.0") // Se vuoi supporto GPU
-    implementation ("org.tensorflow:tensorflow-lite-support:0.3.1") // Per TensorFlow Lite Support Library
+    implementation ("org.tensorflow:tensorflow-lite-gpu:2.10.0")
+    implementation ("org.tensorflow:tensorflow-lite-support:0.3.1")
     // CameraX Core
     implementation ("androidx.camera:camera-core:1.3.4")
     // CameraX Camera2

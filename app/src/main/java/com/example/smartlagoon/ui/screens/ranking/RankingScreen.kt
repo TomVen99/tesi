@@ -73,7 +73,7 @@ fun RankingScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),//smartlagoon_logo),
+                    painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),
                     contentDescription = "Logo",
                     modifier = Modifier
                         .fillMaxWidth()
@@ -97,7 +97,6 @@ fun RankingScreen(
                             Text(
                                 text = it,
                                 modifier = Modifier.clickable {
-                                    //usersDbVm.fetchUserProfileByUsername(user.username)
                                     val route = SmartlagoonRoute.Profile.createRoute(user.username)
                                     navController.navigate(route)
                                 })

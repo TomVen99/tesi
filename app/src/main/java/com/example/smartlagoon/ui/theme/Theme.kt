@@ -22,22 +22,6 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import com.example.smartlagoon.R
 
-
-/*private val DarkColorScheme = darkColorScheme(
-    primary = Color.Black,
-    onPrimary = Color.Black,
-    primaryContainer = MyColors().myBlu,
-    onPrimaryContainer = Color.White,
-    secondaryContainer = MyColors().myGreen,
-    onSecondaryContainer = Color.White,
-    tertiaryContainer = MyColors().backgroundLightBlue,
-    onTertiaryContainer = MyColors().borders,
-    secondary = Color.Black,
-    tertiary = Color.Black,
-    background = Color.DarkGray,
-    onBackground = Color.White
-)*/
-
 private val LightColorScheme = lightColorScheme(
     primary = Color.Black,
     onPrimary = Color.Black,
@@ -61,12 +45,10 @@ fun myButtonColors(): ButtonColors {
     )
 }
 
-// Definizione del font personalizzato
 val myCustomFont = FontFamily(
-    Font(R.font.gloria_hallelujah_regular, FontWeight.Normal) // Sostituisci con il tuo font file
+    Font(R.font.gloria_hallelujah_regular, FontWeight.Normal)
 )
 
-// Definisci la tipografia personalizzata utilizzando il tuo font
 val AppTypography = Typography(
     bodyLarge = TextStyle(
         fontFamily = myCustomFont,
@@ -83,7 +65,6 @@ val AppTypography = Typography(
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp
     ),
-    // Puoi aggiungere altre personalizzazioni di stile qui per diversi tipi di testo
 )
 
 @Composable
@@ -107,5 +88,3 @@ fun SmartlagoonTheme(
         content = content
     )
 }
-
-//enum class Theme { Light, Dark, System }

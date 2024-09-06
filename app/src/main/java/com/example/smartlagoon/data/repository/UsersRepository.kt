@@ -17,14 +17,12 @@ class UserRepository {
     private val _currentUser = MutableLiveData<FirebaseUser?>()
     val currentUser: LiveData<FirebaseUser?> = _currentUser
 
-    // Listener per l'autenticazione dell'utente
     private val authStateListener = FirebaseAuth.AuthStateListener { auth ->
         _currentUser.value = auth.currentUser
         auth.currentUser?.email?.let { Log.e("TEST", it) }
     }
 
     init {
-        // Registra il listener
         Log.e("TEST", "UserRepository initialized")
         firebaseAuth.addAuthStateListener(authStateListener)
     }
@@ -70,7 +68,6 @@ class UserRepository {
         challengePoints: Int,
         onResult: (Boolean, String) -> Unit
     ) {
-        //val user = firebaseAuth.currentUser
         currentUser.let {
             val userDocRef = it.value?.uid?.let { it1 -> firestore.collection("users").document(it1) }
 
@@ -100,7 +97,6 @@ class UserRepository {
         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // Salva i dati dell'utente nelle SharedPreferences
                     val edit = sharedPreferences.edit()
                     edit.putBoolean("isUserLogged", true)
                     edit.putString("mail", email)
@@ -117,40 +113,37 @@ class UserRepository {
         currentUser.value?.email?.let { Log.d("LoginnewUser", it) }
     }
     fun fetchUserProfile(onResult: (User?) -> Unit) {
-        currentUser.value?.email?.let { Log.d("fetch", it) }
-        currentUser.let { user ->
-            user.value?.uid?.let {
-                firestore.collection("users").document(it)
-                    .get()
-                    .addOnSuccessListener { document ->
-                        if (document.exists()) {
-                            val usr = document.toObject(User::class.java)
-                            onResult(usr)
-                        } else {
-                            onResult(null)
-                        }
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e("UserRepository", "Error fetching profile: ${e.message}")
+        val user = firebaseAuth.currentUser
+        Log.d("UserRepository", "uis ${user?.uid}")
+        user?.let {
+            firestore.collection("users").document(user.uid)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val usr = document.toObject(User::class.java)
+                        onResult(usr)
+                        Log.e("UserRepository", "Update fatto")
+                    } else {
                         onResult(null)
+                        Log.e("UserRepository", "Documento non esiste")
                     }
-            }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("UserRepository", "Error fetching profile: ${e.message}")
+                    onResult(null)
+                }
         } ?: onResult(null)
     }
 
     fun updateUserProfile(name: String, surname: String, username: String, onResult: (Boolean) -> Unit) {
-        //val currentUser = firebaseAuth.currentUser
         val userId = currentUser.value?.uid
         val userDocRef = userId?.let { firestore.collection("users").document(it) }
 
         val updatedData = mutableMapOf<String, Any>()
-
-        // Aggiungi solo i valori non vuoti
         if (name.isNotBlank()) updatedData["name"] = name
         if (surname.isNotBlank()) updatedData["surname"] = surname
         if (username.isNotBlank()) updatedData["username"] = username
 
-        // Solo se ci sono dati da aggiornare
         if (updatedData.isNotEmpty()) {
             userDocRef?.update(updatedData)?.addOnSuccessListener {
                 Log.d("UserRepository", "User profile updated successfully.")
@@ -160,7 +153,6 @@ class UserRepository {
                 onResult(false)
             }
         } else {
-            // Nessun dato da aggiornare
             onResult(true)
         }
     }
@@ -171,7 +163,6 @@ class UserRepository {
     }
 
     fun cleanUp() {
-        // Rimuove il listener quando non è più necessario
         firebaseAuth.removeAuthStateListener(authStateListener)
     }
 }

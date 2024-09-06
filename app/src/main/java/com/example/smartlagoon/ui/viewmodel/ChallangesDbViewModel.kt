@@ -21,7 +21,6 @@ class ChallengesDbViewModel(private val userRepository: UserRepository) : ViewMo
     var allChallenges: LiveData<List<Challenge>> = _allChallenges
 
     private val firestore = FirebaseFirestore.getInstance()
-    //private val auth = FirebaseAuth.getInstance()
     val currentUser: LiveData<FirebaseUser?> = userRepository.currentUser
 
 
@@ -33,20 +32,16 @@ class ChallengesDbViewModel(private val userRepository: UserRepository) : ViewMo
     }
 
     fun getAllChallenges() {
-        //Log.d("chDBVM", userId.toString())
         firestore.collection("challenges")
             .get()
             .addOnSuccessListener { result ->
                 val allChallenges = result.documents
-                    //.filter { !((it["completedBy"] as? List<*>)?.contains(userId) ?: false)}
                     .mapNotNull { documentSnapshot ->
-                        //it.toObject(QuizQuestion::class.java)
                         val challenge = documentSnapshot.toObject(Challenge::class.java)
-                        challenge?.id = documentSnapshot.id // Assegna l'ID del documento
+                        challenge?.id = documentSnapshot.id
                         challenge
                     }
 
-                // Aggiorna LiveData con la lista delle sfide non completate
                 _allChallenges.postValue(allChallenges)
 
                 allChallenges.forEach { challenge ->
@@ -66,11 +61,8 @@ class ChallengesDbViewModel(private val userRepository: UserRepository) : ViewMo
         Log.d("challengeDone", challengeId)
         firestore.runTransaction { transaction ->
             val snapshot = transaction.get(questionRef)
-
-            // Ottieni la lista `completedBy` corrente
             val completedBy = snapshot.get("completedBy") as? MutableList<String> ?: mutableListOf()
 
-            // Aggiungi l'UUID dell'utente alla lista se non è già presente
             if (!completedBy.contains(userUUID)) {
                 completedBy.add(userUUID)
                 transaction.update(questionRef, "completedBy", completedBy)
@@ -84,7 +76,6 @@ class ChallengesDbViewModel(private val userRepository: UserRepository) : ViewMo
         }
     }
 
-    // Funzione per aggiungere un punteggio alla collezione "leaderboard"
     private fun addChallenge(challenge: Challenge) {
 
         val challengeData = hashMapOf(
@@ -94,7 +85,6 @@ class ChallengesDbViewModel(private val userRepository: UserRepository) : ViewMo
             "completedBy" to challenge.completedBy,
         )
 
-        // Aggiungi o aggiorna il documento dell'utente nella collezione "leaderboard"
         firestore.collection("challenges").add(challengeData)
             .addOnSuccessListener { documentReference ->
                 challenge.id = documentReference.id
@@ -107,15 +97,12 @@ class ChallengesDbViewModel(private val userRepository: UserRepository) : ViewMo
     }
 
     fun loadChallengesFromJson(context: Context) {
-        // Verifica se il database ha già le sfide caricate per evitare duplicati
         firestore.collection("challenges").get().addOnSuccessListener { documents ->
             if (documents.isEmpty) {
-                // Solo se non ci sono sfide esistenti nel database, carica da JSON
                 val inputStream = context.assets.open("challenges.json")
                 val json = inputStream.bufferedReader().use { it.readText() }
                 val challengesList: List<Challenge> = Gson().fromJson(json, object : TypeToken<List<Challenge>>() {}.type)
 
-                // Aggiungi tutte le sfide al database
                 challengesList.forEach { challenge ->
                     addChallenge(challenge)
                 }
@@ -132,6 +119,5 @@ data class Challenge(
     @get:PropertyName("points") @set:PropertyName("points") var points: Int = 0,
     @get:PropertyName("completedBy") @set:PropertyName("completedBy") var completedBy: List<String>? = null
 ) {
-    // Costruttore senza argomenti è necessario per la deserializzazione
     constructor() : this(null, null, null, 0 ,null)
 }

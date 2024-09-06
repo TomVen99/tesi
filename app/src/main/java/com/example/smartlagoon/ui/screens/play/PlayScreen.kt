@@ -78,7 +78,7 @@ fun PlayScreen(
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .fillMaxSize()
-                        .align(Alignment.Center)  // Centrato rispetto al Box
+                        .align(Alignment.Center)
                 ) {
                     Spacer(modifier = Modifier.height(16.dp))
                     MenuGrid(navController, usersDbVm)
@@ -112,21 +112,7 @@ fun MenuGrid(navController: NavController, usersDbVm: UsersDbViewModel,){
                 modifier = Modifier.fillMaxWidth()
             ) {
                 MenuItem("Classifica", R.raw.ranking, SmartlagoonRoute.Ranking.route, navController)
-
-
-                val route = usersDbVm.userLiveData.value?.username?.let {
-                    SmartlagoonRoute.Profile.createRoute(
-                        it
-                    )
-                }
-                if(route != null) {
-                    MenuItem(
-                        "Profilo",
-                        R.raw.profile,
-                        route,
-                        navController
-                    )
-                }
+                MenuItem("Profilo",R.raw.profile,SmartlagoonRoute.Profile.route, navController)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(
@@ -134,7 +120,6 @@ fun MenuGrid(navController: NavController, usersDbVm: UsersDbViewModel,){
                 modifier = Modifier.fillMaxWidth()
             ) {
                 MenuItem("About", R.raw.info, SmartlagoonRoute.About.route, navController)
-                //SingleMenuItem("About", R.raw.info, SmartlagoonRoute.About, navController, 110)
             }
             Spacer(modifier = Modifier.height(16.dp))
         }

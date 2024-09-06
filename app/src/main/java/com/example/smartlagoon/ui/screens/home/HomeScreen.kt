@@ -70,20 +70,17 @@ fun HomeScreen(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (!isGranted) {
-            Toast.makeText(ctx, "Camera permission is required", Toast.LENGTH_SHORT).show()
+            Toast.makeText(ctx, "Il permesso alla fotocamera è necessario per scattare le foto", Toast.LENGTH_SHORT).show()
         }else {
-            //startCamera()
+
         }
     }
 
     LaunchedEffect(Unit) {
         when (PackageManager.PERMISSION_GRANTED) {
             ContextCompat.checkSelfPermission(ctx, Manifest.permission.CAMERA) -> {
-                // Permission already granted, proceed normally
-                //startCamera()
             }
             else -> {
-                // Request camera permission
                 cameraPermissionState.launch(Manifest.permission.CAMERA)
             }
         }
@@ -92,7 +89,6 @@ fun HomeScreen(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        // Sfondo animato con Lottie
         AnimatedImage(R.raw.sea_background)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -124,8 +120,6 @@ fun MenuGrid(navController: NavController, photosDbVm: PhotosDbViewModel){
                     navController = navController,
                     size = 450,
                 )
-                /*
-            MenuItem("Classifica", R.drawable.ic_classifica, SmartlagoonRoute.Ranking, navController)*/
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(

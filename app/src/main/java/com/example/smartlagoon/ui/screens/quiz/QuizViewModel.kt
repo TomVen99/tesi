@@ -20,7 +20,6 @@ data class QuizQuestion(
     @get:PropertyName("completedBy") @set:PropertyName("completedBy") var completedBy: List<String>? = null,
     @get:PropertyName("category") @set:PropertyName("category") var category: String? = null
 ){
-    // Costruttore senza argomenti è necessario per la deserializzazione
     constructor() : this(null, null, null, 0 ,0)
 }
 
@@ -42,9 +41,6 @@ class QuizViewModel : ViewModel() {
     private val _selectedOption = MutableLiveData<Int?>(null)
     val selectedOption: LiveData<Int?> = _selectedOption
 
-    /*private val _totalQuestions = MutableLiveData(10) // Supponiamo ci siano 10 domande
-    val totalQuestions: LiveData<Int> = _totalQuestions*/
-
     fun getUnconpletedQuestionsByUser() {
         firestore.collection("questions")
             .get()
@@ -52,17 +48,14 @@ class QuizViewModel : ViewModel() {
                 val incompleteQuestions = result.documents
                     .filter { documentSnapshot ->
                         val completedByList = documentSnapshot.get("completedBy") as? List<*>
-                        // Verifica che la lista 'completedBy' non contenga l'ID dell'utente
                         completedByList == null || !completedByList.contains(userId)
                     }
                     .mapNotNull {documentSnapshot ->
-                        //it.toObject(QuizQuestion::class.java)
                         val quizQuestion = documentSnapshot.toObject(QuizQuestion::class.java)
-                        quizQuestion?.id = documentSnapshot.id // Assegna l'ID del documento
+                        quizQuestion?.id = documentSnapshot.id
                         quizQuestion
                     }
 
-                // Aggiorna LiveData con la lista delle sfide non completate
                 _questions.postValue(incompleteQuestions)
                 Log.d("incompleteQuestions", incompleteQuestions.toString())
 
@@ -76,15 +69,12 @@ class QuizViewModel : ViewModel() {
     }
 
     fun loadQuestionsFromJson(context: Context) {
-        // Verifica se il database ha già le sfide caricate per evitare duplicati
         firestore.collection("questions").get().addOnSuccessListener { documents ->
             if (documents.isEmpty) {
-                // Solo se non ci sono sfide esistenti nel database, carica da JSON
                 val inputStream = context.assets.open("quiz_questions.json")
                 val json = inputStream.bufferedReader().use { it.readText() }
                 val quizQuestionsList: List<QuizQuestion> = Gson().fromJson(json, object : TypeToken<List<QuizQuestion>>() {}.type)
 
-                // Aggiungi tutte le sfide al database
                 quizQuestionsList.forEach { quizQuestion ->
                     addQuizQuestion(quizQuestion)
                 }
@@ -105,7 +95,6 @@ class QuizViewModel : ViewModel() {
             "category" to quizQuestion.category,
         )
 
-        // Aggiungi o aggiorna il documento dell'utente nella collezione "leaderboard"
         firestore.collection("questions").add(quiz)
             .addOnSuccessListener { documentReference ->
                 quizQuestion.id = documentReference.id
@@ -126,10 +115,8 @@ class QuizViewModel : ViewModel() {
         firestore.runTransaction { transaction ->
             val snapshot = transaction.get(questionRef)
 
-            // Ottieni la lista `completedBy` corrente
             val completedBy = snapshot.get("completedBy") as? MutableList<String> ?: mutableListOf()
 
-            // Aggiungi l'UUID dell'utente alla lista se non è già presente
             if (!completedBy.contains(userUUID)) {
                 completedBy.add(userUUID)
                 transaction.update(questionRef, "completedBy", completedBy)
@@ -157,7 +144,6 @@ class QuizViewModel : ViewModel() {
             _currentQuestionIndex.value = currentIndex + 1
             _currentQuestion.value = questionList[currentIndex + 1]
         } else {
-            // Logica per gestire la fine del quiz, ad esempio mostrare un messaggio o navigare altrove
             Log.d("QuizViewModel", "Quiz completato")
         }
 

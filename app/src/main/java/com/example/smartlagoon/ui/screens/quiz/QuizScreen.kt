@@ -49,22 +49,18 @@ fun QuizScreen(
     val questionList by quizVm.questions.observeAsState(emptyList())
     val selectedOption by quizVm.selectedOption.observeAsState()
 
-    // Carica la domanda corrente
     val currentQuestion = questionList.getOrNull(questionIndex)
 
-    // Stato per l'AlertDialog
     val showDialog = remember { mutableStateOf(false) }
     val dialogMessage = remember { mutableStateOf("") }
 
     val user by usersDbVm.userLiveData.observeAsState()
 
-    // Funzione per mostrare l'AlertDialog
     fun showMessageDialog(message: String) {
         dialogMessage.value = message
         showDialog.value = true
     }
 
-    // Mostra l'AlertDialog se necessario
     if (showDialog.value) {
         AlertDialog(
             onDismissRequest = { showDialog.value = false },
@@ -105,7 +101,7 @@ fun QuizScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.lagoonguard_logo),//smartlagoon_logo),
+                    painter = painterResource(id = R.drawable.lagoonguard_logo),
                     contentDescription = "Logo",
                     modifier = Modifier
                         .fillMaxWidth()
@@ -161,7 +157,6 @@ fun QuizScreen(
                                     if (isCorrect) {
                                         showMessageDialog("Risposta corretta!\nHai guadagnato ${it.points} punti!")
                                         usersDbVm.addPoints(it.points)
-                                        //usersDbVm.fetchUserProfile()
                                     } else {
                                         showMessageDialog(
                                             "Risposta errata. La risposta corretta era: ${

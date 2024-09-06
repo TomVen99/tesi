@@ -133,20 +133,6 @@ fun AboutScreen(
                     fontSize = 16.sp
                 )
             }
-            /*item {
-                Text(
-                    text = "Per Maggiori Informazioni",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Per ulteriori dettagli sul progetto Smartlagoon, visita il sito web ufficiale del progetto o contatta i partner di progetto:\n\n" +
-                            "• Sito Web del Progetto: (http://www.smartlagoon.eu)\n\n" +
-                            "• Contatti: info@smartlagoon.eu",
-                    fontSize = 16.sp
-                )
-            }*/
             item {
                 Text(
                     text = "Per Maggiori Informazioni",
@@ -155,7 +141,6 @@ fun AboutScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Row for Project Website
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -189,8 +174,6 @@ fun AboutScreen(
                         }
                     }
                 )
-
-                // Row for Contact Email
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

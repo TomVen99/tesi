@@ -2,10 +2,7 @@ package com.example.smartlagoon
 
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.room.Room
-import com.example.smartlagoon.data.database.SmartlagoonDatabase
 import com.example.smartlagoon.data.repository.UserRepository
-import com.example.smartlagoon.ui.screens.home.HomeScreenViewModel
 import com.example.smartlagoon.ui.screens.login.LoginViewModel
 import com.example.smartlagoon.ui.screens.quiz.QuizViewModel
 import com.example.smartlagoon.ui.screens.signin.SigninViewModel
@@ -25,16 +22,6 @@ val appModule = module {
     single { get<Context>().dataStore }
 
     single {
-        Room.databaseBuilder(
-            get(),
-            SmartlagoonDatabase::class.java,
-            "smartlagoon"
-        )
-            .fallbackToDestructiveMigration()
-            .build()
-    }
-
-    single {
         HttpClient {
             install(ContentNegotiation) {
                 json(Json {
@@ -45,8 +32,6 @@ val appModule = module {
     }
 
     single {UserRepository()}
-
-    viewModel { HomeScreenViewModel() }
 
     viewModel { UsersDbViewModel(get()) }
 

@@ -35,12 +35,11 @@ import androidx.navigation.NavController
 import com.example.smartlagoon.ui.SmartlagoonRoute
 
 @Composable
-fun MenuItem(name: String, resId: Int, route: String/*SmartlagoonRoute*/, navController: NavController) {
+fun MenuItem(name: String, resId: Int, route: String, navController: NavController) {
     Card(
         shape = RoundedCornerShape(8.dp),
-        //elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent // Imposta il colore di sfondo trasparente
+            containerColor = Color.Transparent
         ),
         modifier = Modifier
             .size(150.dp)
@@ -128,14 +127,12 @@ fun CameraItem(navController: NavController, size: Int) {
 fun SingleMenuItem(name: String, resId: Int, route: SmartlagoonRoute, navController: NavController, size: Int) {
     Card(
         shape = RoundedCornerShape(8.dp),
-        //elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent // Imposta il colore di sfondo trasparente
+            containerColor = Color.Transparent
         ),
         modifier = Modifier
-            .width(330.dp) // Occupa tutta la larghezza
-            .height(size.dp) // Altezza di due caselle
-            //.clip(RoundedCornerShape(8.dp))
+            .width(330.dp)
+            .height(size.dp)
             .clickable {
                 navController.navigate(route.route)
             }

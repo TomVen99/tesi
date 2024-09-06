@@ -45,8 +45,6 @@ import com.example.smartlagoon.ui.theme.MyColors
 import com.example.smartlagoon.ui.theme.myButtonColors
 import com.example.smartlagoon.ui.viewmodel.Challenge
 
-
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ChallengeScreen(
     navController: NavHostController,
@@ -131,7 +129,6 @@ fun AchievementCard(
                 modifier = Modifier
                     .padding(16.dp)
             ) {
-                // Header Row with Title
                 challenge.title?.let {
                     Text(
                         text = it,
@@ -147,7 +144,6 @@ fun AchievementCard(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Description Text
                 challenge.description?.let {
                     Text(
                         text = it,
@@ -174,25 +170,15 @@ fun AchievementCard(
                 },
                 text = {
                     Column {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_launcher_foreground),  // Sostituisci `your_image` con il nome dell'immagine nella cartella drawable
-                            contentDescription = null,
-                            modifier = Modifier.size(40.dp)  // Imposta la dimensione dell'icona
-                        )
                         challenge.description?.let { Text(text = it) }
                     }
                 },
                 confirmButton = {
                     Button(
                         onClick = {
-                            showDialog = false // Chiude il popup
+                            showDialog = false
 
                             challengeDbVm.setCurrentChallenge(challenge)
-                            /*val intent = Intent(context, TakePhotoActivity::class.java).apply {
-                                putExtra("challengePoints", challenge.points)
-                                putExtra("challengeId", challenge.id)
-                            }
-                            context.startActivity(intent)*/
                             Log.d("currentChallengeChallenge", challenge.toString())
                             navController.navigate(SmartlagoonRoute.Camera.route)
                         },
@@ -209,23 +195,13 @@ fun AchievementCard(
                 title = {
                     Text(text = "Sfida completata!")
                 },
-                /*text = {
-                    Column {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_launcher_foreground),  // Sostituisci `your_image` con il nome dell'immagine nella cartella drawable
-                            contentDescription = null,
-                            modifier = Modifier.size(40.dp)  // Imposta la dimensione dell'icona
-                        )
-                        challenge.description?.let { Text(text = it) }
-                    }
-                },*/
                 text = {
                     Text(text = "Questa sfida è già stata completata!")
                 },
                 confirmButton = {
                     Button(
                         onClick = {
-                            showChallengeDone = false // Chiude il popup
+                            showChallengeDone = false
                         },
                         colors = myButtonColors(),
                     ) {

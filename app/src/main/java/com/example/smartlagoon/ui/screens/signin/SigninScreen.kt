@@ -42,13 +42,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.example.smartlagoon.R
-import com.example.smartlagoon.data.database.User_old
 import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.composables.AnimatedImage
 import com.example.smartlagoon.ui.theme.myButtonColors
 import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun SigninScreen(
@@ -74,7 +71,6 @@ fun SigninScreen(
 
     Box(modifier = Modifier
         .fillMaxSize()
-        //.wrapContentHeight(Alignment.CenterVertically)
         )
     {
         AnimatedImage(R.raw.sea_background)
@@ -95,7 +91,7 @@ fun SigninScreen(
             val mailFocusRequester = remember { FocusRequester() }
 
             Image(
-                painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),//smartlagoon_logo_nosfondo),
+                painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),
                 contentDescription = "Logo",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -105,12 +101,10 @@ fun SigninScreen(
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(1.dp)  // Altezza del tuo spacer
-                    .background(MaterialTheme.colorScheme.onTertiaryContainer)  // Colore del tuo spacer
+                    .height(1.dp)
+                    .background(MaterialTheme.colorScheme.onTertiaryContainer)
             )
             OutlinedTextField(
-                /*value = state.name,
-                onValueChange = actions::setFirstName,*/
                 value = firstName,
                 onValueChange = {
                     firstName = it
@@ -131,8 +125,6 @@ fun SigninScreen(
             )
 
             OutlinedTextField(
-                /*value = state.surname,
-                onValueChange = actions::setSurname,*/
                 value = lastName,
                 onValueChange = {
                     lastName = it
@@ -152,8 +144,6 @@ fun SigninScreen(
                 )
             )
             OutlinedTextField(
-                /*value = state.mail,
-                onValueChange = actions::setMail,*/
                 value = email,
                 onValueChange = {
                     email = it
@@ -170,8 +160,6 @@ fun SigninScreen(
                 )
             )
             OutlinedTextField(
-                /*value = state.username,
-                onValueChange = actions::setUsername,*/
                 value = username,
                 onValueChange = {
                     username = it
@@ -187,16 +175,12 @@ fun SigninScreen(
                     onNext = { passwordFocusRequester.requestFocus() }
                 )
             )
-            var pwd by remember { mutableStateOf(state.password) }
-            /*PasswordTextField*/
             OutlinedTextField(
                 value = password,
                 onValueChange = {
                     password = it
                     actions.setPassword(it)
                                 },
-                /*password = pwd,
-                onPasswordChange = { newPassword -> pwd = newPassword},*/
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp, vertical = 4.dp)
@@ -212,8 +196,6 @@ fun SigninScreen(
             OutlinedTextField(
                 value = password1,
                 onValueChange = { password1 = it },
-                /*password = pwd,
-                onPasswordChange = { newPassword -> pwd = newPassword},*/
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp, vertical = 4.dp)
@@ -251,32 +233,6 @@ fun SigninScreen(
                 enabled = isEnabled,
                 onClick = {
                     viewModel.register(email, password, firstName, lastName, username)
-                /*auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val user = auth.currentUser
-                            user?.let {
-                                val userData = mapOf(
-                                    "name" to firstName,
-                                    "surname" to lastName,
-                                    "username" to username,
-                                    "password" to password,
-                                    "email" to email,
-                                )
-                                firestore.collection("users").document(it.uid).set(userData)
-                                    .addOnSuccessListener {
-                                        Log.d("Registration", "User data saved successfully.")
-                                        showAlertDialog = true
-                                    }
-                                    .addOnFailureListener { e ->
-                                        Log.e("Registration", "Error saving user data", e)
-                                        showMessage = true
-                                    }
-                            }
-                        } else {
-                            Log.e("Registration", "Registration failed", task.exception)
-                        }
-                    }*/
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -285,10 +241,8 @@ fun SigninScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(15.dp)) {
-                Text("Register")
+                Text("Registrati")
             }
-
-            // Controlla il risultato del signup
             if (signinResult == false) {
                 Text(signinLog.toString(), color = Color.Red)
             } else if (signinResult == true) {
@@ -307,7 +261,7 @@ fun SigninScreen(
                     confirmButton = {
                         Button(
                             onClick = {
-                                showAlertDialog = false // Chiude il popup
+                                showAlertDialog = false
                                 navController.navigate(SmartlagoonRoute.Login.route)
                             },
                             colors = myButtonColors(),
@@ -317,15 +271,6 @@ fun SigninScreen(
                     }
                 )
             }
-
-
-            /*if (signinResult == false) {
-                Text(signinLog.toString(), color = Color.Red)
-            } else if (signinResult == true) {
-                navController.navigate(SmartlagoonRoute.Login.route)
-            }*/
-
-
         }
     }
 }
