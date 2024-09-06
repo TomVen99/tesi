@@ -60,12 +60,12 @@ fun CameraScreen(
             Log.e("test", uri.toString())
             uri?.let {
                 it1 -> photosDbVm.uploadPhoto(it1)
+                scheduleNotification(ctx)
             }
             if(challengesDbVm.currentChallenge.value != null) {
                 usersDbVm.addPoints(challengesDbVm.currentChallenge.value!!.points)
                 Log.d("A","CurrentRoute not nul")
                 challengesDbVm.currentChallenge.value!!.id?.let { challengesDbVm.challengeDone(it) }
-                scheduleNotification(ctx)
             }
             photosDbVm.setShowDialog(true)
             val bitmap = uri?.let { it1 -> getBitmapFromUri(ctx, it1) }
@@ -116,7 +116,6 @@ private fun scheduleNotification(ctx: Context) {
     val notificationWorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>()
         .setInitialDelay(24, TimeUnit.HOURS) // Ritardo di 24 ore
         .build()
-
     WorkManager.getInstance(ctx).enqueue(notificationWorkRequest)
 }
 
