@@ -368,7 +368,7 @@ fun ProfileScreen(
                     modifier = Modifier
                         .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape)
                         .padding(8.dp),
-                    text = /*if(tmpUser != null) "${tmpUser?.name ?: ""} ${tmpUser?.surname ?: ""}" else */"${user?.name ?: ""} ${user?.surname ?: ""}",
+                    text = "${user?.name ?: ""} ${user?.surname ?: ""}",
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.titleLarge,
@@ -410,7 +410,7 @@ fun ProfileScreen(
                     Spacer(Modifier.size(ButtonDefaults.IconSpacing))
 
                         Text(
-                            text = /*if(tmpUser != null) "${tmpUser!!.email}" else */"${user?.email}",
+                            text = "${user?.email}",
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.labelLarge
