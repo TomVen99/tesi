@@ -185,9 +185,16 @@ fun SmartlagoonNavGraph(
         }
         with(SmartlagoonRoute.Photo) {
             composable(route) {
+                val showUserPhoto by photosDbVm.showUserPhoto.observeAsState()
                 val isLoading by photosDbVm.isLoading.observeAsState(true)
-                LaunchedEffect(Unit) {
-                    photosDbVm.fetchAllPhotos()
+                if(showUserPhoto == true) {
+                    LaunchedEffect(Unit) {
+                        photosDbVm.fetchPhotosByUser()
+                    }
+                } else {
+                    LaunchedEffect(Unit) {
+                        photosDbVm.fetchAllPhotos()
+                    }
                 }
                 if (isLoading) {
                     LoadingScreen()
@@ -244,7 +251,7 @@ fun SmartlagoonNavGraph(
                     if (currentUser != null) {
                         PlayScreen(
                             navController = navController,
-                            usersDbVm = usersDbVm
+                            photosDbVm = photosDbVm
                         )
                         currentUser?.email?.let { email ->
                             Log.d("navigation", email)

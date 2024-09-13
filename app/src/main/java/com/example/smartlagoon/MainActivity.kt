@@ -15,20 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.smartlagoon.ui.SmartlagoonNavGraph
 import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
-import com.example.smartlagoon.ui.viewmodel.Challenge
-import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.utils.PermissionsManager
-import com.google.firebase.Firebase
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
-import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
 

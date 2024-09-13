@@ -29,12 +29,13 @@ import com.example.smartlagoon.ui.composables.MenuItem
 import com.example.smartlagoon.ui.composables.SingleMenuItem
 import com.example.smartlagoon.ui.composables.TopAppBar
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
+import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 
 @Composable
 fun PlayScreen(
     navController: NavHostController,
-    usersDbVm: UsersDbViewModel
+    photosDbVm: PhotosDbViewModel
 ){
     SmartlagoonTheme {
         Scaffold(
@@ -81,7 +82,7 @@ fun PlayScreen(
                         .align(Alignment.Center)
                 ) {
                     Spacer(modifier = Modifier.height(16.dp))
-                    MenuGrid(navController, usersDbVm)
+                    MenuGrid(navController, photosDbVm)
                 }
             }
         }
@@ -89,14 +90,15 @@ fun PlayScreen(
 }
 
 @Composable
-fun MenuGrid(navController: NavController, usersDbVm: UsersDbViewModel,){
+fun MenuGrid(navController: NavController, photosDbVm: PhotosDbViewModel,){
     LazyColumn {
         item {
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                SingleMenuItem("Foto", R.raw.turtle, SmartlagoonRoute.Photo, navController, 150)
+                photosDbVm.showUserPhoto(true)
+                SingleMenuItem("Le mie foto", R.raw.turtle, SmartlagoonRoute.Photo, navController, 150)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Row(

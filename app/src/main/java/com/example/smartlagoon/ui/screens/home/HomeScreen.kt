@@ -126,6 +126,7 @@ fun MenuGrid(navController: NavController, photosDbVm: PhotosDbViewModel){
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                photosDbVm.showUserPhoto(false)
                 MenuItem("Foto", R.raw.turtle, SmartlagoonRoute.Photo.route, navController)
                 MenuItem("Menu", R.raw.play, SmartlagoonRoute.Play.route, navController)
             }

@@ -80,7 +80,7 @@ fun SigninScreen(
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(10.dp)
-                .border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
+                //.border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
         ) {
 
             val usernameFocusRequester = remember { FocusRequester() }
@@ -98,12 +98,12 @@ fun SigninScreen(
                     .height(150.dp)
                     .padding(2.dp)
             )
-            Spacer(
+            /*Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(MaterialTheme.colorScheme.onTertiaryContainer)
-            )
+            )*/
             OutlinedTextField(
                 value = firstName,
                 onValueChange = {

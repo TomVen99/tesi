@@ -73,7 +73,7 @@ fun Login(
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(10.dp)
-                .border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
+                //.border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),
@@ -83,12 +83,12 @@ fun Login(
                     .height(150.dp)
                     .padding(2.dp)
             )
-            Spacer(
+            /*Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(MaterialTheme.colorScheme.onTertiaryContainer)
-            )
+            )*/
             val mailFocusRequester = remember { FocusRequester() }
             val passwordFocusRequester = remember { FocusRequester() }
 

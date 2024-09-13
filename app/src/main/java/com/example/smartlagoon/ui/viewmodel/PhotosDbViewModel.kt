@@ -27,6 +27,9 @@ class PhotosDbViewModel(private val userRepository: UserRepository) : ViewModel(
     private val _showDialog = MutableLiveData<Boolean>()
     val showDialog: LiveData<Boolean> = _showDialog
 
+    private val _showUserPhoto = MutableLiveData<Boolean>()
+    val showUserPhoto: LiveData<Boolean> = _showUserPhoto
+
     private val _showDeleteDialog = MutableLiveData<Boolean>()
     val showDeleteDialog: LiveData<Boolean> = _showDeleteDialog
 
@@ -38,6 +41,11 @@ class PhotosDbViewModel(private val userRepository: UserRepository) : ViewModel(
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
+
+    fun showUserPhoto(show: Boolean) {
+        _showUserPhoto.value = show
+    }
+
     fun setShowDialog(show: Boolean) {
         _showDialog.value = show
     }
@@ -96,7 +104,9 @@ class PhotosDbViewModel(private val userRepository: UserRepository) : ViewModel(
             }
     }
 
-    fun fetchPhotosByUser(userId: String) {
+    fun fetchPhotosByUser() {
+        val userId = currentUser.value?.uid
+        _isLoading.value = true
         firestore.collection("photos")
             .whereEqualTo("userId", userId)
             .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -105,15 +115,19 @@ class PhotosDbViewModel(private val userRepository: UserRepository) : ViewModel(
                 val photos = result.documents.mapNotNull { it.toObject(Photo::class.java) }
                 _photosLiveData.value = photos
                 Log.e("PhotoDbViewModel", "Aggiornamento foto effettuato")
+                _isLoading.value = false
             }
             .addOnFailureListener { exception ->
                 Log.e("PhotoDbViewModel", "Errore durante il recupero delle foto: ", exception)
+                _isLoading.value = false
             }
     }
 
     fun fetchAllPhotos() {
         _isLoading.value = true
+        val userId = currentUser.value?.uid
         firestore.collection("photos")
+            .whereNotEqualTo("userId", userId)
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->

@@ -77,6 +77,10 @@ import com.example.smartlagoon.ui.viewmodel.Photo
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 import com.example.smartlagoon.ui.viewmodel.User
 import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 
 @Composable
@@ -87,6 +91,7 @@ fun PhotoScreen(
     challengesDbVm: ChallengesDbViewModel,
 ) {
     val showDialog = photosDbVm.showDialog.observeAsState().value ?: false
+    val showUserPhoto = photosDbVm.showUserPhoto.observeAsState().value
     val showDeleteDialog = photosDbVm.showDeleteDialog.observeAsState().value ?: false
     val message = photosDbVm.message.observeAsState().value
     val category = photosDbVm.category.observeAsState().value
@@ -99,7 +104,7 @@ fun PhotoScreen(
             topBar = {
                 TopAppBar(
                     navController = navController,
-                    currentRoute = "Foto",
+                    currentRoute = if(showUserPhoto == true) "Le mie foto" else "Foto",
                 )
             },
         ) { contentPadding ->
@@ -278,14 +283,33 @@ fun PhotoItem(photo: Photo, user: User, navController: NavHostController, usersD
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = convertTimestampToDate(photo.timestamp),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
                     if(photo.userId == usersDbVm.currentUser.value?.uid)
                     {
                         MenuWithIconButton(photo.photoId, photosDbVm)
                     }
+
                 }
             }
         }
     }
+}
+
+private fun convertTimestampToDate(timestamp: Long): String {
+    // Crea un oggetto Instant dal timestamp in millisecondi
+    val instant = Instant.ofEpochMilli(timestamp)
+
+    // Converte Instant a LocalDateTime utilizzando il fuso orario del sistema
+    val dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+
+    // Definisci il formato desiderato per la data
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+
+    // Converte la data in una stringa formattata
+    return dateTime.format(formatter)
 }
 
 @Composable

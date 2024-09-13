@@ -128,6 +128,8 @@ dependencies {
     implementation("com.airbnb.android:lottie-compose:6.0.0")
     //font
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.0")
+    //status bar
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.31.5-beta")
     //Fine miei import
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

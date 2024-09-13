@@ -57,13 +57,13 @@ fun TopAppBar(
             }) {
                 Icon(
                     imageVector = Icons.Default.CameraAlt, // Modifica l'icona secondo le tue necessità
-                    contentDescription = "Settings"
+                    contentDescription = "Camera"
                 )
             }
 
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = MaterialTheme.colorScheme.background
         )
     )
 }

@@ -92,7 +92,7 @@ class ChallengesDbViewModel(private val userRepository: UserRepository) : ViewMo
                 Log.d("challengeId", challenge.toString())
             }
             .addOnFailureListener { e ->
-                println("Errore nell'aggiunta della quiz per  " +  challenge.id + ": $e")
+                println("Errore nell'aggiunta della challenge per  " +  challenge.id + ": $e")
             }
     }
 
