@@ -13,5 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
-/app/src/main/res/raw/sigma_marker.json
 .json
+.apk

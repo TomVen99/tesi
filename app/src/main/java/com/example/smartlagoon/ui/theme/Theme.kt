@@ -5,6 +5,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -13,23 +14,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-
-
-private val DarkColorScheme = darkColorScheme(
-    primary = Color.White,
-    onPrimary = Color.White,
-    primaryContainer = MyColors().darkBLue,
-    onPrimaryContainer = Color.White,
-    secondaryContainer = Color.Yellow,
-    onSecondaryContainer = Color.Black,
-    tertiaryContainer = MyColors().ultraLightBlue,
-    onTertiaryContainer = Color.Black,
-    secondary = MyColors().darkBLue,
-    tertiary = MyColors().darkBLue,
-    background = Color.DarkGray,
-    onBackground = Color.White
-)
+import com.example.smartlagoon.R
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val LightColorScheme = lightColorScheme(
     primary = Color.Black,
@@ -54,29 +46,46 @@ fun myButtonColors(): ButtonColors {
     )
 }
 
+val myCustomFont = FontFamily(
+    Font(R.font.gloria_hallelujah_regular, FontWeight.Normal)
+)
+
+val AppTypography = Typography(
+    bodyLarge = TextStyle(
+        fontFamily = myCustomFont,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
+    ),
+    titleLarge = TextStyle(
+        fontFamily = myCustomFont,
+        fontWeight = FontWeight.Bold,
+        fontSize = 21.sp
+    ),
+    labelLarge = TextStyle(
+        fontFamily = myCustomFont,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp
+    ),
+)
+
 @Composable
 fun SmartlagoonTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme= LightColorScheme
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primaryContainer.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+            window.statusBarColor = colorScheme.background.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
         }
     }
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = AppTypography,
         content = content
     )
 }
-
-enum class Theme { Light, Dark, System }

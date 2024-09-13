@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "162012184175",
+    "firebase_url": "https://lagoonguard-31d01-default-rtdb.firebaseio.com",
+    "project_id": "lagoonguard-31d01",
+    "storage_bucket": "lagoonguard-31d01.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162012184175:android:8902913deb7304f994d79a",
+        "android_client_info": {
+          "package_name": "com.example.smartlagoon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "162012184175-d4t52kpp3mgj2pej4sdd5ar2iv9e35i0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.smartlagoon",
+            "certificate_hash": "e19d48114faa458ed79a10975b5237d11e9cb0f0"
+          }
+        },
+        {
+          "client_id": "162012184175-n0ogvffq648l23fh73nbk8mpcc5gsrj9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzna7-g3cPfBQZdJj81pYGEYAkwu25--s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "162012184175-n0ogvffq648l23fh73nbk8mpcc5gsrj9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -12,7 +12,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.smartlagoon.MainActivity
 import com.example.smartlagoon.R
-import com.example.smartlagoon.TakePhotoActivity
 import com.example.smartlagoon.ui.SmartlagoonRoute
 
 class NotificationWorker(appContext: Context, workerParams: WorkerParameters)
@@ -31,23 +30,19 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters)
         val channelName = "Photo Notifications"
         val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
         notificationManager.createNotificationChannel(channel)
-        // Create an Intent for the activity you want to start.
-        //val resultIntent = Intent(context, TakePhotoActivity::class.java)
+
         val resultIntent = Intent(context, MainActivity::class.java).apply {
             putExtra("route", SmartlagoonRoute.Challenge.route)
         }
-        // Create the TaskStackBuilder.
         val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
-            // Add the intent, which inflates the back stack.
             addNextIntentWithParentStack(resultIntent)
-            // Get the PendingIntent containing the entire back stack.
             getPendingIntent(0,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         }
         val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.logo_notifica)
             .setContentTitle("BeLagoon")
-            .setContentText("È il momento della sfida giornaliera!")
+            .setContentText("Completa una sfida!")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(resultPendingIntent)
             .setAutoCancel(true)

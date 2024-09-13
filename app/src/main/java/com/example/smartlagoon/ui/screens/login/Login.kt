@@ -36,123 +36,124 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.smartlagoon.ui.composables.PasswordTextField
 import com.example.smartlagoon.R
 import com.example.smartlagoon.ui.SmartlagoonRoute
-import com.example.smartlagoon.ui.viewmodel.UsersViewModel
-
+import com.example.smartlagoon.ui.composables.AnimatedImage
+import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 
 
 @Composable
 fun Login(
-    state: LoginState,
-    actions: LoginActions,
-    onSubmit: () -> Unit,
     navController: NavHostController,
-    viewModel: UsersViewModel,
+    viewModel: UsersDbViewModel,
     sharedPreferences: SharedPreferences,
 ) {
     Log.d("LoginScreen", "dentro login screen")
-    val signinResult by viewModel.loginResult.observeAsState()
-    val signinLog by viewModel.loginLog.observeAsState()
+    val loginResult by viewModel.loginResult.observeAsState()
+    val loginLog by viewModel.loginLog.observeAsState()
+    var mail by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var isEnabled by remember { mutableStateOf(false) }
+
 
     Box(modifier = Modifier
         .fillMaxSize()
-        .wrapContentHeight(Alignment.CenterVertically))
+        )
     {
+        AnimatedImage(R.raw.sea_background)
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .align(Alignment.Center)
                 .padding(10.dp)
-                .background(MaterialTheme.colorScheme.background)
-                .border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
+                //.border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.smartlagoon_logo_nosfondo),
+                painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),
                 contentDescription = "Logo",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp)
                     .padding(2.dp)
             )
-            Spacer(
+            /*Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(1.dp)  // Altezza del tuo spacer
-                    .background(MaterialTheme.colorScheme.onTertiaryContainer)  // Colore del tuo spacer
-            )
-            val focusManager = LocalFocusManager.current
-            val usernameFocusRequester = remember { FocusRequester() }
+                    .height(1.dp)
+                    .background(MaterialTheme.colorScheme.onTertiaryContainer)
+            )*/
+            val mailFocusRequester = remember { FocusRequester() }
             val passwordFocusRequester = remember { FocusRequester() }
+
             OutlinedTextField(
-                value = state.username,
-                onValueChange = actions::setUsername,
-                label = { Text("Username") },
+                value = mail,
+                onValueChange = {
+                    mail = it},
+                label = { Text("Mail") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp)
-                    .focusRequester(usernameFocusRequester),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                    .focusRequester(mailFocusRequester),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email,imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(
                     onNext = { passwordFocusRequester.requestFocus() }
                 )
             )
 
-            var pwd by remember { mutableStateOf(state.password) }
-
-            PasswordTextField(
-                password = pwd,
-                onPasswordChange = { newPassword -> pwd = newPassword },
+            OutlinedTextField(
+                value = password,
+                onValueChange = {
+                    password = it },
+                label = { Text("Password") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp)
                     .focusRequester(passwordFocusRequester),
-                label = "Password",
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                loginActions = actions
+                visualTransformation = PasswordVisualTransformation()
             )
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
-                if (signinResult == false) {
-                    Text(signinLog.toString(), color = Color.Red)
-                } else if (signinResult == true) {
-                    navController.navigate(SmartlagoonRoute.Home.buildRoute(state.username))
-                } else if (signinResult == null) {
-                    Spacer(Modifier.size(15.dp))
+                if(loginResult == false) {
+                    Text(loginLog.toString(), color = Color.Red)
+                } else if (loginResult == true) {
+                    Log.d("login", loginResult.toString())
+                    navController.navigate(SmartlagoonRoute.Home.route)
                 }
             }
+
+            if(mail.isNotEmpty() && password.isNotEmpty()) {
+                isEnabled = true
+            }
             Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(15.dp),
+                enabled = isEnabled,
                 onClick = {
-                    if (!state.canSubmit) return@Button
-                    onSubmit()
-                    val edit = sharedPreferences.edit()
-                    edit.putBoolean("isUserLogged", true)
-                    edit.putString("username",state.username)
-                    edit.putString("password",state.password)
-                    edit.apply()
-                    //sharedPreferences.getString("username", "")?.let { Log.d("TAG", "dentro Login " + it) }
+                    viewModel.login(mail, password, sharedPreferences)
+                    if(loginResult == true) {
+                        Log.e("login", "login success")
+                        navController.navigate(SmartlagoonRoute.Home.route)
+                    }else if(loginResult == false) {
+                        Log.e("login", "errore login")
+                    }
                 },
-                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            ) {
-                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                Text("Accedi")
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer)
+                ) {
+                Text("Login")
             }
+            Spacer(Modifier.size(10.dp))
             Text(text = "Oppure")
+
             TextButton(
                 onClick = {
                     navController.navigate(SmartlagoonRoute.Signin.route)

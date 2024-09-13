@@ -1,0 +1,522 @@
+[
+  {
+    "question": "Qual è l'obiettivo principale del progetto SmartLagoon?",
+    "options": [
+      "Promuovere il turismo nel Mar Menor.",
+      "Costruire infrastrutture di pesca.",
+      "Monitorare e migliorare la qualità dell'acqua del Mar Menor.",
+      "Raccogliere fondi per le comunità locali."
+    ],
+    "correctAnswerIndex": 2,
+    "points": 1,
+    "completedBy": [],
+    "category": "Ambiente"
+  },
+  {
+    "question": "Che cos'è il Mar Menor?",
+    "options": [
+      "Un lago artificiale in Spagna.",
+      "Una catena montuosa vicino a Madrid.",
+      "Un parco nazionale in Italia.",
+      "Una laguna salata nella regione di Murcia, in Spagna."
+    ],
+    "correctAnswerIndex": 3,
+    "points": 1,
+    "completedBy": [],
+    "category": "Geografia"
+  },
+  {
+    "question": "Che cosa si intende per eutrofizzazione?",
+    "options": [
+      "Un processo di raffreddamento delle acque.",
+      "Un fenomeno di erosione costiera.",
+      "Un processo di arricchimento dell'acqua con sostanze nutrienti, che causa un'eccessiva crescita delle alghe.",
+      "Un processo di evaporazione accelerata."
+    ],
+    "correctAnswerIndex": 2,
+    "points": 1,
+    "completedBy": [],
+    "category": "Ecologia"
+  },
+  {
+    "question": "Quali sono le principali cause dell'eutrofizzazione nel Mar Menor?",
+    "options": [
+      "Attività vulcaniche.",
+      "Inquinamento da fertilizzanti agricoli e reflui urbani.",
+      "Pesca intensiva.",
+      "Turismo di massa."
+    ],
+    "correctAnswerIndex": 1,
+    "points": 1,
+    "completedBy": [],
+    "category": "Ambiente"
+  },
+  {
+    "question": "Come SmartLagoon monitora la qualità dell'acqua nel Mar Menor?",
+    "options": [
+      "Utilizzando sensori e droni per raccogliere dati in tempo reale.",
+      "Facendo ispezioni manuali settimanali.",
+      "Tramite il controllo satellitare.",
+      "Con l'uso di telecamere subacquee."
+    ],
+    "correctAnswerIndex": 0,
+    "points": 1,
+    "completedBy": [],
+    "category": "Tecnologia"
+  },
+  {
+    "question": "Qual è uno degli effetti dell'eutrofizzazione sul Mar Menor?",
+    "options": [
+      "Aumento della trasparenza dell'acqua.",
+      "Crescita di coralli.",
+      "Aumento della biodiversità marina.",
+      "Diminuzione dei livelli di ossigeno disciolto."
+    ],
+    "correctAnswerIndex": 3,
+    "points": 1,
+    "completedBy": [],
+    "category": "Ecologia"
+  },
+  {
+    "question": "Qual è il ruolo dei cittadini nel progetto SmartLagoon?",
+    "options": [
+      "Monitorare i turisti.",
+      "Raccogliere fondi.",
+      "Diventare guide turistiche locali.",
+      "Contribuire alla raccolta dati tramite osservazioni e segnalazioni."
+    ],
+    "correctAnswerIndex": 3,
+    "points": 1,
+    "completedBy": [],
+    "category": "Partecipazione"
+  },
+  {
+    "question": "Quale delle seguenti piante è indicativa di un'eutrofizzazione avanzata?",
+    "options": [
+      "Posidonia.",
+      "Alghe verdi filamentose.",
+      "Quercia marina.",
+      "Piante di mangrovia."
+    ],
+    "correctAnswerIndex": 1,
+    "points": 1,
+    "completedBy": [],
+    "category": "Ecologia"
+  },
+  {
+    "question": "Quali sono le conseguenze dell'eutrofizzazione sulla fauna del Mar Menor?",
+    "options": [
+      "Aumento della popolazione di pesci.",
+      "Migrazione dei pesci verso acque più calde.",
+      "Riduzione della popolazione di specie ittiche a causa della mancanza di ossigeno.",
+      "Proliferazione di coralli."
+    ],
+    "correctAnswerIndex": 2,
+    "points": 1,
+    "completedBy": [],
+    "category": "Ecologia"
+  },
+  {
+    "question": "Come si possono mitigare gli effetti dell'eutrofizzazione?",
+    "options": [
+      "Aumentando la pesca.",
+      "Rilasciando più sostanze nutrienti nell'acqua.",
+      "Costruendo dighe.",
+      "Riducendo l'uso di fertilizzanti agricoli e migliorando la gestione dei reflui."
+    ],
+    "correctAnswerIndex": 3,
+    "points": 1,
+    "completedBy": [],
+    "category": "Ambiente"
+  },
+  {
+    "question": "Quale dei seguenti animali è stato particolarmente colpito dall'eutrofizzazione nel Mar Menor?",
+    "options": [
+      "Delfini.",
+      "Cavallucci marini.",
+      "Squali.",
+      "Balene."
+    ],
+    "correctAnswerIndex": 1,
+    "points": 1,
+    "completedBy": [],
+    "category": "Fauna"
+  },
+  {
+    "question": "Che tipo di dati raccoglie SmartLagoon per monitorare il Mar Menor?",
+    "options": [
+      "Dati sulle temperature dell'acqua e salinità.",
+      "Dati sulla popolazione di turisti.",
+      "Dati sulle maree.",
+      "Dati sui terremoti."
+    ],
+    "correctAnswerIndex": 0,
+    "points": 1,
+    "completedBy": [],
+    "category": "Tecnologia"
+  },
+  {
+    "question": "Perché l'eutrofizzazione è considerata una minaccia per l'ecosistema del Mar Menor?",
+    "options": [
+      "Perché aumenta la temperatura dell'acqua.",
+      "Perché causa inondazioni.",
+      "Perché facilita la pesca illegale.",
+      "Perché riduce la qualità dell'acqua e minaccia la biodiversità."
+    ],
+    "correctAnswerIndex": 3,
+    "points": 1,
+    "completedBy": [],
+    "category": "Ecologia"
+  },
+  {
+    "question": "Che cos'è una 'zona morta' in un contesto di eutrofizzazione?",
+    "options": [
+      "Un'area del mare senza vita a causa della mancanza di ossigeno.",
+      "Un'area del mare con vita abbondante.",
+      "Un'area colpita da un disastro naturale.",
+      "Un'area del mare con temperature molto basse."
+    ],
+    "correctAnswerIndex": 0,
+    "points": 1,
+    "completedBy": [],
+    "category": "Ecologia"
+  },
+  {
+    "question": "Quale delle seguenti pratiche può contribuire alla riduzione dell'eutrofizzazione?",
+    "options": [
+      "Uso eccessivo di pesticidi.",
+      "Costruzione di dighe.",
+      "Coltivazioni sostenibili e gestione dei fertilizzanti.",
+      "Aumento del turismo nautico."
+    ],
+    "correctAnswerIndex": 2,
+    "points": 1,
+    "completedBy": [],
+    "category": "Agricoltura"
+  },
+  {
+    "question": "Quale tecnologia utilizza SmartLagoon per raccogliere dati?",
+    "options": [
+      "Sensori intelligenti e piattaforme IoT.",
+      "Sistemi satellitari.",
+      "Solo droni.",
+      "Reti da pesca."
+    ],
+    "correctAnswerIndex": 0,
+    "points": 1,
+    "completedBy": [],
+    "category": "Tecnologia"
+  },
+  {
+    "question": "Che cosa indica un'elevata concentrazione di nitrati nell'acqua del Mar Menor?",
+    "options": [
+      "Presenza di minerali rari.",
+      "Possibile inquinamento agricolo.",
+      "Acque molto calde.",
+      "Aumento del turismo."
+    ],
+    "correctAnswerIndex": 1,
+    "points": 1,
+    "completedBy": [],
+    "category": "Ambiente"
+  },
+  {
+    "question": "Qual è una delle sfide principali per la gestione sostenibile del Mar Menor?",
+    "options": [
+      "Costruire più hotel.",
+      "Aumentare il numero di pescherecci.",
+      "Ridurre l'inquinamento agricolo e urbano.",
+      "Sviluppare infrastrutture per il surf."
+    ],
+    "correctAnswerIndex": 2,
+    "points": 1,
+    "completedBy": [],
+    "category": "Gestione Ambientale"
+  },
+  {
+    "question": "Qual è una delle strategie del progetto SmartLagoon per coinvolgere la comunità locale?",
+    "options": [
+      "Promuovere competizioni di pesca.",
+      "Usare piattaforme di citizen science per raccogliere dati.",
+      "Costruire nuove spiagge.",
+      "Offrire lezioni gratuite di biologia marina."
+    ],
+    "correctAnswerIndex": 2,
+    "points": 1,
+    "completedBy": [],
+    "category": "Tecnologia"
+  },
+    {
+      "question": "Quale impatto ha avuto il cambiamento climatico sul Mar Menor?",
+      "options": [
+        "Ha migliorato la qualità dell'acqua.",
+        "Ha ridotto la crescita delle alghe.",
+        "Ha diminuito il livello del mare.",
+        "Ha causato un aumento delle temperature dell'acqua e periodi di siccità."
+      ],
+      "correctAnswerIndex": 3,
+      "points": 1,
+      "completedBy": [],
+      "category": "Ambiente"
+    },
+    {
+      "question": "Qual è uno degli impatti dell'inquinamento agricolo sul Mar Menor?",
+      "options": [
+        "Aumento della biodiversità.",
+        "Eutrofizzazione e morte di specie marine.",
+        "Creazione di nuove barriere coralline.",
+        "Aumento della salinità dell'acqua."
+      ],
+      "correctAnswerIndex": 1,
+      "points": 1,
+      "completedBy": [],
+      "category": "Ambiente"
+    },
+    {
+      "question": "Quale delle seguenti pratiche agricole contribuisce a ridurre l'impatto ambientale sul Mar Menor?",
+      "options": [
+        "Irrigazione eccessiva.",
+        "Disboscamento per creare nuove aree agricole.",
+        "Uso di fertilizzanti organici.",
+        "Monocoltura intensiva."
+      ],
+      "correctAnswerIndex": 2,
+      "points": 1,
+      "completedBy": [],
+      "category": "Agricoltura"
+    },
+    {
+      "question": "Quale obiettivo ambientale è più strettamente associato al concetto di sostenibilità?",
+      "options": [
+        "Aumentare il consumo energetico.",
+        "Ridurre le emissioni di gas serra.",
+        "Costruire più autostrade.",
+        "Aumentare l'uso di plastica monouso."
+      ],
+      "correctAnswerIndex": 1,
+      "points": 1,
+      "completedBy": [],
+      "category": "Sostenibilità"
+    },
+    {
+      "question": "Come contribuisce l'inquinamento da plastica all'eutrofizzazione?",
+      "options": [
+        "Rilasciando sostanze nutrienti nell'acqua.",
+        "Creando ombra che stimola la crescita delle alghe.",
+        "Bloccando i nutrienti dal raggiungere le piante marine.",
+        "Non contribuisce in alcun modo."
+      ],
+      "correctAnswerIndex": 0,
+      "points": 1,
+      "completedBy": [],
+      "category": "Inquinamento"
+    },
+    {
+      "question": "Cosa rappresenta l'indicatore 'impronta ecologica'?",
+      "options": [
+        "La quantità di risorse naturali consumate da una persona o comunità.",
+        "Il numero di alberi piantati in una regione.",
+        "La quantità di acqua usata per produrre un chilo di carne.",
+        "Il numero di turisti in una zona."
+      ],
+      "correctAnswerIndex": 0,
+      "points": 1,
+      "completedBy": [],
+      "category": "Ecologia"
+    },
+    {
+      "question": "Quale pratica riduce il consumo di acqua in agricoltura e aiuta a prevenire l'eutrofizzazione?",
+      "options": [
+        "Irrigazione a pioggia.",
+        "Irrigazione a goccia.",
+        "Uso di pompe ad alta pressione.",
+        "Drenaggio dell'acqua."
+      ],
+      "correctAnswerIndex": 1,
+      "points": 1,
+      "completedBy": [],
+      "category": "Agricoltura"
+    },
+    {
+      "question": "Quale delle seguenti tecnologie può aiutare a migliorare la gestione delle risorse idriche?",
+      "options": [
+        "Sistemi di irrigazione automatizzata.",
+        "Uso di plastica monouso.",
+        "Disboscamento.",
+        "Costruzione di dighe."
+      ],
+      "correctAnswerIndex": 0,
+      "points": 1,
+      "completedBy": [],
+      "category": "Tecnologia"
+    },
+  {
+    "question": "Quale è una delle cause principali dell'aumento della temperatura globale?",
+    "options": [
+      "Movimenti tettonici.",
+      "Correnti oceaniche.",
+      "Attività vulcaniche.",
+      "Emissioni di gas serra derivanti dalle attività umane."
+    ],
+    "correctAnswerIndex": 3,
+    "points": 1,
+    "completedBy": [],
+    "category": "Clima"
+  },
+    {
+      "question": "Qual è il ruolo delle piante acquatiche nel mantenimento dell'equilibrio ecologico del Mar Menor?",
+      "options": [
+        "Aumentare la temperatura dell'acqua.",
+        "Ridurre la trasparenza dell'acqua.",
+        "Assorbire nutrienti in eccesso e produrre ossigeno.",
+        "Attrarre turisti."
+      ],
+      "correctAnswerIndex": 2,
+      "points": 1,
+      "completedBy": [],
+      "category": "Ecologia"
+    },
+    {
+      "question": "Come può la pesca sostenibile aiutare a proteggere il Mar Menor?",
+      "options": [
+        "Aumentando il numero di specie invasive.",
+        "Introducendo specie non native.",
+        "Limitando le catture per mantenere l'equilibrio delle popolazioni ittiche.",
+        "Costruendo più pescherecci."
+      ],
+      "correctAnswerIndex": 2,
+      "points": 1,
+      "completedBy": [],
+      "category": "Pesca"
+    },
+    {
+      "question": "Quale approccio si utilizza per garantire la sostenibilità ambientale?",
+      "options": [
+        "Conservazione delle risorse naturali per le future generazioni.",
+        "Sfruttamento intensivo delle risorse naturali.",
+        "Uso indiscriminato delle risorse idriche.",
+        "Distruzione di habitat naturali."
+      ],
+      "correctAnswerIndex": 0,
+      "points": 1,
+      "completedBy": [],
+      "category": "Sostenibilità"
+    },
+    {
+      "question": "Come influisce il cambiamento climatico sul Mar Menor?",
+      "options": [
+        "Aumenta la temperatura dell'acqua e contribuisce all'eutrofizzazione.",
+        "Riduce la salinità dell'acqua.",
+        "Aumenta la produzione di alghe coralline.",
+        "Causa l'abbassamento del livello del mare."
+      ],
+      "correctAnswerIndex": 0,
+      "points": 1,
+      "completedBy": [],
+      "category": "Ambiente"
+    },
+    {
+      "question": "Qual è l'importanza delle zone umide per l'ambiente?",
+      "options": [
+        "Sono utilizzate esclusivamente per il turismo.",
+        "Servono solo come riserve di acqua dolce.",
+        "Forniscono habitat a numerose specie e filtrano l'acqua.",
+        "Sono usate per il disboscamento."
+      ],
+      "correctAnswerIndex": 2,
+      "points": 1,
+      "completedBy": [],
+      "category": "Ecologia"
+    },
+    {
+      "question": "Cosa rappresenta il termine 'biodiversità'?",
+      "options": [
+        "Il numero di specie umane su un territorio.",
+        "La varietà di specie, ecosistemi e geni in un'area.",
+        "Il numero di parchi naturali in un paese.",
+        "La quantità di specie marine esistenti."
+      ],
+      "correctAnswerIndex": 1,
+      "points": 1,
+      "completedBy": [],
+      "category": "Ecologia"
+    },
+    {
+      "question": "Quale pratica contribuisce maggiormente alla conservazione della biodiversità?",
+      "options": [
+        "Agricoltura sostenibile e diversificata.",
+        "Monocoltura.",
+        "Utilizzo di pesticidi.",
+        "Costruzione di infrastrutture urbane."
+      ],
+      "correctAnswerIndex": 0,
+      "points": 1,
+      "completedBy": [],
+      "category": "Conservazione"
+    },
+    {
+      "question": "Qual è il principale vantaggio dell'energia rinnovabile per l'ambiente?",
+      "options": [
+        "Riduce le emissioni di CO2 e l'inquinamento.",
+        "Aumenta la quantità di rifiuti.",
+        "Costa più dell'energia tradizionale.",
+        "Richiede grandi quantità di acqua."
+      ],
+      "correctAnswerIndex": 3,
+      "points": 1,
+      "completedBy": [],
+      "category": "Energia"
+    },
+    {
+      "question": "Quale delle seguenti è una conseguenza diretta della deforestazione?",
+      "options": [
+        "Aumento dell'umidità.",
+        "Riduzione dell'habitat per molte specie.",
+        "Miglioramento della qualità dell'aria.",
+        "Diminuzione del livello del mare."
+      ],
+      "correctAnswerIndex": 1,
+      "points": 1,
+      "completedBy": [],
+      "category": "Ambiente"
+    },
+    {
+      "question": "Quale iniziativa può aiutare a migliorare la sostenibilità ambientale nelle aree urbane?",
+      "options": [
+        "Costruzione di nuove strade.",
+        "Promozione di trasporti pubblici e infrastrutture ciclabili.",
+        "Espansione delle zone industriali.",
+        "Aumento del numero di parcheggi."
+      ],
+      "correctAnswerIndex": 1,
+      "points": 1,
+      "completedBy": [],
+      "category": "Sostenibilità"
+    },
+    {
+      "question": "Come la raccolta differenziata dei rifiuti contribuisce alla sostenibilità ambientale?",
+      "options": [
+        "Aumenta l'inquinamento delle falde acquifere.",
+        "Riduce la produzione di rifiuti.",
+        "Rende più difficile lo smaltimento dei rifiuti.",
+        "Facilita il riciclaggio e riduce l'inquinamento."
+      ],
+      "correctAnswerIndex": 3,
+      "points": 1,
+      "completedBy": [],
+      "category": "Rifiuti"
+    },
+  {
+    "question": "Qual è uno dei benefici della riforestazione nelle aree degradate?",
+    "options": [
+      "Aumenta l'erosione del suolo.",
+      "Distrugge le coltivazioni esistenti.",
+      "Riduce la capacità del suolo di trattenere l'acqua.",
+      "Migliora la qualità dell'aria e ripristina l'habitat."
+    ],
+    "correctAnswerIndex": 3,
+    "points": 1,
+    "completedBy": [],
+    "category": "Conservazione"
+  }
+]

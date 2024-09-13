@@ -1,41 +1,56 @@
 package com.example.smartlagoon.ui.screens.ranking
 
 import android.net.Uri
+
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.example.smartlagoon.R
-import com.example.smartlagoon.data.database.User
+import com.example.smartlagoon.ui.SmartlagoonRoute
+import com.example.smartlagoon.ui.composables.AnimatedImage
 import com.example.smartlagoon.ui.composables.TopAppBar
-import com.example.smartlagoon.ui.viewmodel.UsersState
+import com.example.smartlagoon.ui.theme.MyColors
+import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RankingScreen(
     navController: NavHostController,
-    user: User,
-    state: UsersState,
+    usersDbVm: UsersDbViewModel
 ) {
+    usersDbVm.getRanking()
+    val ranking by usersDbVm.rankingLiveData.observeAsState(emptyList())
     Scaffold(
         topBar = {
             TopAppBar(
@@ -43,7 +58,30 @@ fun RankingScreen(
                 currentRoute = "Classifica",
             )
         },
+        bottomBar = {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RectangleShape)
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),
+                    contentDescription = "Logo",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp)
+                )
+            }
+        }
     ) { contentPadding ->
+        AnimatedImage(R.raw.sea_background)
         LazyColumn (
             modifier = Modifier
                 .fillMaxSize()
@@ -51,33 +89,49 @@ fun RankingScreen(
             contentPadding = PaddingValues(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            itemsIndexed(state.users){ _, user ->
-                ListItem(
-                    headlineContent = { Text(text = user.username) },
-                    supportingContent = {
-                        Text(text = user.name)
-                    },
-                    leadingContent = {
-                        val painter =
-                            if (user.urlProfilePicture != "")
-                                rememberAsyncImagePainter(Uri.parse(user.urlProfilePicture))
-                            else {
-                                painterResource(id = R.drawable.ic_launcher_foreground)
-                            }
-                        Image(
-                            painter = painter,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(64.dp)
-                                .padding(4.dp),
-                            contentScale = ContentScale.Crop
-                        )
-                    },
-                    trailingContent = { Text(text = user.points.toString())},
-                    modifier = Modifier
-                        .padding(2.dp)
-                        .border(1.dp, MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(16.dp)),
-                )
+            itemsIndexed(ranking) { _, user ->
+                if (user != null) {
+                    ListItem(
+                        headlineContent = { user.username?.let {
+                            Text(
+                                text = it,
+                                modifier = Modifier.clickable {
+                                    val route = SmartlagoonRoute.Profile.createRoute(user.username)
+                                    navController.navigate(route)
+                                })
+                        }},
+                        supportingContent = {
+                            user.name?.let { Text(text = it) }
+                        },
+                        leadingContent = {
+                            val painter =
+                                if (user.profileImageUrl != "")
+                                    rememberAsyncImagePainter(Uri.parse(user.profileImageUrl))
+                                else {
+                                    painterResource(id = R.drawable.ic_launcher_foreground)
+                                }
+                            Image(
+                                painter = painter,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .padding(4.dp)
+                                    .border(BorderStroke(2.dp, MyColors().borders), CircleShape)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop,
+                            )
+                        },
+                        trailingContent = { Text(text = user.points.toString()) },
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .border(
+                                1.dp,
+                                MaterialTheme.colorScheme.primaryContainer,
+                                RoundedCornerShape(16.dp)
+                            )
+                            .clip(RoundedCornerShape(16.dp))
+                    )
+                }
             }
         }
     }
