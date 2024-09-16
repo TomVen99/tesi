@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -113,6 +114,7 @@ class UsersDbViewModel(private val userRepository: UserRepository) : ViewModel()
                 callback(null)
             }
     }
+
     fun login(email: String, password: String, sharedPreferences: SharedPreferences) {
         viewModelScope.launch {
             userRepository.login(email, password, sharedPreferences) { success, message ->

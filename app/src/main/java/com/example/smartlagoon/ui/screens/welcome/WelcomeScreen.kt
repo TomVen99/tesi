@@ -61,6 +61,7 @@ fun WelcomeScreen(
             // Se il permesso per le notifiche è concesso, richiedi quello per la fotocamera
             cameraPermissionState.launch(Manifest.permission.CAMERA)
         } else {
+            cameraPermissionState.launch(Manifest.permission.CAMERA)
             Toast.makeText(ctx,"Il permesso per le notifiche è necessario per rimanere aggiornati",Toast.LENGTH_SHORT)
                 .show()
         }

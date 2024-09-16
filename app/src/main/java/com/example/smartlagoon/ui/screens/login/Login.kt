@@ -56,8 +56,6 @@ fun Login(
     var mail by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isEnabled by remember { mutableStateOf(false) }
-    val showWelcome by usersDbVm.showWelcome.observeAsState()
-
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -70,7 +68,6 @@ fun Login(
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(10.dp)
-                //.border(1.dp, MaterialTheme.colorScheme.onTertiaryContainer, RectangleShape)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.lagoonguard_logo_nosfondo),
@@ -118,13 +115,7 @@ fun Login(
                     Text(loginLog.toString(), color = Color.Red)
                 } else if (loginResult == true) {
                     Log.d("login", loginResult.toString())
-                    navController.navigate(
-                        //if(showWelcome == true) {
-                            SmartlagoonRoute.Welcome.route
-                        /*}else {
-                            SmartlagoonRoute.Home.route
-                        }*/
-                    )
+                    navController.navigate(SmartlagoonRoute.Welcome.route)
                 }
             }
 
@@ -137,13 +128,7 @@ fun Login(
                     usersDbVm.login(mail, password, sharedPreferences)
                     if(loginResult == true) {
                         Log.e("login", "login success")
-                        navController.navigate(
-                            //if(showWelcome == true) {
-                                SmartlagoonRoute.Welcome.route
-                            /*}else {
-                                SmartlagoonRoute.Home.route
-                            }*/
-                        )
+                        navController.navigate(SmartlagoonRoute.Welcome.route)
                     }else if(loginResult == false) {
                         Log.e("login", "errore login")
                     }

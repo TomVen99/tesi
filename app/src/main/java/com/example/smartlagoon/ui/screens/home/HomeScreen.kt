@@ -2,10 +2,12 @@ package com.example.smartlagoon.ui.screens.home
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -60,31 +62,13 @@ import com.example.smartlagoon.ui.composables.CameraItem
 import com.example.smartlagoon.ui.composables.MenuItem
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun HomeScreen(
     navController: NavHostController,
     photosDbVm: PhotosDbViewModel
 ) {
-    val ctx = LocalContext.current
-    val cameraPermissionState = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (!isGranted) {
-            Toast.makeText(ctx, "Il permesso alla fotocamera è necessario per scattare le foto", Toast.LENGTH_SHORT).show()
-        }else {
 
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        when (PackageManager.PERMISSION_GRANTED) {
-            ContextCompat.checkSelfPermission(ctx, Manifest.permission.CAMERA) -> {
-            }
-            else -> {
-                cameraPermissionState.launch(Manifest.permission.CAMERA)
-            }
-        }
-    }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
@@ -108,6 +92,7 @@ fun HomeScreen(
 }
 
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun MenuGrid(navController: NavController, photosDbVm: PhotosDbViewModel){
     LazyColumn {

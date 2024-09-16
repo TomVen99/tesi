@@ -2,6 +2,7 @@ package com.example.smartlagoon.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -101,11 +102,19 @@ fun SmartlagoonNavGraph(
             Log.d("LoginRoute", "navgraph Login")
             composable(route) {
                 usersDbVm = koinViewModel<UsersDbViewModel>()
-                Login(
-                    navController,
-                    usersDbVm,
-                    sharedPreferences
-                )
+                val isLogged = sharedPreferences.getBoolean("isUserLogged", false)
+                if(isLogged) {
+                    WelcomeScreen(
+                        navController = navController,
+                        usersDbVm = usersDbVm
+                    )
+                } else {
+                    Login(
+                        navController,
+                        usersDbVm,
+                        sharedPreferences
+                    )
+                }
             }
         }
         with(SmartlagoonRoute.Signin) {
@@ -273,6 +282,31 @@ fun SmartlagoonNavGraph(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun checkUserLoggedIn(
+    sharedPreferences: SharedPreferences,
+    onUserAuthenticated: () -> Unit,
+    onUserNotAuthenticated: () -> Unit,
+    usersDbVm: UsersDbViewModel
+) {
+    // Verifica se l'utente è già loggato
+    val isUserLogged = sharedPreferences.getBoolean("isUserLogged", false)
+    val email = sharedPreferences.getString("mail", null)
+    val password = sharedPreferences.getString("password", null)
+
+
+    if (isUserLogged && email != null && password != null) {
+        usersDbVm.login(email, password, sharedPreferences)
+        if(usersDbVm.loginResult.value == true) {
+            onUserAuthenticated()
+        } else {
+            onUserNotAuthenticated()
+        }
+    } else {
+        onUserNotAuthenticated()
     }
 }
 
