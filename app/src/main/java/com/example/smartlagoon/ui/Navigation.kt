@@ -29,6 +29,7 @@ import com.example.smartlagoon.ui.screens.quiz.QuizViewModel
 import com.example.smartlagoon.ui.screens.ranking.RankingScreen
 import com.example.smartlagoon.ui.screens.signin.SigninScreen
 import com.example.smartlagoon.ui.screens.signin.SigninViewModel
+import com.example.smartlagoon.ui.screens.welcome.WelcomeScreen
 import com.example.smartlagoon.ui.viewmodel.ChallengesDbViewModel
 import com.example.smartlagoon.ui.viewmodel.PhotosDbViewModel
 import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
@@ -58,6 +59,8 @@ sealed class SmartlagoonRoute(
 
     data object Play : SmartlagoonRoute("play", "Play")
 
+    data object Welcome : SmartlagoonRoute("welcome", "Welcome")
+
     data object Profile : SmartlagoonRoute("profile/{username}","Profile"){
         fun createRoute(username: String): String {
             return "profile/$username"
@@ -65,7 +68,7 @@ sealed class SmartlagoonRoute(
     }
 
     companion object {
-        val routes = setOf(Login, Signin, Home, Ranking, Photo, About, Quiz, Profile, Camera, Play)
+        val routes = setOf(Login, Signin, Home, Ranking, Photo, About, Quiz, Profile, Camera, Play, Welcome)
     }
 }
 
@@ -122,6 +125,14 @@ fun SmartlagoonNavGraph(
                 HomeScreen(
                     navController = navController,
                     photosDbVm = photosDbVm
+                )
+            }
+        }
+        with(SmartlagoonRoute.Welcome) {
+            composable(route) {_ ->
+                WelcomeScreen(
+                    navController = navController,
+                    usersDbVm = usersDbVm
                 )
             }
         }

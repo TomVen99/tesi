@@ -3,8 +3,6 @@ package com.example.smartlagoon.ui.screens.login
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -35,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -51,15 +47,16 @@ import com.example.smartlagoon.ui.viewmodel.UsersDbViewModel
 @Composable
 fun Login(
     navController: NavHostController,
-    viewModel: UsersDbViewModel,
+    usersDbVm: UsersDbViewModel,
     sharedPreferences: SharedPreferences,
 ) {
     Log.d("LoginScreen", "dentro login screen")
-    val loginResult by viewModel.loginResult.observeAsState()
-    val loginLog by viewModel.loginLog.observeAsState()
+    val loginResult by usersDbVm.loginResult.observeAsState()
+    val loginLog by usersDbVm.loginLog.observeAsState()
     var mail by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isEnabled by remember { mutableStateOf(false) }
+    val showWelcome by usersDbVm.showWelcome.observeAsState()
 
 
     Box(modifier = Modifier
@@ -83,12 +80,6 @@ fun Login(
                     .height(150.dp)
                     .padding(2.dp)
             )
-            /*Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(MaterialTheme.colorScheme.onTertiaryContainer)
-            )*/
             val mailFocusRequester = remember { FocusRequester() }
             val passwordFocusRequester = remember { FocusRequester() }
 
@@ -127,7 +118,13 @@ fun Login(
                     Text(loginLog.toString(), color = Color.Red)
                 } else if (loginResult == true) {
                     Log.d("login", loginResult.toString())
-                    navController.navigate(SmartlagoonRoute.Home.route)
+                    navController.navigate(
+                        //if(showWelcome == true) {
+                            SmartlagoonRoute.Welcome.route
+                        /*}else {
+                            SmartlagoonRoute.Home.route
+                        }*/
+                    )
                 }
             }
 
@@ -137,10 +134,16 @@ fun Login(
             Button(
                 enabled = isEnabled,
                 onClick = {
-                    viewModel.login(mail, password, sharedPreferences)
+                    usersDbVm.login(mail, password, sharedPreferences)
                     if(loginResult == true) {
                         Log.e("login", "login success")
-                        navController.navigate(SmartlagoonRoute.Home.route)
+                        navController.navigate(
+                            //if(showWelcome == true) {
+                                SmartlagoonRoute.Welcome.route
+                            /*}else {
+                                SmartlagoonRoute.Home.route
+                            }*/
+                        )
                     }else if(loginResult == false) {
                         Log.e("login", "errore login")
                     }
@@ -173,3 +176,4 @@ fun Login(
         }
     }
 }
+

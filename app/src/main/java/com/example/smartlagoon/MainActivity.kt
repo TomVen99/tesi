@@ -5,10 +5,8 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,18 +18,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.smartlagoon.ui.SmartlagoonNavGraph
 import com.example.smartlagoon.ui.SmartlagoonRoute
 import com.example.smartlagoon.ui.theme.SmartlagoonTheme
-import com.example.smartlagoon.utils.PermissionsManager
 
 class MainActivity : ComponentActivity() {
-
-    private lateinit var permissionHelper: PermissionsManager
-
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-            } else {
-            }
-        }
 
     private var startRoute = ""
     private var generateTest = true
@@ -48,19 +36,6 @@ class MainActivity : ComponentActivity() {
             Log.d("route ricevuta", "Intent NULLO")
         }
 
-        permissionHelper = PermissionsManager(this, requestPermissionLauncher)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissionHelper.checkAndRequestPermissionNotification(
-                onPermissionGranted = {
-                                      },
-                onPermissionDenied = {
-                    Toast.makeText(this, "Permesso notifiche non concesso", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            )
-        } else {
-        }
 
         val sharedPreferences = getPreferences(Context.MODE_PRIVATE)
         generateTest = sharedPreferences.getBoolean("generateTest", true)

@@ -69,6 +69,11 @@ class UsersDbViewModel(private val userRepository: UserRepository) : ViewModel()
     private val _rankingLiveData = MutableLiveData<List<User?>>()
     val rankingLiveData: LiveData<List<User?>> = _rankingLiveData
 
+    private val _showWelcome = MutableLiveData<Boolean>()
+    val showWelcome: LiveData<Boolean> = _showWelcome
+    fun setShowWelcome(show: Boolean) {
+        _showWelcome.value = show
+    }
     fun setNullTmpUserLiveData(){
         _tmpUserLiveData.value = null
     }
