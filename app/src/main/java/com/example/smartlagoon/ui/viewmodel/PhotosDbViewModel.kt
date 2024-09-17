@@ -125,9 +125,9 @@ class PhotosDbViewModel(private val userRepository: UserRepository) : ViewModel(
 
     fun fetchAllPhotos() {
         _isLoading.value = true
-        val userId = currentUser.value?.uid
+        //val userId = currentUser.value?.uid
         firestore.collection("photos")
-            .whereNotEqualTo("userId", userId)
+            //.whereNotEqualTo("userId", userId)
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
