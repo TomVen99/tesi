@@ -6,6 +6,25 @@
     "completedBy": []
   },
   {
+    "title": "Fotografa una tartaruga marina",
+    "description": "Cattura una foto di una tartaruga marina.",
+    "points": 40,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa un uccello acquatico",
+    "description": "Cerca un uccello che frequenta il Mar Menor e cattura la sua immagine.",
+    "points": 25,
+    "completedBy": []
+  },
+  {
+    "title": "Fotografa un pesce pagliaccio",
+    "description": "Cattura una foto di un pesce pagliaccio.",
+    "points": 25,
+    "completedBy": []
+  }
+,
+  {
     "title": "Fotografa una spiaggia pulita",
     "description": "Trova una spiaggia del Mar Menor senza rifiuti visibili e documentala.",
     "points": 15,
@@ -54,12 +73,6 @@
     "completedBy": []
   },
   {
-    "title": "Fotografa un uccello acquatico",
-    "description": "Cerca un uccello che frequenta il Mar Menor e cattura la sua immagine.",
-    "points": 25,
-    "completedBy": []
-  },
-  {
     "title": "Fotografa una situazione di pesca sostenibile",
     "description": "Documenta una scena in cui i pescatori usano attrezzi o metodi di pesca sostenibili.",
     "points": 30,
@@ -69,12 +82,6 @@
     "title": "Fotografa un'area con piante ripariali o mangrovie",
     "description": "Trova un'area costiera con vegetazione naturale e scatta una foto.",
     "points": 20,
-    "completedBy": []
-  },
-  {
-    "title": "Fotografa una tartaruga marina (o segni di essa)",
-    "description": "Cattura una foto di una tartaruga marina o segni della sua presenza (es. tracce sulla sabbia).",
-    "points": 40,
     "completedBy": []
   },
   {
